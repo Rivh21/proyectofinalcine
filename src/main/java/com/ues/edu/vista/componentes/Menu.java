@@ -17,7 +17,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
-import javax.swing.UIManager;
 
 /**
  *
@@ -50,7 +49,6 @@ public class Menu extends javax.swing.JPanel {
         subMenusNucleo.add(new ModeloMenu("Funciones", ModeloMenu.TipoMenu.MENU));
         subMenusNucleo.add(new ModeloMenu("Prueba", ModeloMenu.TipoMenu.MENU));//agreggar
 
-
         // --- SUBMENÚ: Producto ---
         List<ModeloMenu> subMenusConcesion = new ArrayList<>();
         subMenusConcesion.add(new ModeloMenu("Producto", ModeloMenu.TipoMenu.MENU));
@@ -61,6 +59,7 @@ public class Menu extends javax.swing.JPanel {
         subMenusGestion.add(new ModeloMenu("emp", "Empleados", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("usuario", "Usuarios", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("rol", "Roles", ModeloMenu.TipoMenu.MENU));
+        subMenusGestion.add(new ModeloMenu("Permisos", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("pago", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
 
         // ---SUBMENU: Ventas ---
@@ -72,11 +71,10 @@ public class Menu extends javax.swing.JPanel {
         // -----------------------------------------------------------
         // AÑADIR AL MENU PRINCIPAL
         // ÍTEM PADRE (Tipo: SUB_MENU)
-        listaMenu1.addItem(new ModeloMenu("home","INICIO", ModeloMenu.TipoMenu.MENU));
+        listaMenu1.addItem(new ModeloMenu("home", "INICIO", ModeloMenu.TipoMenu.MENU));
 //        listaMenu1.addItem(new ModeloMenu(" ", " ", ModeloMenu.TipoMenu.VACIO));
         listaMenu1.addItem(new ModeloMenu("nucleoCine", "Nucleo Del Cine", subMenusNucleo));
         listaMenu1.addItem(new ModeloMenu("gestion", "Gestion Interna", subMenusGestion));
-       
 
         // ÍTEM PADRE (Tipo: SUB_MENU)
         listaMenu1.addItem(new ModeloMenu("menuProducto", "Productos", subMenusConcesion));
@@ -154,7 +152,7 @@ public class Menu extends javax.swing.JPanel {
         //Mirage    
         GradientPaint gf = new GradientPaint(0, 0, Color.decode("#16222A"), 0, getHeight(), Color.decode("#3A6073"));
         g2.setPaint(gf);
-        
+
         //sirve para redondear
 //        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15); 
         g2.fillRect(0, 0, getWidth(), getHeight());

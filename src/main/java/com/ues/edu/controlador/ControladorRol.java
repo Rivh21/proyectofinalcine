@@ -150,21 +150,20 @@ public class ControladorRol {
     public void mostrar(ListaSimple<Rol> lista) {
         this.listaActualMostrada = lista;
         modelo = new DefaultTableModel();
-        String titulos[] = {"ID", "NOMBRE", "PERMISO"};
+        String titulos[] = {"ID", "NOMBRE"};
         modelo.setColumnIdentifiers(titulos);
         ArrayList<Rol> listaRoles = lista.toArray();
         for (Rol rol : listaRoles) {
             Object[] fila = {
                 rol.getIdRol(),
-                rol.getNombreRol(),
-                rol.getPermisos()
+                rol.getNombreRol()
             };
             modelo.addRow(fila);
         }
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
         this.mantto.tbDatos.setRowSorter(sorter);
         this.mantto.tbDatos.setModel(modelo);
-        int[] anchosFijos = {10, 50, 1000};
+        int[] anchosFijos = {10, 1500};
         ajustarAnchoColumnas(anchosFijos);
         mantto.tbDatos.setModel(modelo);
     }

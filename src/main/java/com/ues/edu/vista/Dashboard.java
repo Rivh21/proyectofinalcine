@@ -33,9 +33,7 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
     private boolean menuVisible = true;
     private final javax.swing.JPanel panelSecundario;
 
-    /**
-     * Creates new form main
-     */
+
     public Dashboard() {
         animador = new Timer(5, (ActionEvent e) -> {
             animateMenuWidth();
@@ -46,19 +44,19 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         setBackground(new Color(0, 0, 0, 0));
         setExtendedState(MAXIMIZED_BOTH);
 
-        // --- 1. CONFIGURACIÓN DEL PANEL SECUNDARIO ---
+        //--- 1. CONFIGURACIÓN DEL PANEL SECUNDARIO ---
         panelSecundario = new javax.swing.JPanel();
         panelSecundario.setLayout(new java.awt.BorderLayout());
         panelSecundario.setOpaque(false);
 
-        // 2. Montar la estructura interna de panelSecundario (Header + Vistas + Footer)
+        //2. Montar la estructura interna de panelSecundario (Header + Vistas + Footer)
         int realHeaderAlto = header1.getPreferredSize().height;
         header1.setPreferredSize(new Dimension(0, realHeaderAlto));
 
         panelSecundario.add(header1, java.awt.BorderLayout.NORTH);
         panelSecundario.add(footer1, java.awt.BorderLayout.SOUTH);
 
-        // 3. Montar la estructura principal en 'bg'
+        //3. Montar la estructura principal en 'bg'
         this.getContentPane().setLayout(new java.awt.BorderLayout());
         this.getContentPane().add(bg, java.awt.BorderLayout.CENTER);
 
@@ -68,12 +66,10 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         bg.add(menu1, java.awt.BorderLayout.WEST);          // Menú a la izquierda
         bg.add(panelSecundario, java.awt.BorderLayout.CENTER); // Contenedor Secundario al centro
 
-        // 5. Inicialización de Listeners
+        //5. Inicialización de Listeners
         header1.setMenuToggleListener(this);
         menu1.getListaMenu().setSelectionListener(this);
 
-        // Si tu footer necesita un listener (aunque ahora tiene System.exit(0)):
-        // footer1.setMenuToggleListener(this); 
         bg.revalidate();
         this.getContentPane().revalidate();
     }
@@ -135,26 +131,26 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
 
     private void showJPanel(javax.swing.JPanel p) {
 
-        // Obtiene el LayoutManager del panel que contiene las vistas
+        //Obtiene el LayoutManager del panel que contiene las vistas
         java.awt.BorderLayout layout = (java.awt.BorderLayout) panelSecundario.getLayout();
 
-        // 1. Encuentra el componente actual en el CENTRO
+        //1. Encuentra el componente actual en el CENTRO
         java.awt.Component centerComponent = layout.getLayoutComponent(panelSecundario, java.awt.BorderLayout.CENTER);
 
-        // 2. Esto limpia la vista anterior
+        //2. Esto limpia la vista anterior
         if (centerComponent != null) {
             panelSecundario.remove(centerComponent);
         }
 
-        // 3. Añade la nueva vista SOLO si no es NULL
+        //3. Añade la nueva vista SOLO si no es NULL
         if (p != null) {
             panelSecundario.add(p, java.awt.BorderLayout.CENTER);
         }
 
-        // 4. Forzar el redibujado en ambos niveles (por si acaso)
+        //4. Forzar el redibujado en ambos niveles (por si acaso)
         panelSecundario.revalidate();
         panelSecundario.repaint();
-        bg.revalidate(); // Revalida el padre también
+        bg.revalidate(); //Revalida el padre también
     }
 
     private void animateMenuWidth() {
@@ -177,8 +173,8 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         bg.repaint();
     }
 
-    // --- IMPLEMENTACIÓN DE INTERFACES ---
-    // 1. HeaderMenuListener: Activa/Desactiva la animación
+    //--- IMPLEMENTACIÓN DE INTERFACES ---
+    //1. HeaderMenuListener: Activa/Desactiva la animación
     @Override
     public void toggleMenuVisibility() {
         if (menuVisible) {
@@ -230,6 +226,10 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 Mantenimiento mantto = new Mantenimiento("Roles");
                 ControladorRol cr = new ControladorRol(mantto);
                 showJPanel(mantto);
+            }
+            
+            case "Permisos" -> {
+                
             }
             
             case "Metodo de Pago" -> {

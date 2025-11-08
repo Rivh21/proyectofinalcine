@@ -265,7 +265,6 @@ public class UsuarioDao implements IUsuario {
                 Rol rol = new Rol();
                 rol.setIdRol(rs.getInt("id_rol"));
                 rol.setNombreRol(rs.getString("nombre_rol"));
-                rol.setPermisos(rs.getString("permisos"));
                 user.setRol(rol);
 
                 Empleado empleado = new Empleado();

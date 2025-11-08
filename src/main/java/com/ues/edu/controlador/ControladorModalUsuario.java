@@ -79,7 +79,7 @@ public class ControladorModalUsuario {
         this.mu.cbRol.removeAllItems();
         RolDao daoRol = new RolDao();
         ListaSimple<Rol> listaRoles = daoRol.selectAll();
-        Rol tituloCombo = new Rol(0, "---SELECCIONE UN ROL---", null);
+        Rol tituloCombo = new Rol(0, "---SELECCIONE UN ROL---");
         mu.cbRol.addItem(tituloCombo);
         for (Rol rol : listaRoles.toArray()) {
             mu.cbRol.addItem(rol);

@@ -20,7 +20,7 @@ public class Conexion {
     
     public Connection getConexion() {       
         String user = "root";
-        String clave = "2505"; //cambiar contraseña
+        String clave = "0000"; //cambiar contraseña
         String url = "jdbc:mariadb://localhost:3306/proyecto_cine";
         try {              
             this.cn = DriverManager.getConnection(url, user, clave);

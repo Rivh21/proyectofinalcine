@@ -4,8 +4,8 @@
  */
 package com.ues.edu.modelo.dao;
 
-import com.ues.edu.interfaces.IRol;
-import com.ues.edu.modelo.Rol;
+import com.ues.edu.interfaces.IPermiso;
+import com.ues.edu.modelo.Permiso;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
@@ -18,50 +18,50 @@ import java.sql.SQLException;
  *
  * @author jorge
  */
-public class RolDao implements IRol {
+public class PermisoDao implements IPermiso {
 
     Conexion conectar;
     Connection con;
     PreparedStatement ps;
     ResultSet rs;
 
-    public RolDao() {
+    public PermisoDao() {
         conectar = new Conexion();
     }
 
     @Override
-    public ListaSimple<Rol> selectAll() {
-        String sql = "SELECT id_rol, nombre_rol FROM roles";
+    public ListaSimple<Permiso> selectAll() {
+        String sql = "SELECT id_permiso, nombre_permiso FROM permisos";
         return select(sql);
     }
 
     @Override
-    public ListaSimple<Rol> selectAllTo(String atributo, String condicion) {
-        String sql = "SELECT id_rol, nombre_rol FROM roles WHERE " + atributo + "='" + condicion + "'";
+    public ListaSimple<Permiso> selectAllTo(String atributo, String condicion) {
+         String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE " + atributo + "='" + condicion + "'";
+        return select(sql);
+    }
+    
+    @Override
+    public ListaSimple<Permiso> buscar(String dato) {
+        String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE nombre_permiso LIKE '" + dato + "%'";
         return select(sql);
     }
 
     @Override
-    public ListaSimple<Rol> buscar(String dato) {
-        String sql = "SELECT id_rol, nombre_rol FROM roles WHERE nombre_rol LIKE '" + dato + "%'";
-        return select(sql);
-    }
-
-    @Override
-    public boolean insert(Rol obj) {
-        String sql = "INSERT INTO roles(nombre_rol) VALUES (?)";
+    public boolean insert(Permiso obj) {
+        String sql = "INSERT INTO permisos(nombre_permiso) VALUES (?)";
         return alterarRegistro(sql, obj);
     }
 
     @Override
-    public boolean update(Rol obj) {
-        String sql = "UPDATE roles SET nombre_rol=? WHERE id_rol=" + obj.getIdRol();
+    public boolean update(Permiso obj) {
+        String sql = "UPDATE permisos SET nombre_permiso=? WHERE id_permiso=" + obj.getIdPermiso();
         return alterarRegistro(sql, obj);
     }
 
     @Override
-    public boolean delete(Rol obj) {
-        String sql = "DELETE FROM roles WHERE id_rol='" + obj.getIdRol() + "'";
+    public boolean delete(Permiso obj) {
+        String sql = "DELETE FROM permisos WHERE id_permiso='" + obj.getIdPermiso() + "'";
         PreparedStatement ps = null;
         try {
             con = conectar.getConexion();
@@ -70,13 +70,11 @@ public class RolDao implements IRol {
             return true;
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error al Eliminar", "No se puede eliminar el rol. Podría estar asignado a un usuario.", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error al Eliminar", "No se puede eliminar el permiso. Está asignado a uno o más roles.", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) {
-                    ps.close();
-                }
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -85,32 +83,28 @@ public class RolDao implements IRol {
         return false;
     }
 
-    private ListaSimple<Rol> select(String sql) {
-        ListaSimple<Rol> lista = new ListaSimple();
-        Rol obj = null;
+    private ListaSimple<Permiso> select(String sql) {
+        ListaSimple<Permiso> lista = new ListaSimple();
+        Permiso obj = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                obj = new Rol();
-                obj.setIdRol(rs.getInt("id_rol"));
-                obj.setNombreRol(rs.getString("nombre_rol"));
+                obj = new Permiso();
+                obj.setIdPermiso(rs.getInt("id_permiso"));
+                obj.setNombrePermiso(rs.getString("nombre_permiso"));
                 lista.insertar(obj);
             }
 
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Consulta", "Error al cargar la lista de roles.", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error de Consulta", "Error al cargar la lista de permisos.", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -119,23 +113,23 @@ public class RolDao implements IRol {
         return lista;
     }
 
-    private boolean alterarRegistro(String sql, Rol obj) {
+    private boolean alterarRegistro(String sql, Permiso obj) {
         PreparedStatement ps = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
-            ps.setString(1, obj.getNombreRol());
+            
+            ps.setString(1, obj.getNombrePermiso()); 
+            
             ps.execute();
             return true;
         } catch (SQLException e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Guardado", "Error al guardar o actualizar el rol. Verifique la conexión.", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error de Guardado", "Error al guardar o actualizar el permiso. Verifique el nombre.", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) {
-                    ps.close();
-                }
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();

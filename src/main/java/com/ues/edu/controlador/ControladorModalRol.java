@@ -87,7 +87,7 @@ public class ControladorModalRol {
     }
 
     private void newRol() {
-        this.rol = new Rol(mr.tfNombreRol.getText().toUpperCase(), mr.tfPermiso.getText().toUpperCase());
+        this.rol = new Rol(mr.tfNombreRol.getText().toUpperCase());
          if (!existeRol()) {
             if (daoRol.insert(rol)) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Green);
@@ -105,7 +105,6 @@ public class ControladorModalRol {
 
     private void editRol() {
         rolSelect.setNombreRol(mr.tfNombreRol.getText().toUpperCase());
-        rolSelect.setPermisos(mr.tfPermiso.getText().toUpperCase());
         if (daoRol.update(rolSelect)) {
             this.mr.dispose();
             DesktopNotify.setDefaultTheme(NotifyTheme.Green);
@@ -116,7 +115,6 @@ public class ControladorModalRol {
 
     private void cargarDatos() {
         mr.tfNombreRol.setText(rolSelect.getNombreRol());
-        mr.tfPermiso.setText(rolSelect.getPermisos());
     }
 
     private boolean existeRol() {

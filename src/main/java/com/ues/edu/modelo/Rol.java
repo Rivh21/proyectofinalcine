@@ -14,21 +14,19 @@ public class Rol implements Comparable<Rol> {
 
     private int idRol;
     private String nombreRol;
-    private String permisos;
     private ArrayList<Usuario> usuarios;
+    private ArrayList<PermisoRol> permisosRoles;
 
     public Rol() {
     }
 
-    public Rol(int idRol, String nombreRol, String permisos) {
+    public Rol(int idRol, String nombreRol) {
         this.idRol = idRol;
         this.nombreRol = nombreRol;
-        this.permisos = permisos;
     }
 
-    public Rol(String nombreRol, String permisos) {
+    public Rol(String nombreRol) {
         this.nombreRol = nombreRol;
-        this.permisos = permisos;
     }
 
     public int getIdRol() {
@@ -47,12 +45,12 @@ public class Rol implements Comparable<Rol> {
         this.nombreRol = nombreRol;
     }
 
-    public String getPermisos() {
-        return permisos;
+    public ArrayList<PermisoRol> getPermisosRoles() {
+        return permisosRoles;
     }
 
-    public void setPermisos(String permisos) {
-        this.permisos = permisos;
+    public void setPermisosRoles(ArrayList<PermisoRol> permisosRoles) {
+        this.permisosRoles = permisosRoles;
     }
 
     public ArrayList<Usuario> getUsuarios() {
@@ -61,6 +59,10 @@ public class Rol implements Comparable<Rol> {
 
     public void setUsuarios(ArrayList<Usuario> usuarios) {
         this.usuarios = usuarios;
+    }
+
+    public Rol(ArrayList<PermisoRol> permisosRoles) {
+        this.permisosRoles = permisosRoles;
     }
 
     @Override
@@ -82,7 +84,7 @@ public class Rol implements Comparable<Rol> {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
-            return true; 
+            return true;
         }
         if (obj == null || getClass() != obj.getClass()) {
             return false;
