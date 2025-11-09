@@ -66,6 +66,7 @@ public class VistaAsientos extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDatosAsientos = new javax.swing.JTable();
         btnSalaSelect = new javax.swing.JButton();
+        lbSala = new javax.swing.JLabel();
         lbSalaSelect = new javax.swing.JLabel();
 
         lbTitulo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
@@ -90,8 +91,10 @@ public class VistaAsientos extends javax.swing.JPanel {
         btnSalaSelect.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnSalaSelect.setText("SELECCIONAR SALA");
 
-        lbSalaSelect.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
-        lbSalaSelect.setText("Sala seleccionada: ");
+        lbSala.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
+        lbSala.setText("Sala seleccionada: ");
+
+        lbSalaSelect.setFont(new java.awt.Font("Roboto", 1, 12)); // NOI18N
 
         javax.swing.GroupLayout fondoLayout = new javax.swing.GroupLayout(fondo);
         fondo.setLayout(fondoLayout);
@@ -109,11 +112,13 @@ public class VistaAsientos extends javax.swing.JPanel {
                         .addGap(55, 55, 55))
                     .addGroup(fondoLayout.createSequentialGroup()
                         .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbSala)
                             .addGroup(fondoLayout.createSequentialGroup()
-                                .addComponent(btnSalaSelect)
+                                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(lbSalaSelect, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnSalaSelect, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(18, 18, 18)
-                                .addComponent(btnCrearAsiento, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(lbSalaSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnCrearAsiento, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         fondoLayout.setVerticalGroup(
@@ -123,14 +128,16 @@ public class VistaAsientos extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(56, 56, 56)
-                .addComponent(lbSalaSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbSala, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addComponent(lbSalaSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCrearAsiento)
-                    .addComponent(btnSalaSelect))
-                .addGap(40, 40, 40)
+                    .addComponent(btnSalaSelect)
+                    .addComponent(btnCrearAsiento))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(90, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -152,6 +159,7 @@ public class VistaAsientos extends javax.swing.JPanel {
     private javax.swing.JPanel fondo;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lbSala;
     public javax.swing.JLabel lbSalaSelect;
     private javax.swing.JLabel lbTitulo;
     public javax.swing.JTable tbDatosAsientos;

@@ -10,30 +10,32 @@ import java.util.List;
  *
  * @author DELL LATITUDE
  */
-public class Asiento {
+public class Asiento implements Comparable<Asiento>{
 
     private int idAsiento;
     private Sala sala;
-    private int fila;
+    private String fila;
     private int numero;
     private List<Boleto> boletos;
-
-    //Atributo temporal para la vista
     private boolean disponible;
     private String colorEstado;
 
     public Asiento() {
     }
 
-    public Asiento(int idAsiento) {
+    public Asiento(int idAsiento, Sala sala, String fila, int numero) {
         this.idAsiento = idAsiento;
-    }
-
-    public Asiento(Sala sala, int fila, int numero, List<Boleto> boletos) {
         this.sala = sala;
         this.fila = fila;
         this.numero = numero;
-        this.boletos = boletos;
+        this.disponible = true; 
+        this.colorEstado = "verde";
+    }
+
+    public Asiento(Sala sala, String fila, int numero) {
+        this.sala = sala;
+        this.fila = fila;
+        this.numero = numero;
     }
 
     public int getIdAsiento() {
@@ -52,11 +54,11 @@ public class Asiento {
         this.sala = sala;
     }
 
-    public int getFila() {
+    public String getFila() {
         return fila;
     }
 
-    public void setFila(int fila) {
+    public void setFila(String fila) {
         this.fila = fila;
     }
 
@@ -91,6 +93,12 @@ public class Asiento {
 
     public void setColorEstado(String colorEstado) {
         this.colorEstado = colorEstado;
+    }
+
+    @Override
+    public int compareTo(Asiento o) {
+         Asiento actual = this;
+        return (actual.getFila().compareToIgnoreCase(o.getFila()));
     }
 
 }
