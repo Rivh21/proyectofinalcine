@@ -8,11 +8,14 @@ import com.ues.edu.modelo.Permiso;
 import com.ues.edu.modelo.dao.PermisoDao;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 import com.ues.edu.vista.Mantenimiento;
+import ds.desktop.notify.DesktopNotify;
+import ds.desktop.notify.NotifyTheme;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
@@ -44,15 +47,93 @@ public class ControladorPermiso {
     }
 
     private void onClickAgregar() {
+        this.mantto.btnAgregar.addActionListener((e) -> {
+            String permiso = JOptionPane.showInputDialog("Permiso");
 
+            if (permiso == null) {
+                DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                DesktopNotify.showDesktopMessage("Cancelado", "Operación cancelada por el usuario",
+                        DesktopNotify.WARNING, 3000);
+                return;
+            }
+
+            if (permiso.trim().isEmpty()) {
+                DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                DesktopNotify.showDesktopMessage("Campo vacío", "Debe ingresar un permiso válido",
+                        DesktopNotify.WARNING, 3000);
+                return;
+            }
+
+            permisoSelect = new Permiso(permiso.toUpperCase());
+            if (!existePermiso()) {
+                if (daoPermiso.insert(permisoSelect)) {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                    DesktopNotify.showDesktopMessage("Ok", "Registro creado correctamente",
+                            DesktopNotify.SUCCESS, 3000);
+                    mostrar(daoPermiso.selectAll());
+                } else {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                    DesktopNotify.showDesktopMessage("Error", "Error al guardar el registro",
+                            DesktopNotify.ERROR, 3000);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El método de pago ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     private void onClickEditar() {
+        this.mantto.btnEditar.addActionListener((e) -> {
+            String permiso = JOptionPane.showInputDialog("Editar permiso", permisoSelect.getNombrePermiso());
 
+            if (permiso == null) {
+                DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                DesktopNotify.showDesktopMessage("Cancelado", "Edición cancelada por el usuario",
+                        DesktopNotify.WARNING, 3000);
+                return;
+            }
+
+            if (permiso.trim().isEmpty()) {
+                DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                DesktopNotify.showDesktopMessage("Campo vacío", "Debe ingresar un nombre válido",
+                        DesktopNotify.WARNING, 3000);
+                return;
+            }
+
+            permisoSelect.setNombrePermiso(permiso.toUpperCase());
+
+            if (!existePermiso()) {
+                if (daoPermiso.update(permisoSelect)) {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                    DesktopNotify.showDesktopMessage("Ok", "Registro actualizado correctamente",
+                            DesktopNotify.SUCCESS, 3000);
+                } else {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                    DesktopNotify.showDesktopMessage("Error", "Error al actualizar el registro",
+                            DesktopNotify.ERROR, 3000);
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "El método de pago ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            permisoSelect = null;
+            mostrar(daoPermiso.selectAll());
+        });
     }
 
     private void onClickEliminar() {
-
+        this.mantto.btnEliminar.addActionListener((e) -> {
+            int op = JOptionPane.showConfirmDialog(null, "Seguro eliminar el permiso "
+                    + permisoSelect.getNombrePermiso());
+            if (op == 0) {
+                if (daoPermiso.delete(permisoSelect)) {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                    DesktopNotify.showDesktopMessage("Ok", "Registro eliminado",
+                            DesktopNotify.SUCCESS, 3000);
+                }
+                mostrar(daoPermiso.selectAll());
+            }
+        });
     }
 
     private void onClickTabla() {
@@ -128,5 +209,10 @@ public class ControladorPermiso {
         for (int i = 0; i < Math.min(anchos.length, columnModel.getColumnCount()); i++) {
             columnModel.getColumn(i).setPreferredWidth(anchos[i]);
         }
+    }
+
+    private boolean existePermiso() {
+        ListaSimple<Permiso> lista = daoPermiso.selectAllTo("nombre_permiso", permisoSelect.getNombrePermiso());
+        return !lista.isEmpty();
     }
 }

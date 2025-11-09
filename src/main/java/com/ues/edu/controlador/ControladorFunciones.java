@@ -66,7 +66,9 @@ public class ControladorFunciones {
 
     private void onClickEditar() {
         mantto.btnEditar.addActionListener(e -> {
-            if (funcionSelect == null) return;
+            if (funcionSelect == null) {
+                return;
+            }
             ModalFunciones mf = new ModalFunciones(
                     (java.awt.Frame) SwingUtilities.getWindowAncestor(mantto),
                     true,
@@ -79,7 +81,9 @@ public class ControladorFunciones {
 
     private void onClickEliminar() {
         mantto.btnEliminar.addActionListener(e -> {
-            if (funcionSelect == null) return;
+            if (funcionSelect == null) {
+                return;
+            }
 
             int op = javax.swing.JOptionPane.showConfirmDialog(
                     mantto,
@@ -92,7 +96,7 @@ public class ControladorFunciones {
                 if (daoFuncion.delete(funcionSelect)) {
                     DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                     DesktopNotify.showDesktopMessage("OK", "Función eliminada", DesktopNotify.SUCCESS, 3000);
-                    cargarLista(); 
+                    cargarLista();
                 } else {
                     DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                     DesktopNotify.showDesktopMessage("Error", "No se pudo eliminar la función", DesktopNotify.ERROR, 3000);
@@ -129,11 +133,11 @@ public class ControladorFunciones {
         for (Object obj : lista.toArray()) {
             Funcion f = (Funcion) obj;
             Object[] fila = {
-                    f.getIdFuncion(),
-                    f.getPeliculaTitulo(),
-                    f.getSalaNombre(),
-                    f.getFechaHoraInicio().format(formatter),
-                    f.getPrecioBoleto()
+                f.getIdFuncion(),
+                f.getPeliculaTitulo(),
+                f.getSalaNombre(),
+                f.getFechaHoraInicio().format(formatter),
+                String.format("$%.2f", f.getPrecioBoleto())
             };
             modeloTabla.addRow(fila);
         }
@@ -154,8 +158,8 @@ public class ControladorFunciones {
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
                 String texto = mantto.tfBuscar.getText().trim();
-                ListaSimpleCircular<Funcion> listaFiltrada =
-                        texto.isEmpty() ? daoFuncion.selectAll() : daoFuncion.buscar(texto);
+                ListaSimpleCircular<Funcion> listaFiltrada
+                        = texto.isEmpty() ? daoFuncion.selectAll() : daoFuncion.buscar(texto);
 
                 mostrar(listaFiltrada);
             }

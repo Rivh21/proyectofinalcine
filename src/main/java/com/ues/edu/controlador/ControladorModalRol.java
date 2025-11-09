@@ -68,21 +68,6 @@ public class ControladorModalRol {
             return false;
         }
 
-        String permiso = mr.tfPermiso.getText().trim();
-        if (permiso.isEmpty()) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "El campo Permisos es obligatorio", DesktopNotify.ERROR, 3000);
-            mr.tfPermiso.requestFocus();
-            return false;
-        }
-        
-        if (permiso.matches(".*\\d.*")) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "El campo Permisos no debe contener números.", DesktopNotify.ERROR, 3000);
-            mr.tfPermiso.requestFocus();
-            return false;
-        }
-
         return true;
     }
 

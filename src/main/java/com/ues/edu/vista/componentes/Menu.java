@@ -59,7 +59,8 @@ public class Menu extends javax.swing.JPanel {
         subMenusGestion.add(new ModeloMenu("emp", "Empleados", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("usuario", "Usuarios", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("rol", "Roles", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("Permisos", ModeloMenu.TipoMenu.MENU));
+        subMenusGestion.add(new ModeloMenu("permiso","Permisos", ModeloMenu.TipoMenu.MENU));
+//        subMenusGestion.add(new ModeloMenu("moderator-24","Roles y Permisos", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("pago", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
 
         // ---SUBMENU: Ventas ---

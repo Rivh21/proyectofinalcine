@@ -38,6 +38,8 @@ public class ControladorRol {
         this.mantto = mantto;
         daoRol = new RolDao();
         this.listaActualMostrada = daoRol.selectAll();
+        this.mantto.btnAux.setVisible(true);
+        this.mantto.btnAux.setText("PERMISOS");
         onClickAgregar();
         onClickEditar();
         onClickEliminar();
@@ -46,6 +48,7 @@ public class ControladorRol {
         mostrar(listaActualMostrada);
         this.mantto.btnEditar.setEnabled(false);
         this.mantto.btnEliminar.setEnabled(false);
+        this.mantto.btnAux.setEnabled(false);
     }
 
     private void onClickAgregar() {
@@ -120,6 +123,7 @@ public class ControladorRol {
                         boolean seleccionado = (rolSelect != null);
                         mantto.btnEditar.setEnabled(seleccionado);
                         mantto.btnEliminar.setEnabled(seleccionado);
+                        mantto.btnAux.setEnabled(seleccionado);
                         mantto.btnAgregar.setEnabled(!seleccionado);
                     }
                 }

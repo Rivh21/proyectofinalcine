@@ -22,6 +22,7 @@ public class Mantenimiento extends javax.swing.JPanel {
     public Mantenimiento(String titulo) {
         initComponents();
         this.lblTitulo.setText(titulo);
+        this.btnAux.setVisible(false);
 
         fondo.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -40,6 +41,7 @@ public class Mantenimiento extends javax.swing.JPanel {
                 btnAgregar.setEnabled(true);
                 btnEditar.setEnabled(false);
                 btnEliminar.setEnabled(false);
+                btnAux.setEnabled(false);
                 tbDatos.clearSelection();
                 fondo.requestFocusInWindow();
             }
@@ -63,6 +65,7 @@ public class Mantenimiento extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDatos = new javax.swing.JTable();
         lblTitulo = new javax.swing.JLabel();
+        btnAux = new javax.swing.JButton();
 
         btnAgregar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnAgregar.setText("AGREGAR");
@@ -92,6 +95,8 @@ public class Mantenimiento extends javax.swing.JPanel {
 
         lblTitulo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
 
+        btnAux.setText("jButton1");
+
         javax.swing.GroupLayout fondoLayout = new javax.swing.GroupLayout(fondo);
         fondo.setLayout(fondoLayout);
         fondoLayout.setHorizontalGroup(
@@ -107,6 +112,8 @@ public class Mantenimiento extends javax.swing.JPanel {
                 .addComponent(btnEditar)
                 .addGap(18, 18, 18)
                 .addComponent(btnEliminar)
+                .addGap(18, 18, 18)
+                .addComponent(btnAux)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -120,11 +127,12 @@ public class Mantenimiento extends javax.swing.JPanel {
                 .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(43, 43, 43)
                 .addComponent(tfBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(53, 53, 53)
+                .addGap(52, 52, 52)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAgregar)
                     .addComponent(btnEditar)
-                    .addComponent(btnEliminar))
+                    .addComponent(btnEliminar)
+                    .addComponent(btnAux))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(32, Short.MAX_VALUE))
@@ -145,6 +153,7 @@ public class Mantenimiento extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnAgregar;
+    public javax.swing.JButton btnAux;
     public javax.swing.JButton btnEditar;
     public javax.swing.JButton btnEliminar;
     private javax.swing.JPanel fondo;

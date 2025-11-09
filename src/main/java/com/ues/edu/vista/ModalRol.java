@@ -22,7 +22,6 @@ public class ModalRol extends javax.swing.JDialog {
         lbTitulo.setText(titulo);
         setLocationRelativeTo(null);
         tfNombreRol.setPlaceholder("Rol");
-        tfPermiso.setPlaceholder("Permiso");
         
         fondo.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -68,7 +67,6 @@ public class ModalRol extends javax.swing.JDialog {
         jSeparator1 = new javax.swing.JSeparator();
         lbTitulo = new javax.swing.JLabel();
         tfNombreRol = new com.ues.edu.vista.swing.PlaceholderTextField();
-        tfPermiso = new com.ues.edu.vista.swing.PlaceholderTextField();
         btnGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -76,8 +74,6 @@ public class ModalRol extends javax.swing.JDialog {
         lbTitulo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
 
         tfNombreRol.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-
-        tfPermiso.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
 
         btnGuardar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnGuardar.setText("GUARDAR");
@@ -91,9 +87,7 @@ public class ModalRol extends javax.swing.JDialog {
                 .addGap(40, 40, 40)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnGuardar)
-                    .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(tfNombreRol, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(tfPermiso, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(tfNombreRol, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 40, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -108,11 +102,9 @@ public class ModalRol extends javax.swing.JDialog {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(tfNombreRol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(tfPermiso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(35, 35, 35)
                 .addComponent(btnGuardar)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -140,6 +132,5 @@ public class ModalRol extends javax.swing.JDialog {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lbTitulo;
     public com.ues.edu.vista.swing.PlaceholderTextField tfNombreRol;
-    public com.ues.edu.vista.swing.PlaceholderTextField tfPermiso;
     // End of variables declaration//GEN-END:variables
 }

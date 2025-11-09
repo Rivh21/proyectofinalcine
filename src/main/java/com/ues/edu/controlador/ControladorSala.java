@@ -64,7 +64,7 @@ public class ControladorSala {
         mantto.tbDatos.setRowSorter(sorter);
         mantto.tbDatos.setModel(modelo);
 
-        int[] anchos = {50, 200};
+        int[] anchos = {50, 2000};
         TableColumnModel columnModel = mantto.tbDatos.getColumnModel();
         for (int i = 0; i < Math.min(anchos.length, columnModel.getColumnCount()); i++) {
             columnModel.getColumn(i).setPreferredWidth(anchos[i]);

@@ -8,6 +8,7 @@ import com.ues.edu.controlador.ControladorEmpleado;
 import com.ues.edu.controlador.ControladorFunciones;
 import com.ues.edu.controlador.ControladorMetodoPago;
 import com.ues.edu.controlador.ControladorPeliculas;
+import com.ues.edu.controlador.ControladorPermiso;
 import com.ues.edu.controlador.ControladorPrueba;
 import com.ues.edu.controlador.ControladorRol;
 import com.ues.edu.controlador.ControladorSala;
@@ -24,7 +25,7 @@ import javax.swing.Timer;
  * @author jorge
  */
 public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener, MenuSelectionListener {
-
+    
     private final int MENU_ANCHO_MAX = 215;
     private final int MENU_ANCHO_MIN = 0;
     private final int VELOCIDAD = 15;
@@ -32,14 +33,13 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
     private int targetWidth;
     private boolean menuVisible = true;
     private final javax.swing.JPanel panelSecundario;
-
-
+    
     public Dashboard() {
         animador = new Timer(5, (ActionEvent e) -> {
             animateMenuWidth();
         });
         initComponents();
-
+        
         this.setLocationRelativeTo(null);
         setBackground(new Color(0, 0, 0, 0));
         setExtendedState(MAXIMIZED_BOTH);
@@ -52,24 +52,24 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         //2. Montar la estructura interna de panelSecundario (Header + Vistas + Footer)
         int realHeaderAlto = header1.getPreferredSize().height;
         header1.setPreferredSize(new Dimension(0, realHeaderAlto));
-
+        
         panelSecundario.add(header1, java.awt.BorderLayout.NORTH);
         panelSecundario.add(footer1, java.awt.BorderLayout.SOUTH);
 
         //3. Montar la estructura principal en 'bg'
         this.getContentPane().setLayout(new java.awt.BorderLayout());
         this.getContentPane().add(bg, java.awt.BorderLayout.CENTER);
-
+        
         bg.setLayout(new java.awt.BorderLayout());
         menu1.setPreferredSize(new Dimension(MENU_ANCHO_MAX, 0));
-
+        
         bg.add(menu1, java.awt.BorderLayout.WEST);          // Menú a la izquierda
         bg.add(panelSecundario, java.awt.BorderLayout.CENTER); // Contenedor Secundario al centro
 
         //5. Inicialización de Listeners
         header1.setMenuToggleListener(this);
         menu1.getListaMenu().setSelectionListener(this);
-
+        
         bg.revalidate();
         this.getContentPane().revalidate();
     }
@@ -152,7 +152,7 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         panelSecundario.repaint();
         bg.revalidate(); //Revalida el padre también
     }
-
+    
     private void animateMenuWidth() {
         int currentWidth = menu1.getPreferredSize().width;
         int newWidth = currentWidth; // Variable local
@@ -162,13 +162,13 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         } else if (currentWidth > targetWidth) {
             newWidth = Math.max(currentWidth - VELOCIDAD, targetWidth);
         }
-
+        
         if (newWidth == targetWidth) {
             animador.stop();
         }
-
+        
         menu1.setPreferredSize(new Dimension(newWidth, menu1.getHeight()));
-
+        
         bg.revalidate();
         bg.repaint();
     }
@@ -185,11 +185,11 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         menuVisible = !menuVisible;
         animador.start();
     }
-
+    
     @Override
     public void onModuleSelected(String itemName) {
         switch (itemName) {
-
+            
             case "Peliculas" -> {
                 Mantenimiento mantto = new Mantenimiento("Peliculas");
                 
@@ -209,19 +209,18 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 showJPanel(mantto);
             }
             
-            
-            case"Prueba"->{
+            case "Prueba" -> {
                 VistaPrueba vista = new VistaPrueba();
                 ControladorPrueba controlador = new ControladorPrueba(vista);
                 showJPanel(vista);
             }
-
+            
             case "Empleados" -> {
                 Mantenimiento mantto = new Mantenimiento("Empleados");
                 ControladorEmpleado cemp = new ControladorEmpleado(mantto);
                 showJPanel(mantto);
             }
-
+            
             case "Roles" -> {
                 Mantenimiento mantto = new Mantenimiento("Roles");
                 ControladorRol cr = new ControladorRol(mantto);
@@ -229,7 +228,9 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
             }
             
             case "Permisos" -> {
-                
+                Mantenimiento mantto = new Mantenimiento("Permisos");
+                ControladorPermiso cnt = new ControladorPermiso(mantto);
+                showJPanel(mantto);
             }
             
             case "Metodo de Pago" -> {
@@ -243,12 +244,12 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 ControladorUsuario cu = new ControladorUsuario(mantto);
                 showJPanel(mantto);
             }
-
+            
             case "INICIO" -> {
                 showJPanel(null);
             }
             case "SALIR" -> {
-
+                
             }
         }
     }
