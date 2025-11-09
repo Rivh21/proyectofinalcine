@@ -13,6 +13,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
+/**
+ * 
+ * @author radon
+ */
 public class ControladorSala {
 
     private final Mantenimiento mantto;
@@ -50,8 +54,8 @@ public class ControladorSala {
 
         for (Sala s : lista.toArray()) {
             Object[] fila = {
-                s.getId_sala(),
-                s.getNombre_sala()
+                s.getIdSala(),
+                s.getNombreSala()
             };
             modelo.addRow(fila);
         }
@@ -105,7 +109,7 @@ public class ControladorSala {
             );
 
             if (op == javax.swing.JOptionPane.YES_OPTION) {
-                if (daoSala.delete(salaSelect)) { // <-- ahora pasa el objeto Sala completo
+                if (daoSala.delete(salaSelect)) {
                     DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                     DesktopNotify.showDesktopMessage("OK", "Sala eliminada", DesktopNotify.SUCCESS, 3000);
                     cargarLista();
@@ -126,7 +130,7 @@ public class ControladorSala {
                     int rowModelo = mantto.tbDatos.convertRowIndexToModel(rowVista);
                     int id = (Integer) mantto.tbDatos.getModel().getValueAt(rowModelo, 0);
 
-                    salaSelect = daoSala.buscarPorId(id); // <-- usar buscarPorId
+                    salaSelect = daoSala.buscarPorId(id);
 
                     boolean seleccionado = salaSelect != null;
                     mantto.btnEditar.setEnabled(seleccionado);

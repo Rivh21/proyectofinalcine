@@ -129,11 +129,11 @@ public class ControladorFunciones {
         for (Object obj : lista.toArray()) {
             Funcion f = (Funcion) obj;
             Object[] fila = {
-                    f.getId_funcion(),
+                    f.getIdFuncion(),
                     f.getPeliculaTitulo(),
                     f.getSalaNombre(),
-                    f.getFecha_hora_inicio().format(formatter),
-                    f.getPrecio_boleto()
+                    f.getFechaHoraInicio().format(formatter),
+                    f.getPrecioBoleto()
             };
             modeloTabla.addRow(fila);
         }

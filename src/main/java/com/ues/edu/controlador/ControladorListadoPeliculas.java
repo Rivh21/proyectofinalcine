@@ -27,7 +27,7 @@ public class ControladorListadoPeliculas {
         this.cmf = cmf;
         this.vistaLista = vistaLista;
         this.daoPelicula = new PeliculaDAO();
-        this.listaActualMostrada = daoPelicula.selectAll(); // ← cambio
+        this.listaActualMostrada = daoPelicula.selectAll();
         vistaLista.btnSeleccionar.setEnabled(false);
 
         keyReleasedBuscar();
@@ -57,7 +57,7 @@ public class ControladorListadoPeliculas {
 
                     peliculaSelect = null;
                     for (Pelicula p : listaActualMostrada.toArray()) {
-                        if (p.getId_pelicula() == idPelicula) {
+                        if (p.getIdPelicula() == idPelicula) {
                             peliculaSelect = p;
                             break;
                         }
@@ -76,7 +76,7 @@ public class ControladorListadoPeliculas {
                 String textoBusqueda = vistaLista.tfBuscar.getText().trim().toLowerCase();
 
                 ListaSimpleCircular<Pelicula> listaFiltrada = new ListaSimpleCircular<>();
-                for (Pelicula p : daoPelicula.selectAll().toArray()) { // ← cambio
+                for (Pelicula p : daoPelicula.selectAll().toArray()) {
                     if (p.getTitulo().toLowerCase().contains(textoBusqueda)) {
                         listaFiltrada.insertar(p);
                     }
@@ -94,9 +94,9 @@ public class ControladorListadoPeliculas {
 
         for (Pelicula p : lista.toArray()) {
             Object[] fila = {
-                p.getId_pelicula(),
+                p.getIdPelicula(),
                 p.getTitulo(),
-                p.getDuracion_minutos(),
+                p.getDuracionMinutos(),
                 p.getGenero(),
                 p.getClasificacion()
             };

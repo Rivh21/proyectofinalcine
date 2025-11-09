@@ -9,6 +9,10 @@ import ds.desktop.notify.NotifyTheme;
 import java.sql.*;
 import java.time.ZoneId;
 
+/**
+ *
+ * @author radon
+ */
 public class FuncionDAO implements IFuncion {
 
     Conexion conectar;
@@ -23,26 +27,26 @@ public class FuncionDAO implements IFuncion {
     @Override
     public ListaSimpleCircular<Funcion> selectAll() {
         String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, " +
-                     "f.id_sala, s.nombre_sala AS sala, " +
-                     "f.fecha_hora_inicio, f.precio_boleto " +
-                     "FROM funciones f " +
-                     "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
-                     "JOIN salas s ON f.id_sala = s.id_sala " +
-                     "ORDER BY f.fecha_hora_inicio ASC";
+                "f.id_sala, s.nombre_sala AS sala, " +
+                "f.fecha_hora_inicio, f.precio_boleto " +
+                "FROM funciones f " +
+                "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
+                "JOIN salas s ON f.id_sala = s.id_sala " +
+                "ORDER BY f.fecha_hora_inicio ASC";
         return select(sql);
     }
 
     @Override
     public ListaSimpleCircular<Funcion> buscar(String textoBusqueda) {
         String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, " +
-                     "f.id_sala, s.nombre_sala AS sala, " +
-                     "f.fecha_hora_inicio, f.precio_boleto " +
-                     "FROM funciones f " +
-                     "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
-                     "JOIN salas s ON f.id_sala = s.id_sala " +
-                     "WHERE p.titulo LIKE '%" + textoBusqueda + "%' " +
-                     "OR s.nombre_sala LIKE '%" + textoBusqueda + "%' " +
-                     "ORDER BY f.fecha_hora_inicio ASC";
+                "f.id_sala, s.nombre_sala AS sala, " +
+                "f.fecha_hora_inicio, f.precio_boleto " +
+                "FROM funciones f " +
+                "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
+                "JOIN salas s ON f.id_sala = s.id_sala " +
+                "WHERE p.titulo LIKE '%" + textoBusqueda + "%' " +
+                "OR s.nombre_sala LIKE '%" + textoBusqueda + "%' " +
+                "ORDER BY f.fecha_hora_inicio ASC";
         return select(sql);
     }
 
@@ -54,13 +58,13 @@ public class FuncionDAO implements IFuncion {
 
     @Override
     public boolean update(Funcion obj) {
-        String sql = "UPDATE funciones SET id_pelicula=?, id_sala=?, fecha_hora_inicio=?, precio_boleto=? WHERE id_funcion=" + obj.getId_funcion();
+        String sql = "UPDATE funciones SET id_pelicula=?, id_sala=?, fecha_hora_inicio=?, precio_boleto=? WHERE id_funcion=" + obj.getIdFuncion();
         return alterarRegistro(sql, obj);
     }
 
     @Override
     public boolean delete(Funcion obj) {
-        String sql = "DELETE FROM funciones WHERE id_funcion='" + obj.getId_funcion() + "'";
+        String sql = "DELETE FROM funciones WHERE id_funcion='" + obj.getIdFuncion() + "'";
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
@@ -84,15 +88,15 @@ public class FuncionDAO implements IFuncion {
     @Override
     public Funcion buscarPorId(int id) {
         String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, " +
-                     "f.id_sala, s.nombre_sala AS sala, " +
-                     "f.fecha_hora_inicio, f.precio_boleto " +
-                     "FROM funciones f " +
-                     "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
-                     "JOIN salas s ON f.id_sala = s.id_sala " +
-                     "WHERE f.id_funcion='" + id + "'";
+                "f.id_sala, s.nombre_sala AS sala, " +
+                "f.fecha_hora_inicio, f.precio_boleto " +
+                "FROM funciones f " +
+                "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
+                "JOIN salas s ON f.id_sala = s.id_sala " +
+                "WHERE f.id_funcion='" + id + "'";
         ListaSimpleCircular<Funcion> lista = select(sql);
         Funcion obj = null;
-        for (Funcion f : lista.toArray()) { // usamos toArray para obtener el primer elemento
+        for (Funcion f : lista.toArray()) {
             obj = f;
             break;
         }
@@ -108,16 +112,16 @@ public class FuncionDAO implements IFuncion {
             rs = ps.executeQuery();
             while (rs.next()) {
                 obj = new Funcion();
-                obj.setId_funcion(rs.getInt("id_funcion"));
-                obj.setId_pelicula(rs.getInt("id_pelicula"));
+                obj.setIdFuncion(rs.getInt("id_funcion"));
+                obj.setIdPelicula(rs.getInt("id_pelicula"));
                 obj.setPeliculaTitulo(rs.getString("pelicula"));
-                obj.setId_sala(rs.getInt("id_sala"));
+                obj.setIdSala(rs.getInt("id_sala"));
                 obj.setSalaNombre(rs.getString("sala"));
 
                 Timestamp ts = rs.getTimestamp("fecha_hora_inicio");
-                if (ts != null) obj.setFecha_hora_inicio(ts.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                if (ts != null) obj.setFechaHoraInicio(ts.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
 
-                obj.setPrecio_boleto(rs.getDouble("precio_boleto"));
+                obj.setPrecioBoleto(rs.getDouble("precio_boleto"));
 
                 lista.insertar(obj);
             }
@@ -141,10 +145,10 @@ public class FuncionDAO implements IFuncion {
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
-            ps.setInt(1, obj.getId_pelicula());
-            ps.setInt(2, obj.getId_sala());
-            ps.setTimestamp(3, Timestamp.valueOf(obj.getFecha_hora_inicio()));
-            ps.setDouble(4, obj.getPrecio_boleto());
+            ps.setInt(1, obj.getIdPelicula());
+            ps.setInt(2, obj.getIdSala());
+            ps.setTimestamp(3, Timestamp.valueOf(obj.getFechaHoraInicio()));
+            ps.setDouble(4, obj.getPrecioBoleto());
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -161,5 +165,4 @@ public class FuncionDAO implements IFuncion {
         }
         return false;
     }
-    //prueba 
 }

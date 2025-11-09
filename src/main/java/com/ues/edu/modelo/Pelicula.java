@@ -6,36 +6,36 @@ package com.ues.edu.modelo;
  */
 public class Pelicula implements Comparable<Pelicula> {
 
-    private int id_pelicula;
+    private int idPelicula;
     private String titulo;
-    private int duracion_minutos;
-    private String genero;
-    private String clasificacion;
+    private int duracionMinutos;
+    private GeneroPelicula genero;
+    private ClasificacionPelicula clasificacion;
 
     public Pelicula() {
     }
 
-    public Pelicula(int id_pelicula, String titulo, int duracion_minutos, String genero, String clasificacion) {
-        this.id_pelicula = id_pelicula;
+    public Pelicula(int idPelicula, String titulo, int duracionMinutos, GeneroPelicula genero, ClasificacionPelicula clasificacion) {
+        this.idPelicula = idPelicula;
         this.titulo = titulo;
-        this.duracion_minutos = duracion_minutos;
+        this.duracionMinutos = duracionMinutos;
         this.genero = genero;
         this.clasificacion = clasificacion;
     }
 
-    public Pelicula(String titulo, int duracion_minutos, String genero, String clasificacion) {
+    public Pelicula(String titulo, int duracionMinutos, GeneroPelicula genero, ClasificacionPelicula clasificacion) {
         this.titulo = titulo;
-        this.duracion_minutos = duracion_minutos;
+        this.duracionMinutos = duracionMinutos;
         this.genero = genero;
         this.clasificacion = clasificacion;
     }
 
-    public int getId_pelicula() {
-        return id_pelicula;
+    public int getIdPelicula() {
+        return idPelicula;
     }
 
-    public void setId_pelicula(int id_pelicula) {
-        this.id_pelicula = id_pelicula;
+    public void setIdPelicula(int idPelicula) {
+        this.idPelicula = idPelicula;
     }
 
     public String getTitulo() {
@@ -46,42 +46,38 @@ public class Pelicula implements Comparable<Pelicula> {
         this.titulo = titulo;
     }
 
-    public int getDuracion_minutos() {
-        return duracion_minutos;
+    public int getDuracionMinutos() {
+        return duracionMinutos;
     }
 
-    public void setDuracion_minutos(int duracion_minutos) {
-        this.duracion_minutos = duracion_minutos;
+    public void setDuracionMinutos(int duracionMinutos) {
+        this.duracionMinutos = duracionMinutos;
     }
 
-    public String getGenero() {
+    public GeneroPelicula getGenero() {
         return genero;
     }
 
-    public void setGenero(String genero) {
+    public void setGenero(GeneroPelicula genero) {
         this.genero = genero;
     }
 
-    public String getClasificacion() {
+    public ClasificacionPelicula getClasificacion() {
         return clasificacion;
     }
 
-    public void setClasificacion(String clasificacion) {
+    public void setClasificacion(ClasificacionPelicula clasificacion) {
         this.clasificacion = clasificacion;
     }
 
     @Override
-    public int compareTo(Pelicula otraPelicula) {
-        int tituloComp = this.titulo.compareToIgnoreCase(otraPelicula.titulo);
-
-        if (tituloComp == 0) {
-            return Integer.compare(this.id_pelicula, otraPelicula.id_pelicula);
-        }
-        return tituloComp;
+    public int compareTo(Pelicula otra) {
+        int cmpTitulo = this.titulo.compareToIgnoreCase(otra.titulo);
+        return (cmpTitulo != 0) ? cmpTitulo : Integer.compare(this.idPelicula, otra.idPelicula);
     }
 
     @Override
     public String toString() {
         return titulo;
-     }
+    }
 }

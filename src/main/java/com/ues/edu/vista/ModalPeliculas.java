@@ -4,6 +4,9 @@
  */
 package com.ues.edu.vista;
 
+import com.ues.edu.modelo.ClasificacionPelicula;
+import com.ues.edu.modelo.GeneroPelicula;
+
 /**
  *
  * @author radon
@@ -20,8 +23,11 @@ public class ModalPeliculas extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         tfTitulo1.setPlaceholder("Titulo Pelicula");
         tfDuracion.setPlaceholder("Duracion(minutos)");
-        tfGenero.setPlaceholder("Genero");
         lbClasificacion.setText("Clasificacion");
+            cmbClasificacion.setModel(new javax.swing.DefaultComboBoxModel<>(ClasificacionPelicula.values()));
+            cmbGenero.setModel(new javax.swing.DefaultComboBoxModel<>(GeneroPelicula.values()));
+
+
         
         
         
@@ -71,10 +77,10 @@ public class ModalPeliculas extends javax.swing.JDialog {
         lbTitulo = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         tfTitulo1 = new com.ues.edu.vista.swing.PlaceholderTextField();
-        tfGenero = new com.ues.edu.vista.swing.PlaceholderTextField();
         cmbClasificacion = new javax.swing.JComboBox<>();
         btnGuardar = new javax.swing.JButton();
         lbClasificacion = new javax.swing.JLabel();
+        cmbGenero = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -94,20 +100,14 @@ public class ModalPeliculas extends javax.swing.JDialog {
             }
         });
 
-        tfGenero.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        tfGenero.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfGeneroActionPerformed(evt);
-            }
-        });
-
         cmbClasificacion.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        cmbClasificacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "G", "PG", "PG-13", "R", "NC-17" }));
 
         btnGuardar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnGuardar.setText("GUARDAR");
 
         lbClasificacion.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+
+        cmbGenero.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
 
         javax.swing.GroupLayout fondoLayout = new javax.swing.GroupLayout(fondo);
         fondo.setLayout(fondoLayout);
@@ -120,12 +120,13 @@ public class ModalPeliculas extends javax.swing.JDialog {
             .addGroup(fondoLayout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(tfGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(tfDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cmbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(29, Short.MAX_VALUE))
+                    .addComponent(cmbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(fondoLayout.createSequentialGroup()
+                        .addComponent(cmbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(20, Short.MAX_VALUE))
             .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(fondoLayout.createSequentialGroup()
                     .addGap(16, 16, 16)
@@ -146,13 +147,13 @@ public class ModalPeliculas extends javax.swing.JDialog {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(60, 60, 60)
                 .addComponent(tfDuracion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(tfGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(3, 3, 3)
-                .addComponent(cmbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(cmbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9)
+                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbClasificacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(64, Short.MAX_VALUE))
             .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(fondoLayout.createSequentialGroup()
                     .addGap(59, 59, 59)
@@ -188,10 +189,6 @@ public class ModalPeliculas extends javax.swing.JDialog {
     private void tfTitulo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfTitulo1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfTitulo1ActionPerformed
-
-    private void tfGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfGeneroActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfGeneroActionPerformed
 
     /**
      * @param args the command line arguments
@@ -237,13 +234,13 @@ public class ModalPeliculas extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnGuardar;
-    public javax.swing.JComboBox<Object> cmbClasificacion;
+    public javax.swing.JComboBox<ClasificacionPelicula> cmbClasificacion;
+    public javax.swing.JComboBox<GeneroPelicula> cmbGenero;
     private javax.swing.JPanel fondo;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lbClasificacion;
     private javax.swing.JLabel lbTitulo;
     public com.ues.edu.vista.swing.PlaceholderTextField tfDuracion;
-    public com.ues.edu.vista.swing.PlaceholderTextField tfGenero;
     public com.ues.edu.vista.swing.PlaceholderTextField tfTitulo1;
     // End of variables declaration//GEN-END:variables
 }

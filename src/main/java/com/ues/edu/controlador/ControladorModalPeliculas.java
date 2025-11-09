@@ -1,5 +1,7 @@
 package com.ues.edu.controlador;
 
+import com.ues.edu.modelo.ClasificacionPelicula;
+import com.ues.edu.modelo.GeneroPelicula;
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.dao.PeliculaDAO;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
@@ -12,7 +14,6 @@ import ds.desktop.notify.NotifyTheme;
  *
  * @author radon
  */
-
 public class ControladorModalPeliculas {
 
     private final ControladorPeliculas ce;
@@ -54,16 +55,16 @@ public class ControladorModalPeliculas {
         Pelicula pelicula = new Pelicula(
                 mp.tfTitulo1.getText().trim(),
                 Integer.parseInt(mp.tfDuracion.getText().trim()),
-                mp.tfGenero.getText().trim(),
-                mp.cmbClasificacion.getSelectedItem().toString()
+                (GeneroPelicula) mp.cmbGenero.getSelectedItem(),
+                (ClasificacionPelicula) mp.cmbClasificacion.getSelectedItem()
         );
 
         if (!existePelicula()) {
-            if (daoPelicula.insert(pelicula)) {   // ← cambio
+            if (daoPelicula.insert(pelicula)) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                 DesktopNotify.showDesktopMessage("OK", "Película agregada", DesktopNotify.SUCCESS, 3000);
                 mp.dispose();
-                ce.mostrar(daoPelicula.selectAll()); // ← cambio
+                ce.mostrar(daoPelicula.selectAll());
             } else {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error", "No se pudo agregar la película", DesktopNotify.ERROR, 3000);
@@ -76,15 +77,15 @@ public class ControladorModalPeliculas {
 
     private void actualizarPelicula() {
         peliculaSelect.setTitulo(mp.tfTitulo1.getText().trim());
-        peliculaSelect.setDuracion_minutos(Integer.parseInt(mp.tfDuracion.getText().trim()));
-        peliculaSelect.setGenero(mp.tfGenero.getText().trim());
-        peliculaSelect.setClasificacion(mp.cmbClasificacion.getSelectedItem().toString());
+        peliculaSelect.setDuracionMinutos(Integer.parseInt(mp.tfDuracion.getText().trim()));
+        peliculaSelect.setGenero((GeneroPelicula) mp.cmbGenero.getSelectedItem());
+        peliculaSelect.setClasificacion((ClasificacionPelicula) mp.cmbClasificacion.getSelectedItem());
 
-        if (daoPelicula.update(peliculaSelect)) { // ← cambio
+        if (daoPelicula.update(peliculaSelect)) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Green);
             DesktopNotify.showDesktopMessage("OK", "Película actualizada", DesktopNotify.SUCCESS, 3000);
             mp.dispose();
-            ce.mostrar(daoPelicula.selectAll()); // ← cambio
+            ce.mostrar(daoPelicula.selectAll());
         }
     }
 
@@ -103,7 +104,6 @@ public class ControladorModalPeliculas {
             mp.tfTitulo1.requestFocus();
             return false;
         }
-
 
         String duracionStr = mp.tfDuracion.getText().trim();
         if (duracionStr.isEmpty()) {
@@ -127,21 +127,6 @@ public class ControladorModalPeliculas {
             return false;
         }
 
-
-        String genero = mp.tfGenero.getText().trim();
-        if (genero.isEmpty()) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "El campo Género es obligatorio", DesktopNotify.ERROR, 3000);
-            mp.tfGenero.requestFocus();
-            return false;
-        }
-        if (!genero.matches("[a-zA-Z ]+")) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "El Género solo puede contener letras", DesktopNotify.ERROR, 3000);
-            mp.tfGenero.requestFocus();
-            return false;
-        }
-
         return true;
     }
 
@@ -152,8 +137,8 @@ public class ControladorModalPeliculas {
 
     private void cargarDatos() {
         mp.tfTitulo1.setText(peliculaSelect.getTitulo());
-        mp.tfDuracion.setText(String.valueOf(peliculaSelect.getDuracion_minutos()));
-        mp.tfGenero.setText(peliculaSelect.getGenero());
+        mp.tfDuracion.setText(String.valueOf(peliculaSelect.getDuracionMinutos()));
+        mp.cmbGenero.setSelectedItem(peliculaSelect.getGenero());
         mp.cmbClasificacion.setSelectedItem(peliculaSelect.getClasificacion());
     }
 }

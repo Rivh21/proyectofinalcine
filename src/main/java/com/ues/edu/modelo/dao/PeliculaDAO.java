@@ -1,6 +1,8 @@
 package com.ues.edu.modelo.dao;
 
 import com.ues.edu.interfaces.IPelicula;
+import com.ues.edu.modelo.ClasificacionPelicula;
+import com.ues.edu.modelo.GeneroPelicula;
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
 import ds.desktop.notify.DesktopNotify;
@@ -8,27 +10,25 @@ import ds.desktop.notify.NotifyTheme;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ *
+ * @author radon
+ */
 public class PeliculaDAO implements IPelicula {
 
-    Conexion conectar;
-    Connection con;
-    PreparedStatement ps;
-    ResultSet rs;
-
-    public PeliculaDAO() {
-        conectar = new Conexion();
-    }
+    private final Conexion conectar = new Conexion();
+    private Connection con;
+    private PreparedStatement ps;
+    private ResultSet rs;
 
     @Override
     public ListaSimpleCircular<Pelicula> selectAll() {
-        String sql = "SELECT * FROM peliculas";
-        return select(sql);
+        return select("SELECT * FROM peliculas");
     }
 
     @Override
     public ListaSimpleCircular<Pelicula> selectAllTo(String atributo, String condicion) {
-        String sql = "SELECT * FROM peliculas WHERE " + atributo + "='" + condicion + "'";
-        return select(sql);
+        return select("SELECT * FROM peliculas WHERE " + atributo + "='" + condicion + "'");
     }
 
     @Override
@@ -49,13 +49,13 @@ public class PeliculaDAO implements IPelicula {
 
     @Override
     public boolean update(Pelicula obj) {
-        String sql = "UPDATE peliculas SET titulo=?, duracion_minutos=?, genero=?, clasificacion=? WHERE id_pelicula=" + obj.getId_pelicula();
+        String sql = "UPDATE peliculas SET titulo=?, duracion_minutos=?, genero=?, clasificacion=? WHERE id_pelicula=" + obj.getIdPelicula();
         return alterarRegistro(sql, obj);
     }
 
     @Override
     public boolean delete(Pelicula obj) {
-        String sql = "DELETE FROM peliculas WHERE id_pelicula='" + obj.getId_pelicula() + "'";
+        String sql = "DELETE FROM peliculas WHERE id_pelicula='" + obj.getIdPelicula() + "'";
         PreparedStatement ps = null;
         try {
             con = conectar.getConexion();
@@ -64,11 +64,11 @@ public class PeliculaDAO implements IPelicula {
             return true;
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Error en sql", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error en SQL", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                ps.close();
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -79,8 +79,6 @@ public class PeliculaDAO implements IPelicula {
 
     private ListaSimpleCircular<Pelicula> select(String sql) {
         ListaSimpleCircular<Pelicula> lista = new ListaSimpleCircular<>();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
 
         try {
             con = conectar.getConexion();
@@ -89,29 +87,27 @@ public class PeliculaDAO implements IPelicula {
 
             while (rs.next()) {
                 Pelicula p = new Pelicula();
-                p.setId_pelicula(rs.getInt("id_pelicula"));
+                p.setIdPelicula(rs.getInt("id_pelicula"));
                 p.setTitulo(rs.getString("titulo"));
-                p.setDuracion_minutos(rs.getInt("duracion_minutos"));
-                p.setGenero(rs.getString("genero"));
-                p.setClasificacion(rs.getString("clasificacion"));
+                p.setDuracionMinutos(rs.getInt("duracion_minutos"));
+
+                // BD -> ENUM
+                p.setGenero(GeneroPelicula.valueOf(rs.getString("genero")));
+                p.setClasificacion(ClasificacionPelicula.valueOf(rs.getString("clasificacion")));
+
                 lista.insertar(p);
             }
 
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Error en sql", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error en SQL", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
-            } catch (SQLException e) {
-            }
+            } catch (SQLException e) { }
         }
         return lista;
     }
@@ -121,32 +117,33 @@ public class PeliculaDAO implements IPelicula {
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
+
             ps.setString(1, obj.getTitulo());
-            ps.setInt(2, obj.getDuracion_minutos());
-            ps.setString(3, obj.getGenero());
-            ps.setString(4, obj.getClasificacion());
+            ps.setInt(2, obj.getDuracionMinutos());
+
+            // ENUM -> BD
+            ps.setString(3, obj.getGenero().name());
+            ps.setString(4, obj.getClasificacion().name());
+
             ps.execute();
             return true;
         } catch (SQLException e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Error en sql", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error en SQL", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                ps.close();
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
-            } catch (SQLException e) {
-            }
+            } catch (SQLException e) { }
         }
         return false;
     }
 
     public Pelicula buscarPorId(int id) {
-        String sql = "SELECT * FROM peliculas WHERE id_pelicula=" + id;
-        ListaSimpleCircular<Pelicula> lista = select(sql);
-
+        ListaSimpleCircular<Pelicula> lista = select("SELECT * FROM peliculas WHERE id_pelicula=" + id);
         ArrayList arr = lista.toArray();
-        if (arr.size() > 0) {
+        if (!arr.isEmpty()) {
             return (Pelicula) arr.get(0);
         }
         return null;

@@ -6,6 +6,10 @@ import com.ues.edu.vista.ModalSalas;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
 
+/**
+ * 
+ * @author radon
+ */
 public class ControladorModalSala {
 
     private final ControladorSala controladorSala;
@@ -27,7 +31,7 @@ public class ControladorModalSala {
     }
 
     private void cargarDatos() {
-        ms.tfNombreSalas.setText(salaSelect.getNombre_sala());
+        ms.tfNombreSalas.setText(salaSelect.getNombreSala());
     }
 
     private void onClickGuardar() {
@@ -42,7 +46,7 @@ public class ControladorModalSala {
 
             Sala existente = dao.buscarPorNombre(nombre);
 
-            if (existente != null && (salaSelect == null || existente.getId_sala() != salaSelect.getId_sala())) {
+            if (existente != null && (salaSelect == null || existente.getIdSala() != salaSelect.getIdSala())) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error", "Ya existe una sala con ese nombre", DesktopNotify.ERROR, 3000);
                 return;
@@ -53,7 +57,7 @@ public class ControladorModalSala {
                 Sala nuevaSala = new Sala(0, nombre);
                 exito = dao.insert(nuevaSala);
             } else {
-                salaSelect.setNombre_sala(nombre);
+                salaSelect.setNombreSala(nombre);
                 exito = dao.update(salaSelect);
             }
 

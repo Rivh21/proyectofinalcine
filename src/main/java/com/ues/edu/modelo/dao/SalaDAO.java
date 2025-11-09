@@ -5,12 +5,13 @@ import com.ues.edu.modelo.Sala;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
 import java.sql.*;
 
+/**
+ * 
+ * @author radon
+ */
 public class SalaDAO implements ISala {
 
-    private Conexion conectar;
-    private Connection con;
-    private PreparedStatement ps;
-    private ResultSet rs;
+    private final Conexion conectar;
 
     public SalaDAO() {
         conectar = new Conexion();
@@ -26,19 +27,17 @@ public class SalaDAO implements ISala {
     public ListaSimpleCircular<Sala> selectAllTo(String atributo, String valor) {
         String sql = "SELECT * FROM salas WHERE " + atributo + "=? ORDER BY nombre_sala ASC";
         ListaSimpleCircular<Sala> lista = new ListaSimpleCircular<>();
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
+        try (Connection con = conectar.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, valor);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Sala s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
-                lista.insertar(s);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Sala s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
+                    lista.insertar(s);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error selectAllTo salas: " + e.getMessage());
-        } finally {
-            try { if (rs != null) rs.close(); if (ps != null) ps.close(); conectar.closeConexion(con); } catch (SQLException e) { e.printStackTrace(); }
         }
         return lista;
     }
@@ -47,19 +46,17 @@ public class SalaDAO implements ISala {
     public ListaSimpleCircular<Sala> buscar(String textoBusqueda) {
         String sql = "SELECT * FROM salas WHERE nombre_sala LIKE ? ORDER BY nombre_sala ASC";
         ListaSimpleCircular<Sala> lista = new ListaSimpleCircular<>();
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
+        try (Connection con = conectar.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, "%" + textoBusqueda + "%");
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Sala s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
-                lista.insertar(s);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Sala s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
+                    lista.insertar(s);
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error buscar salas: " + e.getMessage());
-        } finally {
-            try { if (rs != null) rs.close(); if (ps != null) ps.close(); conectar.closeConexion(con); } catch (SQLException e) { e.printStackTrace(); }
         }
         return lista;
     }
@@ -86,18 +83,16 @@ public class SalaDAO implements ISala {
     public Sala buscarPorId(int idSala) {
         String sql = "SELECT * FROM salas WHERE id_sala=?";
         Sala s = null;
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
+        try (Connection con = conectar.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, idSala);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error buscarPorId sala: " + e.getMessage());
-        } finally {
-            try { if (rs != null) rs.close(); if (ps != null) ps.close(); conectar.closeConexion(con); } catch (SQLException e) { e.printStackTrace(); }
         }
         return s;
     }
@@ -106,47 +101,41 @@ public class SalaDAO implements ISala {
     public Sala buscarPorNombre(String nombre) {
         String sql = "SELECT * FROM salas WHERE nombre_sala=?";
         Sala s = null;
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
+        try (Connection con = conectar.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setString(1, nombre);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
+                }
             }
         } catch (SQLException e) {
             System.err.println("Error buscarPorNombre sala: " + e.getMessage());
-        } finally {
-            try { if (rs != null) rs.close(); if (ps != null) ps.close(); conectar.closeConexion(con); } catch (SQLException e) { e.printStackTrace(); }
         }
         return s;
     }
 
     private ListaSimpleCircular<Sala> select(String sql) {
         ListaSimpleCircular<Sala> lista = new ListaSimpleCircular<>();
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
+        try (Connection con = conectar.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Sala s = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
                 lista.insertar(s);
             }
         } catch (SQLException e) {
             System.err.println("Error select salas: " + e.getMessage());
-        } finally {
-            try { if (rs != null) rs.close(); if (ps != null) ps.close(); conectar.closeConexion(con); } catch (SQLException e) { e.printStackTrace(); }
         }
         return lista;
     }
 
     private boolean alterarRegistro(String sql, Sala sala) {
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
-            ps.setString(1, sala.getNombre_sala());
-            if (sql.contains("UPDATE") || sql.contains("DELETE")) {
-                ps.setInt(2, sala.getId_sala());
+        try (Connection con = conectar.getConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, sala.getNombreSala());
+            if (sql.toUpperCase().contains("UPDATE") || sql.toUpperCase().contains("DELETE")) {
+                ps.setInt(2, sala.getIdSala());
             }
             ps.execute();
             return true;
@@ -154,8 +143,6 @@ public class SalaDAO implements ISala {
             System.err.println("Error alterarRegistro sala: " + e.getMessage());
             e.printStackTrace();
             return false;
-        } finally {
-            try { if (ps != null) ps.close(); conectar.closeConexion(con); } catch (SQLException e) { e.printStackTrace(); }
         }
     }
 }

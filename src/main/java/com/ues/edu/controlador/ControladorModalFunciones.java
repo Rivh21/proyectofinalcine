@@ -66,7 +66,7 @@ public class ControladorModalFunciones {
             if (!validarCampos()) return;
 
             if (peliculaSeleccionada == null && funcionSelect != null) {
-                peliculaSeleccionada = daoPelicula.buscarPorId(funcionSelect.getId_pelicula());
+                peliculaSeleccionada = daoPelicula.buscarPorId(funcionSelect.getIdPelicula());
             }
 
             if (peliculaSeleccionada == null) {
@@ -89,9 +89,9 @@ public class ControladorModalFunciones {
     private void agregarFuncion(Pelicula pelicula, Sala sala, LocalDateTime fecha) {
         try {
             double precio = Double.parseDouble(mf.tfPrecio.getText().trim());
-            Funcion funcion = new Funcion(pelicula.getId_pelicula(), sala.getId_sala(), fecha, precio);
+            Funcion funcion = new Funcion(pelicula.getIdPelicula(), sala.getIdSala(), fecha, precio);
             funcion.setPeliculaTitulo(pelicula.getTitulo());
-            funcion.setSalaNombre(sala.getNombre_sala());
+            funcion.setSalaNombre(sala.getNombreSala());
 
             if (daoFuncion.insert(funcion)) {
                 mf.dispose();
@@ -109,12 +109,12 @@ public class ControladorModalFunciones {
     private void actualizarFuncion(Pelicula pelicula, Sala sala, LocalDateTime fecha) {
         try {
             double precio = Double.parseDouble(mf.tfPrecio.getText().trim());
-            funcionSelect.setId_pelicula(pelicula.getId_pelicula());
-            funcionSelect.setId_sala(sala.getId_sala());
-            funcionSelect.setFecha_hora_inicio(fecha);
-            funcionSelect.setPrecio_boleto(precio);
+            funcionSelect.setIdPelicula(pelicula.getIdPelicula());
+            funcionSelect.setIdSala(sala.getIdSala());
+            funcionSelect.setFechaHoraInicio(fecha);
+            funcionSelect.setPrecioBoleto(precio);
             funcionSelect.setPeliculaTitulo(pelicula.getTitulo());
-            funcionSelect.setSalaNombre(sala.getNombre_sala());
+            funcionSelect.setSalaNombre(sala.getNombreSala());
 
             if (daoFuncion.update(funcionSelect)) {
                 mf.dispose();
@@ -161,35 +161,35 @@ public class ControladorModalFunciones {
 
         for (Object obj : funciones.toArray()) {
             Funcion f = (Funcion) obj;
-            if (funcionSelect != null && f.getId_funcion() == funcionSelect.getId_funcion()) continue;
+            if (funcionSelect != null && f.getIdFuncion() == funcionSelect.getIdFuncion()) continue;
 
-            if (f.getId_sala() == sala.getId_sala() &&
-                f.getFecha_hora_inicio().isEqual(fecha) &&
-                f.getId_pelicula() != pelicula.getId_pelicula()) {
+            if (f.getIdSala() == sala.getIdSala() &&
+                f.getFechaHoraInicio().isEqual(fecha) &&
+                f.getIdPelicula() != pelicula.getIdPelicula()) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error",
-                    "Ya hay otra película programada a esa hora en la misma sala",
-                    DesktopNotify.ERROR, 3000);
+                        "Ya hay otra película programada a esa hora en la misma sala",
+                        DesktopNotify.ERROR, 3000);
                 return false;
             }
 
-            if (f.getId_pelicula() == pelicula.getId_pelicula() &&
-                f.getFecha_hora_inicio().isEqual(fecha) &&
-                f.getId_sala() != sala.getId_sala()) {
+            if (f.getIdPelicula() == pelicula.getIdPelicula() &&
+                f.getFechaHoraInicio().isEqual(fecha) &&
+                f.getIdSala() != sala.getIdSala()) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error",
-                    "La misma película ya está programada en otra sala a esa hora",
-                    DesktopNotify.ERROR, 3000);
+                        "La misma película ya está programada en otra sala a esa hora",
+                        DesktopNotify.ERROR, 3000);
                 return false;
             }
 
-            if (f.getId_pelicula() == pelicula.getId_pelicula() &&
-                f.getId_sala() == sala.getId_sala() &&
-                f.getFecha_hora_inicio().isEqual(fecha)) {
+            if (f.getIdPelicula() == pelicula.getIdPelicula() &&
+                f.getIdSala() == sala.getIdSala() &&
+                f.getFechaHoraInicio().isEqual(fecha)) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error",
-                    "La película ya está programada en esta sala a esta hora",
-                    DesktopNotify.ERROR, 3000);
+                        "La película ya está programada en esta sala a esta hora",
+                        DesktopNotify.ERROR, 3000);
                 return false;
             }
         }
@@ -221,12 +221,12 @@ public class ControladorModalFunciones {
     }
 
     private void cargarDatos() {
-        mf.tfPrecio.setText(String.valueOf(funcionSelect.getPrecio_boleto()));
-        mf.fechaIni.setDateTimeStrict(funcionSelect.getFecha_hora_inicio());
+        mf.tfPrecio.setText(String.valueOf(funcionSelect.getPrecioBoleto()));
+        mf.fechaIni.setDateTimeStrict(funcionSelect.getFechaHoraInicio());
 
         for (int i = 0; i < mf.cmbSalas.getItemCount(); i++) {
             Sala s = mf.cmbSalas.getItemAt(i);
-            if (s.getId_sala() == funcionSelect.getId_sala()) {
+            if (s.getIdSala() == funcionSelect.getIdSala()) {
                 mf.cmbSalas.setSelectedIndex(i);
                 break;
             }
@@ -234,7 +234,7 @@ public class ControladorModalFunciones {
 
         if (funcionSelect.getPeliculaTitulo() != null) {
             mf.lbPeliculas.setText("Película: " + funcionSelect.getPeliculaTitulo());
-            peliculaSeleccionada = daoPelicula.buscarPorId(funcionSelect.getId_pelicula());
+            peliculaSeleccionada = daoPelicula.buscarPorId(funcionSelect.getIdPelicula());
         }
     }
 }

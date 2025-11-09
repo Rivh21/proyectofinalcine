@@ -8,69 +8,69 @@ import java.time.LocalDateTime;
  */
 public class Funcion implements Comparable<Funcion> {
     
-    private int id_funcion;
-    private int id_pelicula;
-    private int id_sala;
-    private LocalDateTime fecha_hora_inicio;
-    private double precio_boleto;
+    private int idFuncion;
+    private int idPelicula;
+    private int idSala;
+    private LocalDateTime fechaHoraInicio;
+    private double precioBoleto;
     private String peliculaTitulo;
     private String salaNombre;
 
     public Funcion() {}
 
-    public Funcion(int id_funcion, int id_pelicula, int id_sala, LocalDateTime fecha_hora_inicio, double precio_boleto) {
-        this.id_funcion = id_funcion;
-        this.id_pelicula = id_pelicula;
-        this.id_sala = id_sala;
-        this.fecha_hora_inicio = fecha_hora_inicio;
-        this.precio_boleto = precio_boleto;
+    public Funcion(int idFuncion, int idPelicula, int idSala, LocalDateTime fechaHoraInicio, double precioBoleto) {
+        this.idFuncion = idFuncion;
+        this.idPelicula = idPelicula;
+        this.idSala = idSala;
+        this.fechaHoraInicio = fechaHoraInicio;
+        this.precioBoleto = precioBoleto;
     }
 
-    public Funcion(int id_pelicula, int id_sala, LocalDateTime fecha_hora_inicio, double precio_boleto) {
-        this.id_pelicula = id_pelicula;
-        this.id_sala = id_sala;
-        this.fecha_hora_inicio = fecha_hora_inicio;
-        this.precio_boleto = precio_boleto;
+    public Funcion(int idPelicula, int idSala, LocalDateTime fechaHoraInicio, double precioBoleto) {
+        this.idPelicula = idPelicula;
+        this.idSala = idSala;
+        this.fechaHoraInicio = fechaHoraInicio;
+        this.precioBoleto = precioBoleto;
     }
 
-    public int getId_funcion() {
-        return id_funcion;
+    public int getIdFuncion() {
+        return idFuncion;
     }
 
-    public void setId_funcion(int id_funcion) {
-        this.id_funcion = id_funcion;
+    public void setIdFuncion(int idFuncion) {
+        this.idFuncion = idFuncion;
     }
 
-    public int getId_pelicula() {
-        return id_pelicula;
+    public int getIdPelicula() {
+        return idPelicula;
     }
 
-    public void setId_pelicula(int id_pelicula) {
-        this.id_pelicula = id_pelicula;
+    public void setIdPelicula(int idPelicula) {
+        this.idPelicula = idPelicula;
     }
 
-    public int getId_sala() {
-        return id_sala;
+    public int getIdSala() {
+        return idSala;
     }
 
-    public void setId_sala(int id_sala) {
-        this.id_sala = id_sala;
+    public void setIdSala(int idSala) {
+        this.idSala = idSala;
     }
 
-    public LocalDateTime getFecha_hora_inicio() {
-        return fecha_hora_inicio;
+    public LocalDateTime getFechaHoraInicio() {
+        return fechaHoraInicio;
     }
 
-    public void setFecha_hora_inicio(LocalDateTime fecha_hora_inicio) {
-        this.fecha_hora_inicio = fecha_hora_inicio;
+    public void setFechaHoraInicio(LocalDateTime fechaHoraInicio) {
+        this.fechaHoraInicio = fechaHoraInicio;
     }
 
-    public double getPrecio_boleto() {
-        return precio_boleto;
+    public double getPrecioBoleto() {
+        return precioBoleto;
     }
 
-    public void setPrecio_boleto(double precio_boleto) {
-        this.precio_boleto = precio_boleto;
+    public void setPrecioBoleto(double precioBoleto) {
+        this.precioBoleto = precioBoleto;
     }
 
     public String getPeliculaTitulo() {
@@ -93,15 +93,15 @@ public class Funcion implements Comparable<Funcion> {
     public String toString() {
         String titulo = (peliculaTitulo != null) ? peliculaTitulo : "Película";
         String sala = (salaNombre != null) ? salaNombre : "Sala";
-        String fecha = (fecha_hora_inicio != null) ? fecha_hora_inicio.toString() : "Fecha no definida";
+        String fecha = (fechaHoraInicio != null) ? fechaHoraInicio.toString() : "Fecha no definida";
         return titulo + " - " + sala + " - " + fecha;
     }
 
     @Override
     public int compareTo(Funcion otra) {
-        if (this.fecha_hora_inicio == null && otra.fecha_hora_inicio == null) return 0;
-        if (this.fecha_hora_inicio == null) return -1;
-        if (otra.fecha_hora_inicio == null) return 1;
-        return this.fecha_hora_inicio.compareTo(otra.fecha_hora_inicio);
+        if (this.fechaHoraInicio == null && otra.fechaHoraInicio == null) return 0;
+        if (this.fechaHoraInicio == null) return -1;
+        if (otra.fechaHoraInicio == null) return 1;
+        return this.fechaHoraInicio.compareTo(otra.fechaHoraInicio);
     }
 }

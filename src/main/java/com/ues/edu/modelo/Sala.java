@@ -5,43 +5,41 @@ package com.ues.edu.modelo;
  * @author radon
  */
 public class Sala implements Comparable<Sala> {
-    private int id_sala;
-    private String nombre_sala;
+
+    private int idSala;
+    private String nombreSala;
 
     public Sala() {
     }
-    
-    
 
-    public Sala(int id_sala, String nombre_sala) {
-        this.id_sala = id_sala;
-        this.nombre_sala = nombre_sala;
+    public Sala(int idSala, String nombreSala) {
+        this.idSala = idSala;
+        this.nombreSala = nombreSala;
     }
 
-    public int getId_sala() {
-        return id_sala;
+    public int getIdSala() {
+        return idSala;
     }
 
-    public void setId_sala(int id_sala) {
-        this.id_sala = id_sala;
+    public void setIdSala(int idSala) {
+        this.idSala = idSala;
     }
 
-    public String getNombre_sala() {
-        return nombre_sala;
+    public String getNombreSala() {
+        return nombreSala;
     }
 
-    public void setNombre_sala(String nombre_sala) {
-        this.nombre_sala = nombre_sala;
+    public void setNombreSala(String nombreSala) {
+        this.nombreSala = nombreSala;
     }
 
     @Override
     public int compareTo(Sala otra) {
-        // Ordena por nombre_sala
-        return this.nombre_sala.compareToIgnoreCase(otra.getNombre_sala());
+        return this.nombreSala.compareToIgnoreCase(otra.getNombreSala());
     }
 
     @Override
     public String toString() {
-        return nombre_sala;
+        return nombreSala;
     }
 }

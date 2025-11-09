@@ -116,9 +116,9 @@ public class ControladorPeliculas {
         ArrayList<Pelicula> listaPeliculas = lista.toArray();
         for (Pelicula p : listaPeliculas) {
             Object[] fila = {
-                p.getId_pelicula(),
+                p.getIdPelicula(),
                 p.getTitulo(),
-                p.getDuracion_minutos(),
+                p.getDuracionMinutos(),
                 p.getGenero(),
                 p.getClasificacion()
             };
@@ -145,7 +145,7 @@ public class ControladorPeliculas {
 
                     peliculaSelect = null;
                     for (Pelicula p : listaActualMostrada.toArray()) {
-                        if (p.getId_pelicula() == idPelicula) {
+                        if (p.getIdPelicula() == idPelicula) {
                             peliculaSelect = p;
                             break;
                         }
