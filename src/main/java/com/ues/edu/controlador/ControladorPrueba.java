@@ -4,6 +4,7 @@
  */
 package com.ues.edu.controlador;
 
+import com.ues.edu.vista.ModalAsientos;
 import com.ues.edu.vista.ModalPeliculas;
 import com.ues.edu.vista.VistaPrueba;
 import javax.swing.JFrame;
@@ -37,8 +38,8 @@ public class ControladorPrueba {
 
     private void btn() {
         vista.jButton1.addActionListener((e)->{
-            ModalPeliculas mu = new ModalPeliculas(new JFrame(), true, "Prueba usuario");
-            mu.setVisible(true);
+            ModalAsientos ma = new ModalAsientos(new JFrame(), true, "Generar asientos");
+            ma.setVisible(true);
         });
     }
 }

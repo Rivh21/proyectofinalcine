@@ -11,12 +11,16 @@ import java.util.List;
  * @author DELL LATITUDE
  */
 public class Asiento {
-    
+
     private int idAsiento;
-    private Sala salas;
+    private Sala sala;
     private int fila;
     private int numero;
     private List<Boleto> boletos;
+
+    //Atributo temporal para la vista
+    private boolean disponible;
+    private String colorEstado;
 
     public Asiento() {
     }
@@ -25,8 +29,8 @@ public class Asiento {
         this.idAsiento = idAsiento;
     }
 
-    public Asiento(Sala salas, int fila, int numero, List<Boleto> boletos) {
-        this.salas = salas;
+    public Asiento(Sala sala, int fila, int numero, List<Boleto> boletos) {
+        this.sala = sala;
         this.fila = fila;
         this.numero = numero;
         this.boletos = boletos;
@@ -40,12 +44,12 @@ public class Asiento {
         this.idAsiento = idAsiento;
     }
 
-    public Sala getSalas() {
-        return salas;
+    public Sala getSala() {
+        return sala;
     }
 
-    public void setSalas(Sala salas) {
-        this.salas = salas;
+    public void setSala(Sala sala) {
+        this.sala = sala;
     }
 
     public int getFila() {
@@ -72,10 +76,21 @@ public class Asiento {
         this.boletos = boletos;
     }
 
-    @Override
-    public String toString() {
-        return "Asientos{" + "idAsiento=" + idAsiento + ", salas=" + salas + ", fila=" + fila + ", numero=" + numero + ", boletos=" + boletos + '}';
+    public boolean isDisponible() {
+        return disponible;
     }
 
-   
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+        this.colorEstado = disponible ? "verde" : "rojo";
+    }
+
+    public String getColorEstado() {
+        return colorEstado;
+    }
+
+    public void setColorEstado(String colorEstado) {
+        this.colorEstado = colorEstado;
+    }
+
 }

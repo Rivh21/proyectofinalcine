@@ -45,7 +45,7 @@ public class Menu extends javax.swing.JPanel {
         List<ModeloMenu> subMenusNucleo = new ArrayList<>();
         subMenusNucleo.add(new ModeloMenu("Peliculas", ModeloMenu.TipoMenu.MENU));
         subMenusNucleo.add(new ModeloMenu("Salas", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("Asientos", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("asiento","Asientos", ModeloMenu.TipoMenu.MENU));
         subMenusNucleo.add(new ModeloMenu("Funciones", ModeloMenu.TipoMenu.MENU));
         subMenusNucleo.add(new ModeloMenu("Prueba", ModeloMenu.TipoMenu.MENU));//agreggar
 

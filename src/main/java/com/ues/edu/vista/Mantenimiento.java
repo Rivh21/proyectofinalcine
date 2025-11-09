@@ -4,10 +4,6 @@
  */
 package com.ues.edu.vista;
 
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
-
 /**
  *
  * @author jorge
