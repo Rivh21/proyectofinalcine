@@ -29,19 +29,19 @@ public class AsientoDao implements IAsiento {
     public AsientoDao() {
         conectar = new Conexion();
     }
-    
+
     @Override
     public ListaSimple<Asiento> selectAll() {
-        String sql = "SELECT a.id_asiento, a.fila, a.numero, s.id_sala, s.nombre_sala " +
-                     "FROM asientos a JOIN salas s ON a.id_sala = s.id_sala";
+        String sql = "SELECT a.id_asiento, a.fila, a.numero, s.id_sala, s.nombre_sala "
+                + "FROM asientos a JOIN salas s ON a.id_sala = s.id_sala";
         return select(sql);
     }
-    
+
     @Override
     public ListaSimple<Asiento> selectBySala(int idSala) {
-        String sql = "SELECT a.id_asiento, a.fila, a.numero, s.id_sala, s.nombre_sala " +
-                     "FROM asientos a JOIN salas s ON a.id_sala = s.id_sala " +
-                     "WHERE a.id_sala = " + idSala;
+        String sql = "SELECT a.id_asiento, a.fila, a.numero, s.id_sala, s.nombre_sala "
+                + "FROM asientos a JOIN salas s ON a.id_sala = s.id_sala "
+                + "WHERE a.id_sala = " + idSala;
         return select(sql);
     }
 
@@ -72,7 +72,9 @@ public class AsientoDao implements IAsiento {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -89,12 +91,12 @@ public class AsientoDao implements IAsiento {
             rs = ps.executeQuery();
             while (rs.next()) {
                 Sala sala = new Sala(rs.getInt("id_sala"), rs.getString("nombre_sala"));
-                
+
                 Asiento obj = new Asiento(
-                    rs.getInt("id_asiento"), 
-                    sala, 
-                    rs.getString("fila"), 
-                    rs.getInt("numero")
+                        rs.getInt("id_asiento"),
+                        sala,
+                        rs.getString("fila"),
+                        rs.getInt("numero")
                 );
                 lista.insertar(obj);
             }
@@ -104,8 +106,12 @@ public class AsientoDao implements IAsiento {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -116,24 +122,24 @@ public class AsientoDao implements IAsiento {
 
     private boolean generarRegistroMasivo(String sql, int idSala, char filaInicio, int numFilas, int asientosPorFila) {
         PreparedStatement ps = null;
-        char filaActual = filaInicio; 
+        char filaActual = filaInicio;
 
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
-            
+
             for (int i = 0; i < numFilas; i++) {
                 for (int j = 1; j <= asientosPorFila; j++) {
-                    
-                    ps.setInt(1, idSala);              
-                    ps.setString(2, String.valueOf(filaActual)); 
-                    ps.setInt(3, j);                   
-                    
+
+                    ps.setInt(1, idSala);
+                    ps.setString(2, String.valueOf(filaActual));
+                    ps.setInt(3, j);
+
                     ps.addBatch();
                 }
                 filaActual++;
             }
-            
+
             ps.executeBatch();
             return true;
         } catch (SQLException e) {
@@ -142,7 +148,9 @@ public class AsientoDao implements IAsiento {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -150,17 +158,17 @@ public class AsientoDao implements IAsiento {
         }
         return false;
     }
-    
+
     private boolean alterarRegistro(String sql, Asiento obj) {
         PreparedStatement ps = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
-            
+
             // Asigna los valores para el UPDATE (Fila, Numero)
             ps.setString(1, obj.getFila());
             ps.setInt(2, obj.getNumero());
-            
+
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -169,12 +177,32 @@ public class AsientoDao implements IAsiento {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean salaTieneAsientos(int idSala) {
+        String sql = "SELECT 1 FROM asientos WHERE id_sala = ? LIMIT 1";
+
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idSala);
+            rs = ps.executeQuery();
+            return rs.next();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+        }
     }
 }

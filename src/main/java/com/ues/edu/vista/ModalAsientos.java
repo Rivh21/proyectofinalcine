@@ -97,7 +97,7 @@ public class ModalAsientos extends javax.swing.JDialog {
         btnGenerarAsientos.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnGenerarAsientos.setText("GENERAR");
 
-        lbTitulo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
+        lbTitulo.setFont(new java.awt.Font("Roboto", 1, 12)); // NOI18N
 
         lbSalaSeleccionada.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
 
@@ -115,7 +115,7 @@ public class ModalAsientos extends javax.swing.JDialog {
             .addGroup(fondoLayout.createSequentialGroup()
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(fondoLayout.createSequentialGroup()
-                        .addGap(43, 43, 43)
+                        .addGap(40, 40, 40)
                         .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(fondoLayout.createSequentialGroup()
                                 .addComponent(btnGenerarAsientos)
@@ -133,7 +133,7 @@ public class ModalAsientos extends javax.swing.JDialog {
                         .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(spNumFila, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(spAsientosXFila, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(43, 43, 43))
+                .addGap(40, 40, 40))
         );
         fondoLayout.setVerticalGroup(
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,7 +152,7 @@ public class ModalAsientos extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(spNumFila, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(spAsientosXFila, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
@@ -184,8 +184,8 @@ public class ModalAsientos extends javax.swing.JDialog {
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnGenerarAsientos;
+    public javax.swing.JButton btnCancelar;
+    public javax.swing.JButton btnGenerarAsientos;
     private javax.swing.JPanel fondo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -193,8 +193,8 @@ public class ModalAsientos extends javax.swing.JDialog {
     private javax.swing.JLabel lbSala;
     public javax.swing.JLabel lbSalaSeleccionada;
     private javax.swing.JLabel lbTitulo;
-    private javax.swing.JSpinner spAsientosXFila;
-    private javax.swing.JSpinner spNumFila;
-    private com.ues.edu.vista.swing.PlaceholderTextField tfFilaInicial;
+    public javax.swing.JSpinner spAsientosXFila;
+    public javax.swing.JSpinner spNumFila;
+    public com.ues.edu.vista.swing.PlaceholderTextField tfFilaInicial;
     // End of variables declaration//GEN-END:variables
 }

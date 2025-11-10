@@ -4,9 +4,9 @@
  */
 package com.ues.edu.controlador;
 
-import com.ues.edu.modelo.Empleado;
-import com.ues.edu.modelo.dao.EmpleadoDao;
-import com.ues.edu.modelo.estructuras.ListaSimple;
+import com.ues.edu.modelo.Sala;
+import com.ues.edu.modelo.dao.SalaDAO;
+import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
 import com.ues.edu.vista.VistaListado;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -22,20 +22,20 @@ import javax.swing.table.TableRowSorter;
  *
  * @author jorge
  */
-public class ControladorListadoEmpleados {
+public class ControladorListadoSalas {
 
     DefaultTableModel modelo;
-    ControladorModalUsuario cmu;
-    EmpleadoDao daoEmpleado;
+    ControladorAsiento ca;
+    SalaDAO daoSala;
     VistaListado vistaLista;
-    private Empleado empleadoSelect;
-    private ListaSimple<Empleado> listaActualMostrada;
+    private Sala salaSelect;
+    private ListaSimpleCircular<Sala> listaActualMostrada;
 
-    public ControladorListadoEmpleados(ControladorModalUsuario cmu, VistaListado vistaLista) {
-        this.cmu = cmu;
-        daoEmpleado = new EmpleadoDao();
+    public ControladorListadoSalas(ControladorAsiento ca, VistaListado vistaLista) {
+        this.ca = ca;
+        daoSala = new SalaDAO();
         this.vistaLista = vistaLista;
-        this.listaActualMostrada = daoEmpleado.selectEmpleadosSinUsuario();
+        this.listaActualMostrada = daoSala.selectAll();
         onClickSeleccionar();
         onClickTabla();
         keyReleasedBuscar();
@@ -45,25 +45,25 @@ public class ControladorListadoEmpleados {
 
     private void onClickSeleccionar() {
         this.vistaLista.btnSeleccionar.addActionListener((e) -> {
-            if (empleadoSelect != null) {
-                String nombreCompleto = empleadoSelect.getNombre() + " " + empleadoSelect.getApellido();
+            if (salaSelect != null) {
+                String nombreSala = salaSelect.getNombreSala();
 
                 int respuesta = JOptionPane.showConfirmDialog(
-                        vistaLista, 
-                        "Una vez asignado, este empleado no podrá ser modificado.\n¿Desea asignar a " + nombreCompleto.toUpperCase() + " al nuevo usuario?",
-                        "Confirmar Asignación de Empleado",
+                        vistaLista,
+                        "Una vez seleccionada, esta sala no podrá ser modificada.\n¿Desea seleccionar  " + nombreSala.toUpperCase(),
+                        "Confirmar Selección de Sala",
                         JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE 
+                        JOptionPane.WARNING_MESSAGE
                 );
-
                 if (respuesta == JOptionPane.YES_OPTION) {
-                    this.cmu.cargarEmpleado(empleadoSelect);
+                    this.ca.cargarSala(salaSelect);
 
                     this.vistaLista.dispose();
                 }
             }
             this.vistaLista.dispose();
         });
+
     }
 
     private void onClickTabla() {
@@ -76,16 +76,16 @@ public class ControladorListadoEmpleados {
                         int rowModelo = vistaLista.tbDatos.convertRowIndexToModel(rowVista);
 
                         Object idValue = vistaLista.tbDatos.getModel().getValueAt(rowModelo, 0);
-                        int idEmpleado = (Integer) idValue;
+                        int idSala = (Integer) idValue;
 
-                        empleadoSelect = null; 
-                        for (Empleado emp : listaActualMostrada.toArray()) { 
-                            if (emp.getIdEmpleado() == idEmpleado) {
-                                empleadoSelect = emp;
+                        salaSelect = null;
+                        for (Sala sala : listaActualMostrada.toArray()) {
+                            if (sala.getIdSala() == idSala) {
+                                salaSelect = sala;
                                 break;
                             }
                         }
-                        if (empleadoSelect != null) {
+                        if (salaSelect != null) {
                             vistaLista.btnSeleccionar.setEnabled(true);
                         }
                     }
@@ -99,34 +99,28 @@ public class ControladorListadoEmpleados {
             @Override
             public void keyReleased(KeyEvent e) {
                 String textoBusqueda = vistaLista.tfBuscar.getText().trim();
-                ListaSimple<Empleado> listaFinal = filtrarListaEnMemoria(textoBusqueda);
+                ListaSimpleCircular<Sala> listaFinal = filtrarListaEnMemoria(textoBusqueda);
                 mostrar(listaFinal);
             }
         });
     }
 
-    public void mostrar(ListaSimple<Empleado> lista) {
+    private void mostrar(ListaSimpleCircular<Sala> lista) {
         this.listaActualMostrada = lista;
         modelo = new DefaultTableModel();
-        String titulos[] = {"N", "NOMBRE", "APELLIDO", "DUI", "EMAIL", "TELÉFONO", "SALARIO"};
+        String titulos[] = {"ID", "NOMBRE SALA"};
         modelo.setColumnIdentifiers(titulos);
-        ArrayList<Empleado> listaEmpleados = lista.toArray();
-        for (Empleado emp : listaEmpleados) {
+        ArrayList<Sala> listaSalas = lista.toArray();
+        for (Sala sala : listaSalas) {
             Object[] fila = {
-                emp.getIdEmpleado(),
-                emp.getNombre(),
-                emp.getApellido(),
-                emp.getDui(),
-                emp.getEmail(),
-                emp.getTelefono(),
-                String.format("$%.2f", emp.getSalario())
-            };
+                sala.getIdSala(),
+                sala.getNombreSala(),};
             modelo.addRow(fila);
         }
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
         this.vistaLista.tbDatos.setRowSorter(sorter);
         this.vistaLista.tbDatos.setModel(modelo);
-        int[] anchosFijos = {30, 200, 200, 50, 100, 50, 50};
+        int[] anchosFijos = {50, 1500};
 
         ajustarAnchoColumnas(anchosFijos);
         vistaLista.tbDatos.setModel(modelo);
@@ -139,23 +133,22 @@ public class ControladorListadoEmpleados {
         }
     }
 
-    private ListaSimple<Empleado> filtrarListaEnMemoria(String texto) {
-        ListaSimple<Empleado> listaOrigen = daoEmpleado.selectEmpleadosSinUsuario();
+    private ListaSimpleCircular<Sala> filtrarListaEnMemoria(String texto) {
+        ListaSimpleCircular<Sala> listaOrigen = daoSala.selectAll();
         String textoLimpio = texto.trim();
         if (textoLimpio.isEmpty()) {
             return listaOrigen;
         }
 
-        ListaSimple<Empleado> listaFiltrada = new ListaSimple<>();
+        ListaSimpleCircular<Sala> listaFiltrada = new ListaSimpleCircular<>();
         String busqueda = textoLimpio.toLowerCase();
 
-        for (Empleado emp : listaOrigen.toArray()) {
-            if (emp.getNombre().toLowerCase().contains(busqueda)
-                    || emp.getApellido().toLowerCase().contains(busqueda)) {
-
-                listaFiltrada.insertar(emp);
+        for (Sala sala : listaOrigen.toArray()) {
+            if (sala.getNombreSala().toLowerCase().contains(busqueda)) {
+                listaFiltrada.insertar(sala);
             }
         }
         return listaFiltrada;
     }
+
 }

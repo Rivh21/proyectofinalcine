@@ -14,8 +14,10 @@ import com.ues.edu.modelo.estructuras.ListaSimple;
 public interface IAsiento {
 
     public ListaSimple<Asiento> selectAll();
-    
+
     public ListaSimple<Asiento> selectBySala(int idSala);
+
+    public boolean salaTieneAsientos(int idSala);
 
     public boolean generate(int idSala, char filaInicio, int numFilas, int asientosPorFila);
 

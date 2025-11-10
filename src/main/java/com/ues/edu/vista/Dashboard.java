@@ -4,6 +4,7 @@
  */
 package com.ues.edu.vista;
 
+import com.ues.edu.controlador.ControladorAsiento;
 import com.ues.edu.controlador.ControladorEmpleado;
 import com.ues.edu.controlador.ControladorFunciones;
 import com.ues.edu.controlador.ControladorMetodoPago;
@@ -210,7 +211,7 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
 
             case "Asientos" -> {
                 VistaAsientos vc = new VistaAsientos("Asientos");
-                
+                ControladorAsiento ca = new ControladorAsiento(vc);
                 showJPanel(vc);
             }
 
