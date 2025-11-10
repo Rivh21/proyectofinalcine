@@ -10,6 +10,10 @@ import com.ues.edu.vista.ModalFunciones;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
 
+/**
+ * 
+ * @author radon
+ */
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;

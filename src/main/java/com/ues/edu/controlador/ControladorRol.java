@@ -1,8 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ues.edu.controlador;
+
+import com.ues.edu.vista.VistaPermisoRol;
+// ------------------------------------
 
 import com.ues.edu.modelo.Rol;
 import com.ues.edu.modelo.dao.RolDao;
@@ -44,7 +43,7 @@ public class ControladorRol {
         onClickEditar();
         onClickEliminar();
         onClickTabla();
-//        onClickPermiso();
+        onClickPermiso(); 
         keyReleasedBuscar();
         mostrar(listaActualMostrada);
         this.mantto.btnEditar.setEnabled(false);
@@ -52,6 +51,25 @@ public class ControladorRol {
         this.mantto.btnAux.setEnabled(false);
     }
 
+    private void onClickPermiso() {
+        this.mantto.btnAux.addActionListener((e) -> {
+            if (rolSelect == null) {
+                JOptionPane.showMessageDialog(null, "Seleccione un rol para asignar/ver permisos.",
+                                "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int idRol = rolSelect.getIdRol();
+            String nombreRol = rolSelect.getNombreRol();
+            VistaPermisoRol vistaPermisos = new VistaPermisoRol(); 
+            ControladorPermisoRol controladorPermiso = new ControladorPermisoRol();
+            controladorPermiso.cargarPermisosEnTabla(idRol, nombreRol, vistaPermisos);
+            JFrame framePermisos = new JFrame("Permisos del Rol: ");
+            framePermisos.setContentPane(vistaPermisos);
+            framePermisos.setSize(800, 600);
+            framePermisos.setLocationRelativeTo(this.mantto);
+            framePermisos.setVisible(true);
+        });
+    }
     private void onClickAgregar() {
         this.mantto.btnAgregar.addActionListener((e) -> {
             ModalRol mr = new ModalRol(new JFrame(), true, "Agregar Rol");
@@ -59,7 +77,6 @@ public class ControladorRol {
             mr.setVisible(true);
         });
     }
-
     private void onClickEditar() {
         this.mantto.btnEditar.addActionListener((e) -> {
             ModalRol mr = new ModalRol(new JFrame(), true, "Editar Rol");
@@ -67,15 +84,13 @@ public class ControladorRol {
             mr.setVisible(true);
         });
     }
-
     private void onClickEliminar() {
         mantto.btnEliminar.addActionListener((e) -> {
             if (rolSelect == null) {
                 JOptionPane.showMessageDialog(null, "Seleccione un rol para eliminar",
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                                "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
             int op = JOptionPane.showConfirmDialog(
                     this.mantto,
                     "¿Seguro que quiere eliminar permanentemente el rol " + rolSelect.getNombreRol() + "?\nEsta acción no se puede deshacer.",
@@ -83,7 +98,6 @@ public class ControladorRol {
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE
             );
-
             if (op == JOptionPane.YES_OPTION) {
 
                 if (daoRol.delete(rolSelect)) {
@@ -91,9 +105,7 @@ public class ControladorRol {
                     DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                     DesktopNotify.showDesktopMessage("OK", "Registro Eliminado de la Base de Datos",
                             DesktopNotify.SUCCESS, 3000);
-
                     mostrar(daoRol.selectAll());
-
                 } else {
                     JOptionPane.showMessageDialog(null,
                             "Error: No se pudo eliminar el registro en la base de datos.",
@@ -179,5 +191,4 @@ public class ControladorRol {
             columnModel.getColumn(i).setPreferredWidth(anchos[i]);
         }
     }
-
 }

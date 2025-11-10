@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ues.edu.modelo.dao;
 
 import com.ues.edu.interfaces.IPermiso;
@@ -16,8 +12,9 @@ import java.sql.SQLException;
 
 /**
  *
- * @author jorge
+ * @author radonay
  */
+
 public class PermisoDao implements IPermiso {
 
     Conexion conectar;
@@ -37,10 +34,10 @@ public class PermisoDao implements IPermiso {
 
     @Override
     public ListaSimple<Permiso> selectAllTo(String atributo, String condicion) {
-         String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE " + atributo + "='" + condicion + "'";
+        String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE " + atributo + "='" + condicion + "'";
         return select(sql);
     }
-    
+
     @Override
     public ListaSimple<Permiso> buscar(String dato) {
         String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE nombre_permiso LIKE '" + dato + "%'";
@@ -84,19 +81,17 @@ public class PermisoDao implements IPermiso {
     }
 
     private ListaSimple<Permiso> select(String sql) {
-        ListaSimple<Permiso> lista = new ListaSimple();
-        Permiso obj = null;
+        ListaSimple<Permiso> lista = new ListaSimple<>();
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                obj = new Permiso();
-                obj.setIdPermiso(rs.getInt("id_permiso"));
-                obj.setNombrePermiso(rs.getString("nombre_permiso"));
-                lista.insertar(obj);
+                Permiso p = new Permiso();
+                p.setIdPermiso(rs.getInt("id_permiso"));
+                p.setNombrePermiso(rs.getString("nombre_permiso"));
+                lista.insertar(p);
             }
-
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
             DesktopNotify.showDesktopMessage("Error de Consulta", "Error al cargar la lista de permisos.", DesktopNotify.ERROR, 3000);
@@ -118,9 +113,7 @@ public class PermisoDao implements IPermiso {
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
-            
-            ps.setString(1, obj.getNombrePermiso()); 
-            
+            ps.setString(1, obj.getNombrePermiso());
             ps.execute();
             return true;
         } catch (SQLException e) {
@@ -137,4 +130,47 @@ public class PermisoDao implements IPermiso {
         }
         return false;
     }
+
+    public ListaSimple<Permiso> selectAllPermisos() {
+        return select("SELECT id_permiso, nombre_permiso FROM permisos");
+    }
+
+    public ListaSimple<Permiso> obtenerIdPorNombre(String nombrePermiso) {
+    String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE nombre_permiso = ?";
+    ListaSimple<Permiso> lista = new ListaSimple<>();
+
+    try {
+        con = conectar.getConexion();
+        ps = con.prepareStatement(sql);
+        ps.setString(1, nombrePermiso);
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+            Permiso p = new Permiso();
+            p.setIdPermiso(rs.getInt("id_permiso"));
+            p.setNombrePermiso(rs.getString("nombre_permiso"));
+            lista.insertar(p);
+        }
+    } catch (SQLException e) {
+        DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+        DesktopNotify.showDesktopMessage(
+            "Error de Consulta", 
+            "No se pudo obtener el permiso por nombre.", 
+            DesktopNotify.ERROR, 
+            3000
+        );
+        e.printStackTrace();
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+            conectar.closeConexion(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    return lista;
+}
+
 }
