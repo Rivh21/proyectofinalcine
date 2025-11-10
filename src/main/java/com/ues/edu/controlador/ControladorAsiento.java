@@ -135,9 +135,6 @@ public class ControladorAsiento {
         this.vista.tbDatosAsientos.setRowSorter(sorter);
         this.vista.tbDatosAsientos.setModel(modelo);
 
-        // Ajuste de anchos de columna (si se implementa)
-        // ajustarAnchoColumnas(anchosFijos); 
     }
 
-    // NOTA: Los métodos privados como ajustarAnchoColumnas() se omiten por ser utilidades de Swing.
 }
