@@ -44,6 +44,7 @@ public class ControladorRol {
         onClickEditar();
         onClickEliminar();
         onClickTabla();
+//        onClickPermiso();
         keyReleasedBuscar();
         mostrar(listaActualMostrada);
         this.mantto.btnEditar.setEnabled(false);

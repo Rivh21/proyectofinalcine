@@ -4,9 +4,13 @@
  */
 package com.ues.edu.controlador;
 
+import com.ues.edu.modelo.GenericTableModel;
 import com.ues.edu.vista.ModalAsientos;
 import com.ues.edu.vista.ModalPeliculas;
 import com.ues.edu.vista.VistaPrueba;
+import com.ues.edu.vista.swing.TablaConCheckboxes;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
@@ -17,7 +21,6 @@ import javax.swing.table.DefaultTableModel;
 public class ControladorPrueba {
 
     private final VistaPrueba vista;
-    private DefaultTableModel modelo;
 
     public ControladorPrueba(VistaPrueba vista) {
         this.vista = vista;
@@ -27,13 +30,35 @@ public class ControladorPrueba {
     }
 
     private void pintarTabla() {
-        modelo = new DefaultTableModel();
-        String titulos[] = {"Prueba", "Controlador"};
-        modelo.setColumnIdentifiers(titulos);
-        modelo.addRow(new Object[]{"Dato 1", "Controlador A"});
-        modelo.addRow(new Object[]{"Dato 2", "Controlador B"});
-        vista.tbDatosPrueba.setModel(modelo);
+        String[] nombres = {"Rol", "Permiso", "Tiene Permiso"};
+        Class<?>[] tipos = {String.class, String.class, Boolean.class}; 
+        boolean[] editable = {false, false, true}; 
+        
+        List<Object[]> datos = Arrays.asList(
+            new Object[]{"nombreRol", "permiso", false},
+            new Object[]{"Admin", "Gestion interna", false},
+            new Object[]{"Admin", "Producto", false},
+            new Object[]{"Admin", "Ventas", false}
+        );
 
+        //nombreRol = rolSelect.getNombreRol();
+        //permiso = permisoSelect.getNombrePermiso();
+        //validacion pendiente para no utilizar permisos repetidos en un mismo rol
+        if (vista.miTablaConCheckboxes1 != null) {
+
+            GenericTableModel modeloConfigurado = new GenericTableModel(
+                nombres, 
+                tipos, 
+                editable, 
+                datos
+            );
+
+            vista.miTablaConCheckboxes1.setModel(modeloConfigurado);
+
+            
+        } else {
+            System.err.println("La tabla miTablaConCheckboxes1 no está disponible para configuración.");
+        }
     }
 
     private void btn() {
