@@ -53,10 +53,10 @@ public class VistaPermisoRol extends javax.swing.JPanel {
         tbDatos = new com.ues.edu.vista.swing.TablaConCheckboxes();
 
         btnCambios.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        btnCambios.setText("GUARDA CAMBIOS");
+        btnCambios.setText("GUARDAR");
 
         btnAsignar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        btnAsignar.setText("ASIGNAR PERMISO");
+        btnAsignar.setText("ASIGNAR PERMISOS");
 
         lblTitulo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
 
@@ -66,19 +66,18 @@ public class VistaPermisoRol extends javax.swing.JPanel {
         fondo.setLayout(fondoLayout);
         fondoLayout.setHorizontalGroup(
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
-                .addContainerGap(589, Short.MAX_VALUE)
-                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(fondoLayout.createSequentialGroup()
-                .addGap(53, 53, 53)
-                .addComponent(btnCambios)
-                .addGap(18, 18, 18)
-                .addComponent(btnAsignar)
-                .addContainerGap(632, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
+                    .addGroup(fondoLayout.createSequentialGroup()
+                        .addComponent(btnCambios)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAsignar)))
+                .addGap(50, 50, 50))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 422, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         fondoLayout.setVerticalGroup(
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -89,8 +88,8 @@ public class VistaPermisoRol extends javax.swing.JPanel {
                     .addComponent(btnCambios)
                     .addComponent(btnAsignar))
                 .addGap(30, 30, 30)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(110, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);

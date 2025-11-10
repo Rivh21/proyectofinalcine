@@ -43,44 +43,44 @@ public class Menu extends javax.swing.JPanel {
     private void init() {
         // --- SUBMENU: NucleoCine ---
         List<ModeloMenu> subMenusNucleo = new ArrayList<>();
-        subMenusNucleo.add(new ModeloMenu("Peliculas", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("Salas", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("movie","Peliculas", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("sala","Salas", ModeloMenu.TipoMenu.MENU));
         subMenusNucleo.add(new ModeloMenu("asiento","Asientos", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("Funciones", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("funcion","Funciones", ModeloMenu.TipoMenu.MENU));
         subMenusNucleo.add(new ModeloMenu("Prueba", ModeloMenu.TipoMenu.MENU));//agreggar
 
         // --- SUBMENÚ: Producto ---
         List<ModeloMenu> subMenusConcesion = new ArrayList<>();
-        subMenusConcesion.add(new ModeloMenu("Producto", ModeloMenu.TipoMenu.MENU));
-        subMenusConcesion.add(new ModeloMenu("Lote Inventario", ModeloMenu.TipoMenu.MENU));
+        subMenusConcesion.add(new ModeloMenu("hand_package","Producto", ModeloMenu.TipoMenu.MENU));
+        subMenusConcesion.add(new ModeloMenu("inventario","Lote Inventario", ModeloMenu.TipoMenu.MENU));
 
         // --- SUBMENU: Gestion Interna ---
         List<ModeloMenu> subMenusGestion = new ArrayList<>();
-        subMenusGestion.add(new ModeloMenu("emp", "Empleados", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("usuario", "Usuarios", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("rol", "Roles", ModeloMenu.TipoMenu.MENU));
+        subMenusGestion.add(new ModeloMenu("grupo", "Empleados", ModeloMenu.TipoMenu.MENU));
+        subMenusGestion.add(new ModeloMenu("user", "Usuarios", ModeloMenu.TipoMenu.MENU));
+        subMenusGestion.add(new ModeloMenu("asignar_rol", "Roles", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("permiso","Permisos", ModeloMenu.TipoMenu.MENU));
 //        subMenusGestion.add(new ModeloMenu("moderator-24","Roles y Permisos", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("pago", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
+        subMenusGestion.add(new ModeloMenu("payments", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
 
         // ---SUBMENU: Ventas ---
         List<ModeloMenu> subMenuVentas = new ArrayList<>();
-        subMenuVentas.add(new ModeloMenu("Factura Taquilla", ModeloMenu.TipoMenu.MENU));
-        subMenuVentas.add(new ModeloMenu("Factura Concesion", ModeloMenu.TipoMenu.MENU));
-        subMenuVentas.add(new ModeloMenu("Boletos", ModeloMenu.TipoMenu.MENU));
+        subMenuVentas.add(new ModeloMenu("factura","Factura Taquilla", ModeloMenu.TipoMenu.MENU));
+        subMenuVentas.add(new ModeloMenu("factura","Factura Concesion", ModeloMenu.TipoMenu.MENU));
+        subMenuVentas.add(new ModeloMenu("ticket","Boletos", ModeloMenu.TipoMenu.MENU));
 
         // -----------------------------------------------------------
         // AÑADIR AL MENU PRINCIPAL
         // ÍTEM PADRE (Tipo: SUB_MENU)
-        listaMenu1.addItem(new ModeloMenu("home", "INICIO", ModeloMenu.TipoMenu.MENU));
+        listaMenu1.addItem(new ModeloMenu("home_24", "INICIO", ModeloMenu.TipoMenu.MENU));
 //        listaMenu1.addItem(new ModeloMenu(" ", " ", ModeloMenu.TipoMenu.VACIO));
-        listaMenu1.addItem(new ModeloMenu("nucleoCine", "Nucleo Del Cine", subMenusNucleo));
-        listaMenu1.addItem(new ModeloMenu("gestion", "Gestion Interna", subMenusGestion));
+        listaMenu1.addItem(new ModeloMenu("theaters", "Nucleo Del Cine", subMenusNucleo));
+        listaMenu1.addItem(new ModeloMenu("settings", "Gestion Interna", subMenusGestion));
 
         // ÍTEM PADRE (Tipo: SUB_MENU)
-        listaMenu1.addItem(new ModeloMenu("menuProducto", "Productos", subMenusConcesion));
+        listaMenu1.addItem(new ModeloMenu("storefront", "Productos", subMenusConcesion));
 
-        listaMenu1.addItem(new ModeloMenu("ventas", "Ventas", subMenuVentas));
+        listaMenu1.addItem(new ModeloMenu("sell", "Ventas", subMenuVentas));
         listaMenu1.addItem(new ModeloMenu(" ", " ", ModeloMenu.TipoMenu.VACIO));
 
     }

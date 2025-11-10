@@ -40,14 +40,14 @@ public class ControladorPermisoRol {
         this.idRolActual = idRol;
         this.nombreRolActual = nombreRol;
         this.vistaActual = vista;
-        vista.lblTitulo.setText("Permisos del Rol: " + nombreRol);
+        vista.lblTitulo.setText("Rol seleccionado:  " + nombreRol);
         vista.btnCambios.addActionListener(e -> guardarCambiosPermisos(vista.tbDatos));
         vista.btnAsignar.addActionListener(e -> mostrarModalAsignarPermiso());
         recargarTabla();
     }
 
     public void recargarTabla() {
-        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"ID_P", "Permiso", "Asignado", "ID_PR"}, 0) {
+        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"ID_P", "Permiso", "Tiene permiso", "ID_PR"}, 0) {
             @Override
             public Class<?> getColumnClass(int column) {
                 return (column == 2) ? Boolean.class : super.getColumnClass(column);
