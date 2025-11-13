@@ -43,31 +43,31 @@ public class Menu extends javax.swing.JPanel {
     private void init() {
         // --- SUBMENU: NucleoCine ---
         List<ModeloMenu> subMenusNucleo = new ArrayList<>();
-        subMenusNucleo.add(new ModeloMenu("movie","Peliculas", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("sala","Salas", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("asiento","Asientos", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("funcion","Funciones", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("movie", "Peliculas", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("sala", "Salas", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("asiento", "Asientos", ModeloMenu.TipoMenu.MENU));
+        subMenusNucleo.add(new ModeloMenu("funcion", "Funciones", ModeloMenu.TipoMenu.MENU));
         subMenusNucleo.add(new ModeloMenu("Prueba", ModeloMenu.TipoMenu.MENU));//agreggar
 
         // --- SUBMENÚ: Producto ---
         List<ModeloMenu> subMenusConcesion = new ArrayList<>();
-        subMenusConcesion.add(new ModeloMenu("hand_package","Producto", ModeloMenu.TipoMenu.MENU));
-        subMenusConcesion.add(new ModeloMenu("inventario","Lote Inventario", ModeloMenu.TipoMenu.MENU));
+        subMenusConcesion.add(new ModeloMenu("hand_package", "Producto", ModeloMenu.TipoMenu.MENU));
+        subMenusConcesion.add(new ModeloMenu("inventario", "Lote Inventario", ModeloMenu.TipoMenu.MENU));
 
         // --- SUBMENU: Gestion Interna ---
         List<ModeloMenu> subMenusGestion = new ArrayList<>();
         subMenusGestion.add(new ModeloMenu("grupo", "Empleados", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("user", "Usuarios", ModeloMenu.TipoMenu.MENU));
         subMenusGestion.add(new ModeloMenu("asignar_rol", "Roles", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("permiso","Permisos", ModeloMenu.TipoMenu.MENU));
+        subMenusGestion.add(new ModeloMenu("permiso", "Permisos", ModeloMenu.TipoMenu.MENU));
 //        subMenusGestion.add(new ModeloMenu("moderator-24","Roles y Permisos", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("payments", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
 
         // ---SUBMENU: Ventas ---
         List<ModeloMenu> subMenuVentas = new ArrayList<>();
-        subMenuVentas.add(new ModeloMenu("factura","Factura Taquilla", ModeloMenu.TipoMenu.MENU));
-        subMenuVentas.add(new ModeloMenu("factura","Factura Concesion", ModeloMenu.TipoMenu.MENU));
-        subMenuVentas.add(new ModeloMenu("ticket","Boletos", ModeloMenu.TipoMenu.MENU));
+        subMenuVentas.add(new ModeloMenu("factura", "Factura Taquilla", ModeloMenu.TipoMenu.MENU));
+        subMenuVentas.add(new ModeloMenu("factura", "Factura Concesion", ModeloMenu.TipoMenu.MENU));
+        subMenuVentas.add(new ModeloMenu("ticket", "Boletos", ModeloMenu.TipoMenu.MENU));
+        subMenuVentas.add(new ModeloMenu("payments", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
 
         // -----------------------------------------------------------
         // AÑADIR AL MENU PRINCIPAL

@@ -5,6 +5,7 @@ import com.ues.edu.modelo.dao.FuncionDAO;
 import com.ues.edu.modelo.dao.PeliculaDAO;
 import com.ues.edu.modelo.dao.SalaDAO;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
+import com.ues.edu.utilidades.CustomDateFormatter;
 import com.ues.edu.vista.Mantenimiento;
 import com.ues.edu.vista.ModalFunciones;
 import ds.desktop.notify.DesktopNotify;
@@ -18,7 +19,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
-import java.time.format.DateTimeFormatter;
 
 public class ControladorFunciones {
 
@@ -28,8 +28,7 @@ public class ControladorFunciones {
     private final SalaDAO daoSala;
     private Funcion funcionSelect;
     private ListaSimpleCircular<Funcion> listaFunciones;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
+    
     public ControladorFunciones(Mantenimiento mantto) {
         this.mantto = mantto;
         this.daoFuncion = new FuncionDAO();
@@ -140,7 +139,7 @@ public class ControladorFunciones {
                 f.getIdFuncion(),
                 f.getPeliculaTitulo(),
                 f.getSalaNombre(),
-                f.getFechaHoraInicio().format(formatter),
+                CustomDateFormatter.format(f.getFechaHoraInicio()),
                 String.format("$%.2f", f.getPrecioBoleto())
             };
             modeloTabla.addRow(fila);
@@ -150,7 +149,7 @@ public class ControladorFunciones {
         mantto.tbDatos.setRowSorter(sorter);
         mantto.tbDatos.setModel(modeloTabla);
 
-        int[] anchos = {30, 200, 150, 150, 50};
+        int[] anchos = {30, 200, 150, 180, 50};
         TableColumnModel columnModel = mantto.tbDatos.getColumnModel();
         for (int i = 0; i < Math.min(anchos.length, columnModel.getColumnCount()); i++) {
             columnModel.getColumn(i).setPreferredWidth(anchos[i]);
