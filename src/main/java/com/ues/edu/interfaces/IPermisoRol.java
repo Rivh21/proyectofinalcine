@@ -4,6 +4,7 @@
  */
 package com.ues.edu.interfaces;
 
+import com.ues.edu.modelo.Permiso;
 import com.ues.edu.modelo.PermisoRol;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 
@@ -12,16 +13,27 @@ import com.ues.edu.modelo.estructuras.ListaSimple;
  * @author jorge
  */
 public interface IPermisoRol {
+    
+     ListaSimple<PermisoRol> selectAll();
 
-    public ListaSimple<PermisoRol> selectAll();
+    ListaSimple<PermisoRol> selectAllTo(String atributo, String condicion);
 
-    public ListaSimple<PermisoRol> selectAllTo(String atributo, String condicion);
+    ListaSimple<PermisoRol> buscar(String dato);
 
-    public ListaSimple<PermisoRol> buscar(String dato);
+    boolean insert(PermisoRol obj);
 
-    public boolean insert(PermisoRol obj);
+    boolean update(PermisoRol obj);
 
-    public boolean update(PermisoRol obj);
+    boolean delete(PermisoRol obj);
 
-    public boolean delete(PermisoRol obj);
+    ListaSimple<PermisoRol> selectByRol(int idRol);
+
+    boolean actualizarEstadoPermiso(int idRol, int idPermiso, boolean tienePermiso);
+
+    ListaSimple<Permiso> selectAllPermisos();
+
+    ListaSimple<Permiso> obtenerIdPorNombre(String nombrePermiso);
+
+    boolean existePermisoRol(int idRol, int idPermiso);
+
 }

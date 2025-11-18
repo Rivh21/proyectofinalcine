@@ -11,11 +11,13 @@ import com.ues.edu.vista.ModalFunciones;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
 
-/**
- * 
- * @author radon
- */
-import javax.swing.SwingUtilities;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
@@ -26,100 +28,167 @@ public class ControladorFunciones {
     private final FuncionDAO daoFuncion;
     private final PeliculaDAO daoPelicula;
     private final SalaDAO daoSala;
+
     private Funcion funcionSelect;
-    private ListaSimpleCircular<Funcion> listaFunciones;
-    
+    private ListaSimpleCircular<Funcion> listaActualMostrada;
+    private DefaultTableModel modelo;
+
     public ControladorFunciones(Mantenimiento mantto) {
         this.mantto = mantto;
         this.daoFuncion = new FuncionDAO();
         this.daoPelicula = new PeliculaDAO();
         this.daoSala = new SalaDAO();
-        this.listaFunciones = new ListaSimpleCircular<>();
 
-        cargarLista();
+        this.listaActualMostrada = daoFuncion.selectAll();
+
         onClickTabla();
         onClickAgregar();
         onClickEditar();
         onClickEliminar();
         keyReleasedBuscar();
+        mostrar(listaActualMostrada);
 
-        this.mantto.btnEditar.setEnabled(false);
-        this.mantto.btnEliminar.setEnabled(false);
-    }
-
-    public void cargarLista() {
-        listaFunciones = daoFuncion.selectAll();
-        funcionSelect = null;
         mantto.btnEditar.setEnabled(false);
         mantto.btnEliminar.setEnabled(false);
-        mostrar(listaFunciones);
     }
 
     private void onClickAgregar() {
-        mantto.btnAgregar.addActionListener(e -> {
-            ModalFunciones mf = new ModalFunciones(
-                    (java.awt.Frame) SwingUtilities.getWindowAncestor(mantto),
-                    true,
-                    "Agregar Función"
-            );
+        mantto.btnAgregar.addActionListener((e) -> {
+            ModalFunciones mf = new ModalFunciones(new JFrame(), true, "Agregar Función");
             new ControladorModalFunciones(this, mf);
             mf.setVisible(true);
         });
     }
 
     private void onClickEditar() {
-        mantto.btnEditar.addActionListener(e -> {
+        mantto.btnEditar.addActionListener((e) -> {
             if (funcionSelect == null) {
+                JOptionPane.showMessageDialog(null,
+                        "Seleccione una función para editar.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            ModalFunciones mf = new ModalFunciones(
-                    (java.awt.Frame) SwingUtilities.getWindowAncestor(mantto),
-                    true,
-                    "Editar Función"
-            );
+
+            ModalFunciones mf = new ModalFunciones(new JFrame(), true, "Editar Función");
             new ControladorModalFunciones(this, mf, funcionSelect);
             mf.setVisible(true);
         });
     }
 
     private void onClickEliminar() {
-        mantto.btnEliminar.addActionListener(e -> {
+        mantto.btnEliminar.addActionListener((e) -> {
             if (funcionSelect == null) {
+                JOptionPane.showMessageDialog(null,
+                        "Seleccione una función para eliminar.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            int op = javax.swing.JOptionPane.showConfirmDialog(
-                    mantto,
-                    "¿Seguro que quiere eliminar permanentemente la función?",
+            int op = JOptionPane.showConfirmDialog(
+                    this.mantto,
+                    "¿Seguro que quiere eliminar permanentemente la función?\nEsta acción no se puede deshacer.",
                     "Confirmar Eliminación",
-                    javax.swing.JOptionPane.YES_NO_OPTION
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
             );
 
-            if (op == javax.swing.JOptionPane.YES_OPTION) {
+            if (op == JOptionPane.YES_OPTION) {
+
                 if (daoFuncion.delete(funcionSelect)) {
+
+                    // ✔ Notificación original (NO SE REMOVE)
                     DesktopNotify.setDefaultTheme(NotifyTheme.Green);
-                    DesktopNotify.showDesktopMessage("OK", "Función eliminada", DesktopNotify.SUCCESS, 3000);
-                    cargarLista();
+                    DesktopNotify.showDesktopMessage(
+                            "OK",
+                            "Función eliminada",
+                            DesktopNotify.SUCCESS,
+                            3000
+                    );
+
+                    mostrar(daoFuncion.selectAll());
+
                 } else {
+
+                    // ✔ Notificación original (NO SE REMOVE)
                     DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-                    DesktopNotify.showDesktopMessage("Error", "No se pudo eliminar la función", DesktopNotify.ERROR, 3000);
+                    DesktopNotify.showDesktopMessage(
+                            "Error",
+                            "No se pudo eliminar la función",
+                            DesktopNotify.ERROR,
+                            3000
+                    );
                 }
             }
         });
     }
 
-    private void onClickTabla() {
-        mantto.tbDatos.addMouseListener(new java.awt.event.MouseAdapter() {
+    private void keyReleasedBuscar() {
+        mantto.tfBuscar.addKeyListener(new KeyAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
+            public void keyReleased(KeyEvent e) {
+                String texto = mantto.tfBuscar.getText().trim();
+
+                ListaSimpleCircular<Funcion> lista;
+                if (texto.isEmpty()) {
+                    lista = daoFuncion.selectAll();
+                } else {
+                    lista = daoFuncion.buscar(texto);
+                }
+
+                mostrar(lista);
+            }
+        });
+    }
+
+    public void mostrar(ListaSimpleCircular<Funcion> lista) {
+        this.listaActualMostrada = lista;
+
+        modelo = new DefaultTableModel();
+        String titulos[] = {"ID", "PELÍCULA", "SALA", "FECHA Y HORA", "PRECIO"};
+        modelo.setColumnIdentifiers(titulos);
+
+        for (Funcion f : lista.toArray()) {
+            Object[] fila = {
+                f.getIdFuncion(),
+                f.getPeliculaTitulo(),
+                f.getSalaNombre(),
+                CustomDateFormatter.format(f.getFechaHoraInicio()),
+                String.format("$%.2f", f.getPrecioBoleto())
+            };
+            modelo.addRow(fila);
+        }
+
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
+        mantto.tbDatos.setRowSorter(sorter);
+        mantto.tbDatos.setModel(modelo);
+
+        int[] anchos = {30, 200, 150, 180, 50};
+        ajustarAnchoColumnas(anchos);
+    }
+
+    private void onClickTabla() {
+        mantto.tbDatos.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+
                 int rowVista = mantto.tbDatos.getSelectedRow();
+
                 if (rowVista >= 0) {
                     int rowModelo = mantto.tbDatos.convertRowIndexToModel(rowVista);
                     int id = (Integer) mantto.tbDatos.getModel().getValueAt(rowModelo, 0);
 
-                    funcionSelect = daoFuncion.buscarPorId(id);
+                    funcionSelect = null;
+                    for (Funcion f : listaActualMostrada.toArray()) {
+                        if (f.getIdFuncion() == id) {
+                            funcionSelect = f;
+                            break;
+                        }
+                    }
 
-                    boolean seleccionado = funcionSelect != null;
+                    boolean seleccionado = (funcionSelect != null);
+
                     mantto.btnEditar.setEnabled(seleccionado);
                     mantto.btnEliminar.setEnabled(seleccionado);
                     mantto.btnAgregar.setEnabled(!seleccionado);
@@ -128,44 +197,10 @@ public class ControladorFunciones {
         });
     }
 
-    public void mostrar(ListaSimpleCircular<Funcion> lista) {
-        DefaultTableModel modeloTabla = new DefaultTableModel();
-        String titulos[] = {"ID", "PELÍCULA", "SALA", "FECHA Y HORA", "PRECIO"};
-        modeloTabla.setColumnIdentifiers(titulos);
-
-        for (Object obj : lista.toArray()) {
-            Funcion f = (Funcion) obj;
-            Object[] fila = {
-                f.getIdFuncion(),
-                f.getPeliculaTitulo(),
-                f.getSalaNombre(),
-                CustomDateFormatter.format(f.getFechaHoraInicio()),
-                String.format("$%.2f", f.getPrecioBoleto())
-            };
-            modeloTabla.addRow(fila);
-        }
-
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modeloTabla);
-        mantto.tbDatos.setRowSorter(sorter);
-        mantto.tbDatos.setModel(modeloTabla);
-
-        int[] anchos = {30, 200, 150, 180, 50};
+    private void ajustarAnchoColumnas(int[] anchos) {
         TableColumnModel columnModel = mantto.tbDatos.getColumnModel();
         for (int i = 0; i < Math.min(anchos.length, columnModel.getColumnCount()); i++) {
             columnModel.getColumn(i).setPreferredWidth(anchos[i]);
         }
-    }
-
-    private void keyReleasedBuscar() {
-        mantto.tfBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent e) {
-                String texto = mantto.tfBuscar.getText().trim();
-                ListaSimpleCircular<Funcion> listaFiltrada
-                        = texto.isEmpty() ? daoFuncion.selectAll() : daoFuncion.buscar(texto);
-
-                mostrar(listaFiltrada);
-            }
-        });
     }
 }

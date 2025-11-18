@@ -24,4 +24,8 @@ public interface IPermiso {
     public boolean update(Permiso obj);
 
     public boolean delete(Permiso obj);
+    
+    ListaSimple<Permiso> selectAllPermisos();
+
+    ListaSimple<Permiso> obtenerIdPorNombre(String nombrePermiso);
 }

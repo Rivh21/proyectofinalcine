@@ -7,6 +7,7 @@ import com.ues.edu.vista.Mantenimiento;
 import com.ues.edu.vista.ModalSalas;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
+import javax.swing.JFrame;
 
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
@@ -72,31 +73,20 @@ public class ControladorSala {
     }
 
     private void onClickAgregar() {
-        mantto.btnAgregar.addActionListener(e -> {
-            ModalSalas ms = new ModalSalas(
-                    (java.awt.Frame) SwingUtilities.getWindowAncestor(mantto),
-                    true,
-                    "Agregar Sala"
-            );
-            new ControladorModalSala(this, ms);
-            ms.setVisible(true);
-        });
-    }
+    mantto.btnAgregar.addActionListener((e) -> {
+        ModalSalas ms = new ModalSalas(new JFrame(),true, "Agregar Sala");
+        new ControladorModalSala(this, ms);
+        ms.setVisible(true);
+    });
+}
 
-    private void onClickEditar() {
-        mantto.btnEditar.addActionListener(e -> {
-            if (salaSelect == null) return;
-
-            ModalSalas ms = new ModalSalas(
-                    (java.awt.Frame) SwingUtilities.getWindowAncestor(mantto),
-                    true,
-                    "Editar Sala"
-            );
-            new ControladorModalSala(this, ms, salaSelect);
-            ms.setVisible(true);
-        });
-    }
-
+private void onClickEditar() {
+    mantto.btnEditar.addActionListener((e) -> {
+        ModalSalas ms = new ModalSalas(new JFrame(),true,"Editar Sala");
+        new ControladorModalSala(this, ms, salaSelect);
+        ms.setVisible(true);
+    });
+}
     private void onClickEliminar() {
         mantto.btnEliminar.addActionListener(e -> {
             if (salaSelect == null) return;

@@ -1,8 +1,10 @@
 package com.ues.edu.controlador;
+
 /**
  *
  * @author radon
  */
+
 import com.ues.edu.modelo.Funcion;
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.Sala;
@@ -42,6 +44,7 @@ public class ControladorModalFunciones {
         this.daoPelicula = new PeliculaDAO();
         this.daoSala = new SalaDAO();
         this.funcionSelect = funcionSelect;
+
         cargarSalas();
         if (funcionSelect != null) cargarDatos();
         onClickGuardar();
@@ -94,8 +97,18 @@ public class ControladorModalFunciones {
             funcion.setSalaNombre(sala.getNombreSala());
 
             if (daoFuncion.insert(funcion)) {
+
+                // ✔ NOTIFICACIÓN DE AGREGADO
+                DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                DesktopNotify.showDesktopMessage(
+                        "Función agregada",
+                        "La función se registró correctamente",
+                        DesktopNotify.SUCCESS, 3500
+                );
+
                 mf.dispose();
                 cf.mostrar(daoFuncion.selectAll());
+
             } else {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error", "No se pudo agregar la función", DesktopNotify.ERROR, 3000);
@@ -117,8 +130,18 @@ public class ControladorModalFunciones {
             funcionSelect.setSalaNombre(sala.getNombreSala());
 
             if (daoFuncion.update(funcionSelect)) {
+
+                // ✔ NOTIFICACIÓN DE ACTUALIZACIÓN
+                DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                DesktopNotify.showDesktopMessage(
+                        "Función actualizada",
+                        "Los datos fueron modificados correctamente",
+                        DesktopNotify.SUCCESS, 3500
+                );
+
                 mf.dispose();
                 cf.mostrar(daoFuncion.selectAll());
+
             } else {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error", "No se pudo actualizar la función", DesktopNotify.ERROR, 3000);
@@ -166,30 +189,39 @@ public class ControladorModalFunciones {
             if (f.getIdSala() == sala.getIdSala() &&
                 f.getFechaHoraInicio().isEqual(fecha) &&
                 f.getIdPelicula() != pelicula.getIdPelicula()) {
+
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-                DesktopNotify.showDesktopMessage("Error",
+                DesktopNotify.showDesktopMessage(
+                        "Error",
                         "Ya hay otra película programada a esa hora en la misma sala",
-                        DesktopNotify.ERROR, 3000);
+                        DesktopNotify.ERROR, 3000
+                );
                 return false;
             }
 
             if (f.getIdPelicula() == pelicula.getIdPelicula() &&
                 f.getFechaHoraInicio().isEqual(fecha) &&
                 f.getIdSala() != sala.getIdSala()) {
+
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-                DesktopNotify.showDesktopMessage("Error",
+                DesktopNotify.showDesktopMessage(
+                        "Error",
                         "La misma película ya está programada en otra sala a esa hora",
-                        DesktopNotify.ERROR, 3000);
+                        DesktopNotify.ERROR, 3000
+                );
                 return false;
             }
 
             if (f.getIdPelicula() == pelicula.getIdPelicula() &&
                 f.getIdSala() == sala.getIdSala() &&
                 f.getFechaHoraInicio().isEqual(fecha)) {
+
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-                DesktopNotify.showDesktopMessage("Error",
+                DesktopNotify.showDesktopMessage(
+                        "Error",
                         "La película ya está programada en esta sala a esta hora",
-                        DesktopNotify.ERROR, 3000);
+                        DesktopNotify.ERROR, 3000
+                );
                 return false;
             }
         }
