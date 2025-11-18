@@ -16,7 +16,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author jorge
  */
 public class Test {
-
+//prueba
     public static void main(String[] args) {
         // Aplicar FlatLaf globalmente
 //        try {
