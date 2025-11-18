@@ -13,7 +13,7 @@ import com.ues.edu.modelo.estructuras.ListaSimple;
  * @author jorge
  */
 public interface IPermisoRol {
-    
+    //cambios inter
      ListaSimple<PermisoRol> selectAll();
 
     ListaSimple<PermisoRol> selectAllTo(String atributo, String condicion);
