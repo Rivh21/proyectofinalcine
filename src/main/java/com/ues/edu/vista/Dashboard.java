@@ -10,6 +10,7 @@ import com.ues.edu.controlador.ControladorFunciones;
 import com.ues.edu.controlador.ControladorMetodoPago;
 import com.ues.edu.controlador.ControladorPeliculas;
 import com.ues.edu.controlador.ControladorPermiso;
+import com.ues.edu.controlador.ControladorProducto;
 import com.ues.edu.controlador.ControladorPrueba;
 import com.ues.edu.controlador.ControladorRol;
 import com.ues.edu.controlador.ControladorSala;
@@ -244,6 +245,12 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 ControladorMetodoPago cmp = new ControladorMetodoPago(mantto);
                 showJPanel(mantto);
             }
+            case "Producto" -> {
+                Mantenimiento mantto = new Mantenimiento("Producto");
+                ControladorProducto ctrlPro = new ControladorProducto(mantto);
+                showJPanel(mantto);
+            }
+            
 
             case "Usuarios" -> {
                 Mantenimiento mantto = new Mantenimiento("Usuarios");

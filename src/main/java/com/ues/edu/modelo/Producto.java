@@ -1,22 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ues.edu.modelo;
-
-import java.util.List;
 
 /**
  *
- * @author DELL LATITUDE
+ * @author radon
  */
 public class Producto {
 
     private int idProducto;
     private String nombre;
     private Double precioVenta;
-    private String stockActual;
-    private List<DetalleConsecion> detalleonsecion;
 
     public Producto() {
     }
@@ -25,11 +17,10 @@ public class Producto {
         this.idProducto = idProducto;
     }
 
-    public Producto(String nombre, Double precioVenta, String stockActual, List<DetalleConsecion> detalleonsecion) {
+    public Producto(int idProducto, String nombre, Double precioVenta) {
+        this.idProducto = idProducto;
         this.nombre = nombre;
         this.precioVenta = precioVenta;
-        this.stockActual = stockActual;
-        this.detalleonsecion = detalleonsecion;
     }
 
     public int getIdProducto() {
@@ -56,25 +47,8 @@ public class Producto {
         this.precioVenta = precioVenta;
     }
 
-    public String getStockActual() {
-        return stockActual;
-    }
-
-    public void setStockActual(String stockActual) {
-        this.stockActual = stockActual;
-    }
-
-    public List<DetalleConsecion> getDetalleonsecion() {
-        return detalleonsecion;
-    }
-
-    public void setDetalleonsecion(List<DetalleConsecion> detalleonsecion) {
-        this.detalleonsecion = detalleonsecion;
-    }
-
     @Override
     public String toString() {
-        return "Producto{" + "idProducto=" + idProducto + ", nombre=" + nombre + ", precioVenta=" + precioVenta + ", stockActual=" + stockActual + ", detalleonsecion=" + detalleonsecion + '}';
+        return nombre;
     }
-
 }
