@@ -1,13 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ues.edu.controlador;
-
-/**
- *
- * @author radon
- */
 
 import com.ues.edu.modelo.Producto;
 import com.ues.edu.modelo.dao.ProductoDao;
@@ -16,6 +7,7 @@ import com.ues.edu.vista.Mantenimiento;
 import com.ues.edu.vista.ModalProducto;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -26,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
-
 
 public class ControladorProducto {
 
@@ -40,33 +31,37 @@ public class ControladorProducto {
         daoProducto = new ProductoDao();
         this.mantto = mantto;
         this.pilaActualMostrada = daoProducto.selectAll();
+
         onClickTabla();
         onClickAgregar();
         onClickEditar();
         onClickEliminar();
         keyReleasedBuscar();
+
         mostrar(pilaActualMostrada);
         this.mantto.btnEditar.setEnabled(false);
         this.mantto.btnEliminar.setEnabled(false);
     }
 
+    public ProductoDao getDaoProducto() {
+        return daoProducto; // Getter para que ModalProducto use el mismo DAO
+    }
+
     private void onClickAgregar() {
-    mantto.btnAgregar.addActionListener((e) -> {
-        ModalProducto mp = new ModalProducto(new JFrame(), true, "Agregar Producto");
-        new ControladorModalProducto(this, mp);
-        mp.setVisible(true);
-    });
-}
+        mantto.btnAgregar.addActionListener((e) -> {
+            ModalProducto mp = new ModalProducto(new JFrame(), true, "Agregar Producto");
+            new ControladorModalProducto(this, mp); // usa DAO compartido
+            mp.setVisible(true);
+        });
+    }
 
-
-   private void onClickEditar() {
-    mantto.btnEditar.addActionListener((e) -> {
-        ModalProducto mp = new ModalProducto(new JFrame(), true, "Editar Producto");
-        new ControladorModalProducto(this, mp, productoSelect);
-        mp.setVisible(true);
-    });
-}
-
+    private void onClickEditar() {
+        mantto.btnEditar.addActionListener((e) -> {
+            ModalProducto mp = new ModalProducto(new JFrame(), true, "Editar Producto");
+            new ControladorModalProducto(this, mp, productoSelect); // usa DAO compartido
+            mp.setVisible(true);
+        });
+    }
 
     private void onClickEliminar() {
         mantto.btnEliminar.addActionListener((e) -> {
@@ -85,14 +80,11 @@ public class ControladorProducto {
             );
 
             if (op == JOptionPane.YES_OPTION) {
-
                 if (daoProducto.delete(productoSelect)) {
                     DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                     DesktopNotify.showDesktopMessage("OK", "Producto eliminado.",
                             DesktopNotify.SUCCESS, 3000);
-
-                    mostrar(daoProducto.selectAll());
-
+                    cargarLista();
                 } else {
                     JOptionPane.showMessageDialog(null,
                             "No se pudo eliminar el producto.",
@@ -122,7 +114,6 @@ public class ControladorProducto {
                     porNombre = daoProducto.buscarNombre(texto);
 
                     pila = new Pila<>();
-
                     if (porId != null) pila.push(porId);
                     if (porNombre != null) pila.push(porNombre);
                 }
@@ -191,12 +182,8 @@ public class ControladorProducto {
             columnModel.getColumn(i).setPreferredWidth(anchos[i]);
         }
     }
- public void cargarLista() {
-    mostrar(daoProducto.selectAll());
+
+    public void cargarLista() {
+        mostrar(daoProducto.selectAll());
+    }
 }
-
-
-}
-
-
-

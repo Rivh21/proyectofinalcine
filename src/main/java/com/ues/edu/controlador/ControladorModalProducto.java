@@ -1,8 +1,4 @@
 package com.ues.edu.controlador;
-/**
- *
- * @author radon
- */
 
 import com.ues.edu.modelo.Producto;
 import com.ues.edu.modelo.dao.ProductoDao;
@@ -24,11 +20,10 @@ public class ControladorModalProducto {
     public ControladorModalProducto(ControladorProducto controladorProducto, ModalProducto mp, Producto productoSelect) {
         this.controladorProducto = controladorProducto;
         this.mp = mp;
-        this.dao = new ProductoDao();
+        this.dao = controladorProducto.getDaoProducto(); // usar mismo DAO
         this.productoSelect = productoSelect;
 
         if (productoSelect != null) cargarDatos();
-
         onClickGuardar();
     }
 
@@ -60,9 +55,7 @@ public class ControladorModalProducto {
             boolean exito;
 
             if (productoSelect == null) {
-
                 Producto nuevo = new Producto(0, nombre, precio);
-
                 exito = dao.insert(nuevo);
 
                 if (exito) {
@@ -70,12 +63,9 @@ public class ControladorModalProducto {
                     DesktopNotify.showDesktopMessage("OK", "Producto agregado correctamente",
                             DesktopNotify.SUCCESS, 3000);
                 }
-
             } else {
-
                 productoSelect.setNombre(nombre);
                 productoSelect.setPrecioVenta(precio);
-
                 exito = dao.update(productoSelect);
 
                 if (exito) {
@@ -86,7 +76,7 @@ public class ControladorModalProducto {
             }
 
             if (exito) {
-                controladorProducto.cargarLista();
+                controladorProducto.cargarLista(); // refresca la tabla
                 mp.dispose();
             }
         });

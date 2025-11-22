@@ -7,6 +7,7 @@ package com.ues.edu.vista;
 import com.ues.edu.controlador.ControladorAsiento;
 import com.ues.edu.controlador.ControladorEmpleado;
 import com.ues.edu.controlador.ControladorFunciones;
+import com.ues.edu.controlador.ControladorLotesInventario;
 import com.ues.edu.controlador.ControladorMetodoPago;
 import com.ues.edu.controlador.ControladorPeliculas;
 import com.ues.edu.controlador.ControladorPermiso;
@@ -248,6 +249,11 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
             case "Producto" -> {
                 Mantenimiento mantto = new Mantenimiento("Producto");
                 ControladorProducto ctrlPro = new ControladorProducto(mantto);
+                showJPanel(mantto);
+            }
+            case "Lote Inventario" -> {
+                Mantenimiento mantto = new Mantenimiento("Producto");
+                ControladorLotesInventario ctrlLote = new ControladorLotesInventario(mantto);
                 showJPanel(mantto);
             }
             

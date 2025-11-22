@@ -1,15 +1,12 @@
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.dao.PeliculaDAO;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
 import com.ues.edu.vista.VistaListado;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
@@ -29,7 +26,6 @@ public class ControladorListadoPeliculas {
         this.daoPelicula = new PeliculaDAO();
         this.listaActualMostrada = daoPelicula.selectAll();
         vistaLista.btnSeleccionar.setEnabled(false);
-
         keyReleasedBuscar();
         onClickTabla();
         onClickSeleccionar();
