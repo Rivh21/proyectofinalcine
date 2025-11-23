@@ -5,7 +5,6 @@
 package com.ues.edu.controlador;
 
 import com.ues.edu.modelo.FacturaTaquilla;
-import com.ues.edu.modelo.Rol;
 import com.ues.edu.modelo.dao.FacturaTaquillaDao;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 import com.ues.edu.vista.Mantenimiento;
