@@ -154,7 +154,12 @@ public class ControladorUsuario {
 
     public void mostrar(ListaSimple<Usuario> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"N", "NOMBRE USUARIO", "NOMBRE", "APELLIDO", "ROL"};
         modelo.setColumnIdentifiers(titulos);
         ArrayList<Usuario> listaUsuarios = lista.toArray();

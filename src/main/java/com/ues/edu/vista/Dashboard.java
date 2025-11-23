@@ -5,8 +5,10 @@
 package com.ues.edu.vista;
 
 import com.ues.edu.controlador.ControladorAsiento;
+import com.ues.edu.controlador.ControladorBoletos;
 import com.ues.edu.controlador.ControladorEmpleado;
 import com.ues.edu.controlador.ControladorFunciones;
+import com.ues.edu.controlador.ControladorLecturaFactura;
 import com.ues.edu.controlador.ControladorLotesInventario;
 import com.ues.edu.controlador.ControladorMetodoPago;
 import com.ues.edu.controlador.ControladorPeliculas;
@@ -18,6 +20,7 @@ import com.ues.edu.controlador.ControladorSala;
 import com.ues.edu.controlador.ControladorUsuario;
 import com.ues.edu.interfaces.HeaderMenuListener;
 import com.ues.edu.interfaces.MenuSelectionListener;
+import com.ues.edu.modelo.Usuario;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -36,8 +39,10 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
     private int targetWidth;
     private boolean menuVisible = true;
     private final javax.swing.JPanel panelSecundario;
+    private final Usuario usuarioLogueado;
 
-    public Dashboard() {
+    public Dashboard(Usuario usuario) {
+        this.usuarioLogueado = usuario;
         animador = new Timer(5, (ActionEvent e) -> {
             animateMenuWidth();
         });
@@ -256,12 +261,23 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 ControladorLotesInventario ctrlLote = new ControladorLotesInventario(mantto);
                 showJPanel(mantto);
             }
-            
 
             case "Usuarios" -> {
                 Mantenimiento mantto = new Mantenimiento("Usuarios");
                 ControladorUsuario cu = new ControladorUsuario(mantto);
                 showJPanel(mantto);
+            }
+
+            case "Factura Taquilla" -> {
+                Mantenimiento mantto = new Mantenimiento("Facturas");
+                ControladorLecturaFactura clf = new ControladorLecturaFactura(mantto);
+                showJPanel(mantto);
+            }
+
+            case "Boletos" -> {
+                VistaBoletos vb = new VistaBoletos("Boletos");
+                ControladorBoletos cb = new ControladorBoletos(vb, usuarioLogueado);
+                showJPanel(vb);
             }
 
             case "INICIO" -> {

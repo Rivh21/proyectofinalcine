@@ -152,7 +152,7 @@ public class Mantenimiento extends javax.swing.JPanel {
     public javax.swing.JButton btnAux;
     public javax.swing.JButton btnEditar;
     public javax.swing.JButton btnEliminar;
-    private javax.swing.JPanel fondo;
+    public javax.swing.JPanel fondo;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblTitulo;
     public javax.swing.JTable tbDatos;

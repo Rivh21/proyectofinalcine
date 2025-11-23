@@ -43,7 +43,7 @@ public class ModeloMenu {
     public ModeloMenu(String icon, String nombre, List<ModeloMenu> subMenus) {
         this(icon, nombre, TipoMenu.SUB_MENU);
         this.subMenus = subMenus;
-        // Marca a los hijos como subMenuChild
+        // Marca a los hijos como subMenu
         for (ModeloMenu sub : subMenus) {
             sub.setSubMenuChild(true);
         }
@@ -98,22 +98,22 @@ public class ModeloMenu {
     }
 
     public Icon toIcon() {
-        // 1. Verificar si hay un nombre de icono para buscar.
+        // 1. Verifica si hay un nombre de icono para buscar
         if (this.icono == null || this.icono.trim().isEmpty()) {
             return null;
         }
-        // 2. Construir la ruta usando la barra diagonal inicial '/' 
+        // 2. Construye la ruta usando la barra diagonal inicial  
         String path = "/iconos/" + this.icono + ".png";
 
-        // 3. Intentar obtener el recurso.
+        // 3. Intenta obtener el recurso.
         java.net.URL location = getClass().getResource(path);
 
-        // 4. Verificar si el recurso fue encontrado.
+        // 4. Verifica si el recurso fue encontrado
         if (location == null) {
             System.err.println("ERROR: Recurso de icono NO ENCONTRADO en la ruta: " + path);
             return new ImageIcon();
         }
-        // 5. Si se encuentra, crea y devuelve el ImageIcon.
+        // 5. Si se encuentra, crea y devuelve el ImageIcon
         return new ImageIcon(location);
     }
 }

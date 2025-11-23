@@ -122,7 +122,12 @@ public class ControladorEmpleado {
 
     public void mostrar(ListaSimple<Empleado> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"N", "NOMBRE", "APELLIDO", "DUI", "EMAIL", "TELÉFONO", "SALARIO"};
         modelo.setColumnIdentifiers(titulos);
         ArrayList<Empleado> listaEmpleados = lista.toArray();

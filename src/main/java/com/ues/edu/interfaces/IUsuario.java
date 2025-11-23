@@ -26,4 +26,6 @@ public interface IUsuario {
     public boolean delete(Usuario obj);
 
     public Usuario login(String usuario, String claveEncriptada);
+    
+    public boolean existeNombreUsuario(String nombreUsuario);
 }

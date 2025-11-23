@@ -4,53 +4,66 @@
  */
 package com.ues.edu.modelo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
  *
  * @author DELL LATITUDE
  */
-public class FacturaTaquilla implements Comparable<FacturaTaquilla> {
+public class FacturaTaquilla implements Comparable<FacturaTaquilla>{
 
-    private int idFacturaTaquilla;
-    private Double MontoTotal;
+    private String idFacturaTaquilla;
+    private BigDecimal MontoTotal;
+    private BigDecimal descuentoAplicado;
     private Usuario usuarios;
-    private MetodoPago metodopago;
+    private MetodoPago metodoPago;
     private Empleado empleado;
     private List<Boleto> boletos;
 
     public FacturaTaquilla() {
+        this.descuentoAplicado = BigDecimal.ZERO;
     }
 
-    public FacturaTaquilla(int idFacturaTaquilla, Double MontoTotal, Usuario usuarios, MetodoPago metodopago, Empleado empleado) {
+    public FacturaTaquilla(String idFacturaTaquilla, BigDecimal MontoTotal, BigDecimal descuentoAplicado, Usuario usuarios, MetodoPago metodoPago, Empleado empleado) {
         this.idFacturaTaquilla = idFacturaTaquilla;
         this.MontoTotal = MontoTotal;
+        this.descuentoAplicado = descuentoAplicado;
         this.usuarios = usuarios;
-        this.metodopago = metodopago;
+        this.metodoPago = metodoPago;
         this.empleado = empleado;
     }
 
-    public FacturaTaquilla(Double MontoTotal, Usuario usuarios, MetodoPago metodopago, Empleado empleado) {
+    public FacturaTaquilla(BigDecimal MontoTotal, BigDecimal descuentoAplicado, Usuario usuarios, MetodoPago metodoPago, Empleado empleado) {
         this.MontoTotal = MontoTotal;
+        this.descuentoAplicado = descuentoAplicado;
         this.usuarios = usuarios;
-        this.metodopago = metodopago;
+        this.metodoPago = metodoPago;
         this.empleado = empleado;
     }
 
-    public int getIdFacturaTaquilla() {
+    public String getIdFacturaTaquilla() {
         return idFacturaTaquilla;
     }
 
-    public void setIdFacturaTaquilla(int idFacturaTaquilla) {
+    public void setIdFacturaTaquilla(String idFacturaTaquilla) {
         this.idFacturaTaquilla = idFacturaTaquilla;
     }
 
-    public Double getMontoTotal() {
+    public BigDecimal getMontoTotal() {
         return MontoTotal;
     }
 
-    public void setMontoTotal(Double MontoTotal) {
+    public void setMontoTotal(BigDecimal MontoTotal) {
         this.MontoTotal = MontoTotal;
+    }
+
+    public BigDecimal getDescuentoAplicado() {
+        return descuentoAplicado;
+    }
+
+    public void setDescuentoAplicado(BigDecimal descuentoAplicado) {
+        this.descuentoAplicado = descuentoAplicado;
     }
 
     public Usuario getUsuarios() {
@@ -61,12 +74,12 @@ public class FacturaTaquilla implements Comparable<FacturaTaquilla> {
         this.usuarios = usuarios;
     }
 
-    public MetodoPago getMetodopago() {
-        return metodopago;
+    public MetodoPago getMetodoPago() {
+        return metodoPago;
     }
 
-    public void setMetodopago(MetodoPago metodopago) {
-        this.metodopago = metodopago;
+    public void setMetodoPago(MetodoPago metodoPago) {
+        this.metodoPago = metodoPago;
     }
 
     public Empleado getEmpleado() {
@@ -86,13 +99,8 @@ public class FacturaTaquilla implements Comparable<FacturaTaquilla> {
     }
 
     @Override
-    public String toString() {
-        return "FacturasTaquillas{" + "idFacturaTaquilla=" + idFacturaTaquilla + ", MontoTotal=" + MontoTotal + ", usuarios=" + usuarios + ", metodopago=" + metodopago + ", empleado=" + empleado + ", boletos=" + boletos + '}';
-    }
-
-    @Override
     public int compareTo(FacturaTaquilla o) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.idFacturaTaquilla.compareTo(o.idFacturaTaquilla);
     }
 
 }

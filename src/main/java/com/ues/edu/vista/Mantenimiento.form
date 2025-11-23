@@ -27,6 +27,9 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JPanel" name="fondo">
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">

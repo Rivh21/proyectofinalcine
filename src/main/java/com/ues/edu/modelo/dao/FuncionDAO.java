@@ -26,27 +26,27 @@ public class FuncionDAO implements IFuncion {
 
     @Override
     public ListaSimpleCircular<Funcion> selectAll() {
-        String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, " +
-                "f.id_sala, s.nombre_sala AS sala, " +
-                "f.fecha_hora_inicio, f.precio_boleto " +
-                "FROM funciones f " +
-                "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
-                "JOIN salas s ON f.id_sala = s.id_sala " +
-                "ORDER BY f.fecha_hora_inicio ASC";
+        String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, "
+                + "f.id_sala, s.nombre_sala AS sala, "
+                + "f.fecha_hora_inicio, f.precio_boleto "
+                + "FROM funciones f "
+                + "JOIN peliculas p ON f.id_pelicula = p.id_pelicula "
+                + "JOIN salas s ON f.id_sala = s.id_sala "
+                + "ORDER BY f.fecha_hora_inicio ASC";
         return select(sql);
     }
 
     @Override
     public ListaSimpleCircular<Funcion> buscar(String textoBusqueda) {
-        String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, " +
-                "f.id_sala, s.nombre_sala AS sala, " +
-                "f.fecha_hora_inicio, f.precio_boleto " +
-                "FROM funciones f " +
-                "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
-                "JOIN salas s ON f.id_sala = s.id_sala " +
-                "WHERE p.titulo LIKE '%" + textoBusqueda + "%' " +
-                "OR s.nombre_sala LIKE '%" + textoBusqueda + "%' " +
-                "ORDER BY f.fecha_hora_inicio ASC";
+        String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, "
+                + "f.id_sala, s.nombre_sala AS sala, "
+                + "f.fecha_hora_inicio, f.precio_boleto "
+                + "FROM funciones f "
+                + "JOIN peliculas p ON f.id_pelicula = p.id_pelicula "
+                + "JOIN salas s ON f.id_sala = s.id_sala "
+                + "WHERE p.titulo LIKE '%" + textoBusqueda + "%' "
+                + "OR s.nombre_sala LIKE '%" + textoBusqueda + "%' "
+                + "ORDER BY f.fecha_hora_inicio ASC";
         return select(sql);
     }
 
@@ -76,7 +76,9 @@ public class FuncionDAO implements IFuncion {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -87,13 +89,13 @@ public class FuncionDAO implements IFuncion {
 
     @Override
     public Funcion buscarPorId(int id) {
-        String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, " +
-                "f.id_sala, s.nombre_sala AS sala, " +
-                "f.fecha_hora_inicio, f.precio_boleto " +
-                "FROM funciones f " +
-                "JOIN peliculas p ON f.id_pelicula = p.id_pelicula " +
-                "JOIN salas s ON f.id_sala = s.id_sala " +
-                "WHERE f.id_funcion='" + id + "'";
+        String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, "
+                + "f.id_sala, s.nombre_sala AS sala, "
+                + "f.fecha_hora_inicio, f.precio_boleto "
+                + "FROM funciones f "
+                + "JOIN peliculas p ON f.id_pelicula = p.id_pelicula "
+                + "JOIN salas s ON f.id_sala = s.id_sala "
+                + "WHERE f.id_funcion='" + id + "'";
         ListaSimpleCircular<Funcion> lista = select(sql);
         Funcion obj = null;
         for (Funcion f : lista.toArray()) {
@@ -119,7 +121,9 @@ public class FuncionDAO implements IFuncion {
                 obj.setSalaNombre(rs.getString("sala"));
 
                 Timestamp ts = rs.getTimestamp("fecha_hora_inicio");
-                if (ts != null) obj.setFechaHoraInicio(ts.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                if (ts != null) {
+                    obj.setFechaHoraInicio(ts.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
+                }
 
                 obj.setPrecioBoleto(rs.getDouble("precio_boleto"));
 
@@ -131,8 +135,12 @@ public class FuncionDAO implements IFuncion {
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -157,12 +165,28 @@ public class FuncionDAO implements IFuncion {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
         return false;
+    }
+
+    @Override
+    public ListaSimpleCircular<Funcion> selectProximasFunciones() {
+        String sql = "SELECT f.id_funcion, f.id_pelicula, p.titulo AS pelicula, "
+                + "f.id_sala, s.nombre_sala AS sala, "
+                + "f.fecha_hora_inicio, f.precio_boleto "
+                + "FROM funciones f "
+                + "JOIN peliculas p ON f.id_pelicula = p.id_pelicula "
+                + "JOIN salas s ON f.id_sala = s.id_sala "
+                + "WHERE f.fecha_hora_inicio >= NOW() "
+                + // CLAUSULA CLAVE: Filtra funciones cuya hora de inicio sea AHORA o FUTURA
+                "ORDER BY f.fecha_hora_inicio ASC";
+        return select(sql);
     }
 }

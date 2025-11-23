@@ -1,4 +1,5 @@
 package com.ues.edu.controlador;
+
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.dao.PeliculaDAO;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
@@ -84,7 +85,12 @@ public class ControladorListadoPeliculas {
 
     public void mostrar(ListaSimpleCircular<Pelicula> lista) {
         listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "TÍTULO", "DURACIÓN", "GÉNERO", "CLASIFICACIÓN"};
         modelo.setColumnIdentifiers(titulos);
 

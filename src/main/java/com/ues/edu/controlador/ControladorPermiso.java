@@ -185,7 +185,12 @@ public class ControladorPermiso {
 
     public void mostrar(ListaSimple<Permiso> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "NOMBRE"};
         modelo.setColumnIdentifiers(titulos);
         ArrayList<Permiso> listaPermisos = lista.toArray();

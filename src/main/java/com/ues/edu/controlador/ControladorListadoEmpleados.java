@@ -49,11 +49,11 @@ public class ControladorListadoEmpleados {
                 String nombreCompleto = empleadoSelect.getNombre() + " " + empleadoSelect.getApellido();
 
                 int respuesta = JOptionPane.showConfirmDialog(
-                        vistaLista, 
+                        vistaLista,
                         "Una vez asignado, este empleado no podrá ser modificado.\n¿Desea asignar a " + nombreCompleto.toUpperCase() + " al nuevo usuario?",
                         "Confirmar Asignación de Empleado",
                         JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE 
+                        JOptionPane.WARNING_MESSAGE
                 );
 
                 if (respuesta == JOptionPane.YES_OPTION) {
@@ -78,8 +78,8 @@ public class ControladorListadoEmpleados {
                         Object idValue = vistaLista.tbDatos.getModel().getValueAt(rowModelo, 0);
                         int idEmpleado = (Integer) idValue;
 
-                        empleadoSelect = null; 
-                        for (Empleado emp : listaActualMostrada.toArray()) { 
+                        empleadoSelect = null;
+                        for (Empleado emp : listaActualMostrada.toArray()) {
                             if (emp.getIdEmpleado() == idEmpleado) {
                                 empleadoSelect = emp;
                                 break;
@@ -107,7 +107,12 @@ public class ControladorListadoEmpleados {
 
     public void mostrar(ListaSimple<Empleado> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"N", "NOMBRE", "APELLIDO", "DUI", "EMAIL", "TELÉFONO", "SALARIO"};
         modelo.setColumnIdentifiers(titulos);
         ArrayList<Empleado> listaEmpleados = lista.toArray();

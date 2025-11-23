@@ -145,7 +145,12 @@ public class ControladorFunciones {
     public void mostrar(ListaSimpleCircular<Funcion> lista) {
         this.listaActualMostrada = lista;
 
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "PELÍCULA", "SALA", "FECHA Y HORA", "PRECIO"};
         modelo.setColumnIdentifiers(titulos);
 

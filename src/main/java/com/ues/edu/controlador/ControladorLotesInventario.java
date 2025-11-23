@@ -48,7 +48,7 @@ public class ControladorLotesInventario {
 
         for (Object o : dao.selectAll().toArray()) {
             LotesInventario l = (LotesInventario) o;
-            l.calcularPrioridad(); 
+            l.calcularPrioridad();
             cola.offer(l, l.getPrioridad());
         }
 
@@ -58,17 +58,18 @@ public class ControladorLotesInventario {
     private void onClickAgregar() {
         mantto.btnAgregar.addActionListener(e -> {
             ModalLotesInventario modal = new ModalLotesInventario(new JFrame(), true, "Registrar Lote");
-            new ControladorModalLotesInventario(this, modal);
+            ControladorModalLotesInventario cmli = new ControladorModalLotesInventario(this, modal);
             modal.setVisible(true);
         });
     }
 
     private void onClickEditar() {
         mantto.btnEditar.addActionListener(e -> {
-            if (loteSelect == null) return;
-
+            if (loteSelect == null) {
+                return;
+            }
             ModalLotesInventario modal = new ModalLotesInventario(new JFrame(), true, "Editar Lote");
-            new ControladorModalLotesInventario(this, modal, loteSelect);
+            ControladorModalLotesInventario cmli = new ControladorModalLotesInventario(this, modal);
             modal.setVisible(true);
         });
     }
@@ -101,70 +102,74 @@ public class ControladorLotesInventario {
         });
     }
 
-   private void keyReleasedBuscar() {
-    mantto.tfBuscar.addKeyListener(new KeyAdapter() {
-        @Override
-        public void keyReleased(KeyEvent e) {
-            String texto = mantto.tfBuscar.getText().trim();
-            PrioridadCola<LotesInventario> lista = new PrioridadCola<>(3);
+    private void keyReleasedBuscar() {
+        mantto.tfBuscar.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                String texto = mantto.tfBuscar.getText().trim();
+                PrioridadCola<LotesInventario> lista = new PrioridadCola<>(3);
 
-            if (texto.isEmpty()) {
-                lista = dao.selectAll();
-            } else {
-                LotesInventario l = texto.matches("\\d+") ? dao.buscar(Integer.parseInt(texto)) : null;
-                if (l != null) lista.offer(l, l.getPrioridad());
+                if (texto.isEmpty()) {
+                    lista = dao.selectAll();
+                } else {
+                    LotesInventario l = texto.matches("\\d+") ? dao.buscar(Integer.parseInt(texto)) : null;
+                    if (l != null) {
+                        lista.offer(l, l.getPrioridad());
+                    }
 
-                LotesInventario l2 = dao.buscarPorNombreProducto(texto);
-                if (l2 != null && (l == null || l2.getIdLote() != l.getIdLote()))
-                    lista.offer(l2, l2.getPrioridad());
+                    LotesInventario l2 = dao.buscarPorNombreProducto(texto);
+                    if (l2 != null && (l == null || l2.getIdLote() != l.getIdLote())) {
+                        lista.offer(l2, l2.getPrioridad());
+                    }
+                }
+
+                mostrar(lista);
             }
-
-            mostrar(lista);
-        }
-    });
-}
-
-
-    public void mostrar(PrioridadCola<LotesInventario> cola) {
-    this.colaActual = cola;
-
-    modelo = new DefaultTableModel();
-    String[] titulos = {"ID LOTE", "PRODUCTO", "CANTIDAD", "FECHA CADUCIDAD", "FECHA RECEPCIÓN"};
-    modelo.setColumnIdentifiers(titulos);
-
-    ArrayList<LotesInventario> lista = new ArrayList<>();
-    for (Object o : cola.toArray()) {
-        LotesInventario l = (LotesInventario) o;
-        l.calcularPrioridad(); 
-        lista.add(l);
-    }
-
-    lista.sort((l1, l2) -> {
-        int cmp = Integer.compare(l1.getPrioridad(), l2.getPrioridad());
-        if (cmp == 0) { // si la prioridad es igual, ordenar por fecha caducidad
-            return l1.getFechaCaducidad().compareTo(l2.getFechaCaducidad());
-        }
-        return cmp;
-    });
-
-    for (LotesInventario l : lista) {
-        modelo.addRow(new Object[]{
-            l.getIdLote(),
-            l.getProductoNombre(),
-            l.getCantidadDisponible(),
-            l.getFechaCaducidad(),
-            l.getFechaRecepcion()
         });
     }
 
-    mantto.tbDatos.setModel(modelo);
-    TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
-    mantto.tbDatos.setRowSorter(sorter);
-    ajustarColumnas(new int[]{60, 200, 80, 130, 130});
-}
+    public void mostrar(PrioridadCola<LotesInventario> cola) {
+        this.colaActual = cola;
 
-  
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        String[] titulos = {"ID LOTE", "PRODUCTO", "CANTIDAD", "FECHA CADUCIDAD", "FECHA RECEPCIÓN"};
+        modelo.setColumnIdentifiers(titulos);
 
+        ArrayList<LotesInventario> lista = new ArrayList<>();
+        for (Object o : cola.toArray()) {
+            LotesInventario l = (LotesInventario) o;
+            l.calcularPrioridad();
+            lista.add(l);
+        }
+
+        lista.sort((l1, l2) -> {
+            int cmp = Integer.compare(l1.getPrioridad(), l2.getPrioridad());
+            if (cmp == 0) { // si la prioridad es igual, ordenar por fecha caducidad
+                return l1.getFechaCaducidad().compareTo(l2.getFechaCaducidad());
+            }
+            return cmp;
+        });
+
+        for (LotesInventario l : lista) {
+            modelo.addRow(new Object[]{
+                l.getIdLote(),
+                l.getProductoNombre(),
+                l.getCantidadDisponible(),
+                l.getFechaCaducidad(),
+                l.getFechaRecepcion()
+            });
+        }
+
+        mantto.tbDatos.setModel(modelo);
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
+        mantto.tbDatos.setRowSorter(sorter);
+        ajustarColumnas(new int[]{60, 200, 80, 130, 130});
+    }
 
     private void ajustarColumnas(int[] anchos) {
         TableColumnModel columnModel = mantto.tbDatos.getColumnModel();
@@ -178,7 +183,9 @@ public class ControladorLotesInventario {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int rowVista = mantto.tbDatos.getSelectedRow();
-                if (rowVista < 0) return;
+                if (rowVista < 0) {
+                    return;
+                }
 
                 int filaModelo = mantto.tbDatos.convertRowIndexToModel(rowVista);
                 int id = (int) mantto.tbDatos.getModel().getValueAt(filaModelo, 0);

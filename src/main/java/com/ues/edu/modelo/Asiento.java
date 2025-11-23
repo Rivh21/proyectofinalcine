@@ -10,7 +10,7 @@ import java.util.List;
  *
  * @author DELL LATITUDE
  */
-public class Asiento implements Comparable<Asiento>{
+public class Asiento implements Comparable<Asiento> {
 
     private int idAsiento;
     private Sala sala;
@@ -28,7 +28,7 @@ public class Asiento implements Comparable<Asiento>{
         this.sala = sala;
         this.fila = fila;
         this.numero = numero;
-        this.disponible = true; 
+        this.disponible = true;
         this.colorEstado = "verde";
     }
 
@@ -97,8 +97,13 @@ public class Asiento implements Comparable<Asiento>{
 
     @Override
     public int compareTo(Asiento o) {
-         Asiento actual = this;
-        return (actual.getFila().compareToIgnoreCase(o.getFila()));
+        int resultadoFila = this.fila.compareToIgnoreCase(o.getFila());
+
+        if (resultadoFila == 0) {
+            // Si la fila es la misma, compara el número (1, 2, 3...)
+            return Integer.compare(this.numero, o.getNumero());
+        }
+        return resultadoFila;
     }
 
 }

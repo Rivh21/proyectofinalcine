@@ -50,7 +50,7 @@ public class ControladorProducto {
     private void onClickAgregar() {
         mantto.btnAgregar.addActionListener((e) -> {
             ModalProducto mp = new ModalProducto(new JFrame(), true, "Agregar Producto");
-            new ControladorModalProducto(this, mp); // usa DAO compartido
+            ControladorModalProducto cmp = new ControladorModalProducto(this, mp);// usa DAO compartido
             mp.setVisible(true);
         });
     }
@@ -58,7 +58,7 @@ public class ControladorProducto {
     private void onClickEditar() {
         mantto.btnEditar.addActionListener((e) -> {
             ModalProducto mp = new ModalProducto(new JFrame(), true, "Editar Producto");
-            new ControladorModalProducto(this, mp, productoSelect); // usa DAO compartido
+            ControladorModalProducto cmp = new ControladorModalProducto(this, mp);// usa DAO compartido
             mp.setVisible(true);
         });
     }
@@ -114,8 +114,12 @@ public class ControladorProducto {
                     porNombre = daoProducto.buscarNombre(texto);
 
                     pila = new Pila<>();
-                    if (porId != null) pila.push(porId);
-                    if (porNombre != null) pila.push(porNombre);
+                    if (porId != null) {
+                        pila.push(porId);
+                    }
+                    if (porNombre != null) {
+                        pila.push(porNombre);
+                    }
                 }
 
                 mostrar(pila);
@@ -125,7 +129,12 @@ public class ControladorProducto {
 
     public void mostrar(Pila<Producto> pila) {
         this.pilaActualMostrada = pila;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "NOMBRE", "PRECIO VENTA"};
         modelo.setColumnIdentifiers(titulos);
 

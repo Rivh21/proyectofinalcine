@@ -4,14 +4,16 @@
  */
 package com.ues.edu.controlador;
 
-import com.ues.edu.modelo.Sala;
-import com.ues.edu.modelo.dao.SalaDAO;
+import com.ues.edu.modelo.Funcion;
+import com.ues.edu.modelo.dao.FuncionDAO;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
+import com.ues.edu.utilidades.CustomDateFormatter;
 import com.ues.edu.vista.VistaListado;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -22,48 +24,48 @@ import javax.swing.table.TableRowSorter;
  *
  * @author jorge
  */
-public class ControladorListadoSalas {
+public class ControladorSeleccionarFuncion {
 
-    DefaultTableModel modelo;
-    ControladorAsiento ca;
-    SalaDAO daoSala;
-    VistaListado vistaLista;
-    private Sala salaSelect;
-    private ListaSimpleCircular<Sala> listaActualMostrada;
+    private DefaultTableModel modelo;
+    private ControladorBoletos controladorBoletos; // Referencia al controlador principal
+    private FuncionDAO daoFuncion;
+    private VistaListado vistaLista;
+    private Funcion funcionSelect;
+    private ListaSimpleCircular<Funcion> listaActualMostrada;
 
-    public ControladorListadoSalas(ControladorAsiento ca, VistaListado vistaLista) {
-        this.ca = ca;
-        daoSala = new SalaDAO();
+    public ControladorSeleccionarFuncion(ControladorBoletos controladorBoletos, VistaListado vistaLista) {
+        this.controladorBoletos = controladorBoletos;
         this.vistaLista = vistaLista;
-        this.listaActualMostrada = daoSala.selectAll();
+        this.daoFuncion = new FuncionDAO();
+        this.listaActualMostrada = daoFuncion.selectProximasFunciones();
         onClickSeleccionar();
         onClickTabla();
         keyReleasedBuscar();
         mostrar(listaActualMostrada);
         vistaLista.btnSeleccionar.setEnabled(false);
+
     }
 
     private void onClickSeleccionar() {
         this.vistaLista.btnSeleccionar.addActionListener((e) -> {
-            if (salaSelect != null) {
-                String nombreSala = salaSelect.getNombreSala();
+            if (funcionSelect != null) {
 
+                // Confirmación
                 int respuesta = JOptionPane.showConfirmDialog(
                         vistaLista,
-                        "Una vez seleccionada, esta sala no podrá ser modificada.\n¿Desea seleccionar  " + nombreSala.toUpperCase(),
-                        "Confirmar Selección de Sala",
+                        "¿Desea seleccionar la función de: " + funcionSelect.getPeliculaTitulo() + "?",
+                        "Confirmar Selección",
                         JOptionPane.YES_NO_OPTION,
-                        JOptionPane.WARNING_MESSAGE
+                        JOptionPane.QUESTION_MESSAGE
                 );
-                if (respuesta == JOptionPane.YES_OPTION) {
-                    this.ca.cargarSala(salaSelect);
 
+                if (respuesta == JOptionPane.YES_OPTION) {
+                    controladorBoletos.cargarFuncion(funcionSelect);
                     this.vistaLista.dispose();
                 }
             }
             this.vistaLista.dispose();
         });
-
     }
 
     private void onClickTabla() {
@@ -74,18 +76,18 @@ public class ControladorListadoSalas {
                     int rowVista = vistaLista.tbDatos.getSelectedRow();
                     if (rowVista >= 0) {
                         int rowModelo = vistaLista.tbDatos.convertRowIndexToModel(rowVista);
-
                         Object idValue = vistaLista.tbDatos.getModel().getValueAt(rowModelo, 0);
-                        int idSala = (Integer) idValue;
+                        int idFuncion = (Integer) idValue;
 
-                        salaSelect = null;
-                        for (Sala sala : listaActualMostrada.toArray()) {
-                            if (sala.getIdSala() == idSala) {
-                                salaSelect = sala;
+                        funcionSelect = null;
+                        for (Funcion func : listaActualMostrada.toArray()) {
+                            if (func.getIdFuncion() == idFuncion) {
+                                funcionSelect = func;
                                 break;
                             }
                         }
-                        if (salaSelect != null) {
+
+                        if (funcionSelect != null) {
                             vistaLista.btnSeleccionar.setEnabled(true);
                         }
                     }
@@ -99,13 +101,13 @@ public class ControladorListadoSalas {
             @Override
             public void keyReleased(KeyEvent e) {
                 String textoBusqueda = vistaLista.tfBuscar.getText().trim();
-                ListaSimpleCircular<Sala> listaFinal = filtrarListaEnMemoria(textoBusqueda);
+                ListaSimpleCircular<Funcion> listaFinal = filtrarListaEnMemoria(textoBusqueda);
                 mostrar(listaFinal);
             }
         });
     }
 
-    private void mostrar(ListaSimpleCircular<Sala> lista) {
+    public void mostrar(ListaSimpleCircular<Funcion> lista) {
         this.listaActualMostrada = lista;
         modelo = new DefaultTableModel() {
             @Override
@@ -113,22 +115,30 @@ public class ControladorListadoSalas {
                 return false;
             }
         };
-        String titulos[] = {"ID", "NOMBRE SALA"};
+
+        String titulos[] = {"ID", "PELÍCULA", "SALA", "FECHA Y HORA", "PRECIO"};
         modelo.setColumnIdentifiers(titulos);
-        ArrayList<Sala> listaSalas = lista.toArray();
-        for (Sala sala : listaSalas) {
+
+        ArrayList<Funcion> listaFunciones = lista.toArray();
+
+        for (Funcion f : listaFunciones) {
             Object[] fila = {
-                sala.getIdSala(),
-                sala.getNombreSala(),};
+                f.getIdFuncion(),
+                f.getPeliculaTitulo(),
+                f.getSalaNombre(),
+                CustomDateFormatter.format(f.getFechaHoraInicio()), // Formato legible
+                String.format("$ %.2f", f.getPrecioBoleto())
+            };
             modelo.addRow(fila);
         }
+
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
         this.vistaLista.tbDatos.setRowSorter(sorter);
         this.vistaLista.tbDatos.setModel(modelo);
-        int[] anchosFijos = {50, 1500};
 
+        // Ajustar anchos visuales
+        int[] anchosFijos = {30, 200, 100, 120, 60};
         ajustarAnchoColumnas(anchosFijos);
-        vistaLista.tbDatos.setModel(modelo);
     }
 
     private void ajustarAnchoColumnas(int[] anchos) {
@@ -138,22 +148,24 @@ public class ControladorListadoSalas {
         }
     }
 
-    private ListaSimpleCircular<Sala> filtrarListaEnMemoria(String texto) {
-        ListaSimpleCircular<Sala> listaOrigen = daoSala.selectAll();
-        String textoLimpio = texto.trim();
-        if (textoLimpio.isEmpty()) {
-            return listaOrigen;
+    private ListaSimpleCircular<Funcion> filtrarListaEnMemoria(String texto) {
+        // Si no hay texto, traemos todas las proximas funciones de nuevo
+        if (texto == null || texto.trim().isEmpty()) {
+            return daoFuncion.selectProximasFunciones();
         }
 
-        ListaSimpleCircular<Sala> listaFiltrada = new ListaSimpleCircular<>();
-        String busqueda = textoLimpio.toLowerCase();
+        // Obtenemos la lista original completa para filtrar sobre ella
+        ListaSimpleCircular<Funcion> listaOrigen = daoFuncion.selectProximasFunciones();
+        ListaSimpleCircular<Funcion> listaFiltrada = new ListaSimpleCircular<>();
+        String busqueda = texto.trim().toLowerCase();
 
-        for (Sala sala : listaOrigen.toArray()) {
-            if (sala.getNombreSala().toLowerCase().contains(busqueda)) {
-                listaFiltrada.insertar(sala);
+        for (Funcion f : listaOrigen.toArray()) {
+            // Filtramos por Nombre de Película o Nombre de Sala
+            if (f.getPeliculaTitulo().toLowerCase().contains(busqueda)
+                    || f.getSalaNombre().toLowerCase().contains(busqueda)) {
+                listaFiltrada.insertar(f);
             }
         }
         return listaFiltrada;
     }
-
 }

@@ -131,7 +131,6 @@ public class ControladorModalUsuario {
         }
 
         mu.lbAviso.setText("");
-
         Rol rolSeleccionado = (Rol) this.mu.cbRol.getSelectedItem();
 
         if (rolSeleccionado != null && rolSeleccionado.getIdRol() == 0) {
@@ -153,15 +152,17 @@ public class ControladorModalUsuario {
 
     private void newUsuario() {
         Rol rolSeleccionado = (Rol) this.mu.cbRol.getSelectedItem();
+        String nombreUsuario = this.mu.tfUsuario.getText();
         String password = Encriptar.getStringMessageDigest(
                 this.mu.pfPassword.getText(), Encriptar.SHA256);
+
         this.usuario = new Usuario(
-                this.mu.tfUsuario.getText(),
+                nombreUsuario,
                 password,
                 rolSeleccionado,
                 this.empleadoAsociado
         );
-        if (!existeUsuario()) {
+        if (!daoUsuario.existeNombreUsuario(nombreUsuario)) {
             if (daoUsuario.insert(usuario)) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                 DesktopNotify.showDesktopMessage("Ok", "Registro Creado", DesktopNotify.SUCCESS, 4000);
@@ -169,16 +170,23 @@ public class ControladorModalUsuario {
                 cu.mostrar(daoUsuario.selectAll());
             } else {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-                DesktopNotify.showDesktopMessage("Error", "Error al guardar", DesktopNotify.SUCCESS, 9000);
+                DesktopNotify.showDesktopMessage("Error", "Error al guardar", DesktopNotify.ERROR, 3000); // Se cambió SUCCESS a ERROR
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Usuario ya existe", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error: El nombre de usuario '" + nombreUsuario + "' ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void editUsuario() {
         Rol rolSeleccionado = (Rol) this.mu.cbRol.getSelectedItem();
         String nuevaPassword = new String(this.mu.pfPassword.getPassword());
+
+        if (!usuarioSelect.getNombreUsuario().equals(this.mu.tfUsuario.getText().trim())) {
+            if (daoUsuario.existeNombreUsuario(this.mu.tfUsuario.getText().trim())) {
+                JOptionPane.showMessageDialog(null, "Error: El nuevo nombre de usuario ya existe.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
         usuarioSelect.setNombreUsuario(this.mu.tfUsuario.getText());
         usuarioSelect.setRol(rolSeleccionado);
         usuarioSelect.setEmpleado(this.empleadoAsociado);
@@ -197,7 +205,7 @@ public class ControladorModalUsuario {
             cu.mostrar(daoUsuario.selectAll());
         } else {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-           DesktopNotify.showDesktopMessage("Error", "Error al Actualizar", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error al Actualizar", DesktopNotify.ERROR, 3000);
         }
     }
 
@@ -212,8 +220,4 @@ public class ControladorModalUsuario {
         }
     }
 
-    private boolean existeUsuario() {
-        ListaSimple<Usuario> lista = daoUsuario.selectAllTo("nombre_usuario", usuario.getNombreUsuario() + "");
-        return !lista.isEmpty();
-    }
 }

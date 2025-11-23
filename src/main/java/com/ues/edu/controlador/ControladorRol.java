@@ -43,7 +43,7 @@ public class ControladorRol {
         onClickEditar();
         onClickEliminar();
         onClickTabla();
-        onClickPermiso(); 
+        onClickPermiso();
         keyReleasedBuscar();
         mostrar(listaActualMostrada);
         this.mantto.btnEditar.setEnabled(false);
@@ -55,12 +55,12 @@ public class ControladorRol {
         this.mantto.btnAux.addActionListener((e) -> {
             if (rolSelect == null) {
                 JOptionPane.showMessageDialog(null, "Seleccione un rol para asignar/ver permisos.",
-                                "Advertencia", JOptionPane.WARNING_MESSAGE);
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             int idRol = rolSelect.getIdRol();
             String nombreRol = rolSelect.getNombreRol();
-            VistaPermisoRol vistaPermisos = new VistaPermisoRol(); 
+            VistaPermisoRol vistaPermisos = new VistaPermisoRol();
             ControladorPermisoRol controladorPermiso = new ControladorPermisoRol();
             controladorPermiso.cargarPermisosEnTabla(idRol, nombreRol, vistaPermisos);
             JFrame framePermisos = new JFrame("Permisos del Rol: ");
@@ -70,6 +70,7 @@ public class ControladorRol {
             framePermisos.setVisible(true);
         });
     }
+
     private void onClickAgregar() {
         this.mantto.btnAgregar.addActionListener((e) -> {
             ModalRol mr = new ModalRol(new JFrame(), true, "Agregar Rol");
@@ -77,6 +78,7 @@ public class ControladorRol {
             mr.setVisible(true);
         });
     }
+
     private void onClickEditar() {
         this.mantto.btnEditar.addActionListener((e) -> {
             ModalRol mr = new ModalRol(new JFrame(), true, "Editar Rol");
@@ -84,11 +86,12 @@ public class ControladorRol {
             mr.setVisible(true);
         });
     }
+
     private void onClickEliminar() {
         mantto.btnEliminar.addActionListener((e) -> {
             if (rolSelect == null) {
                 JOptionPane.showMessageDialog(null, "Seleccione un rol para eliminar",
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             int op = JOptionPane.showConfirmDialog(
@@ -166,7 +169,12 @@ public class ControladorRol {
 
     public void mostrar(ListaSimple<Rol> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "NOMBRE"};
         modelo.setColumnIdentifiers(titulos);
         ArrayList<Rol> listaRoles = lista.toArray();

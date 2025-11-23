@@ -164,8 +164,6 @@ public class AsientoDao implements IAsiento {
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
-
-            // Asigna los valores para el UPDATE (Fila, Numero)
             ps.setString(1, obj.getFila());
             ps.setInt(2, obj.getNumero());
 

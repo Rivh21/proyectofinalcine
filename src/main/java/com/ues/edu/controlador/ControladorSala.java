@@ -15,11 +15,12 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 /**
- * 
+ *
  * @author radon
  */
 public class ControladorSala {
-
+    
+    DefaultTableModel modelo;
     private final Mantenimiento mantto;
     private final SalaDAO daoSala;
     private Sala salaSelect;
@@ -49,7 +50,12 @@ public class ControladorSala {
     }
 
     private void mostrar(ListaSimpleCircular<Sala> lista) {
-        DefaultTableModel modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "NOMBRE"};
         modelo.setColumnIdentifiers(titulos);
 
@@ -73,23 +79,26 @@ public class ControladorSala {
     }
 
     private void onClickAgregar() {
-    mantto.btnAgregar.addActionListener((e) -> {
-        ModalSalas ms = new ModalSalas(new JFrame(),true, "Agregar Sala");
-        new ControladorModalSala(this, ms);
-        ms.setVisible(true);
-    });
-}
+        mantto.btnAgregar.addActionListener((e) -> {
+            ModalSalas ms = new ModalSalas(new JFrame(), true, "Agregar Sala");
+            new ControladorModalSala(this, ms);
+            ms.setVisible(true);
+        });
+    }
 
-private void onClickEditar() {
-    mantto.btnEditar.addActionListener((e) -> {
-        ModalSalas ms = new ModalSalas(new JFrame(),true,"Editar Sala");
-        new ControladorModalSala(this, ms, salaSelect);
-        ms.setVisible(true);
-    });
-}
+    private void onClickEditar() {
+        mantto.btnEditar.addActionListener((e) -> {
+            ModalSalas ms = new ModalSalas(new JFrame(), true, "Editar Sala");
+            new ControladorModalSala(this, ms, salaSelect);
+            ms.setVisible(true);
+        });
+    }
+
     private void onClickEliminar() {
         mantto.btnEliminar.addActionListener(e -> {
-            if (salaSelect == null) return;
+            if (salaSelect == null) {
+                return;
+            }
 
             int op = javax.swing.JOptionPane.showConfirmDialog(
                     mantto,

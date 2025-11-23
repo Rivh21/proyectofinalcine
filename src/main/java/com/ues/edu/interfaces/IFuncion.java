@@ -5,15 +5,17 @@ import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
 
 public interface IFuncion {
 
-    ListaSimpleCircular<Funcion> selectAll();
+    public ListaSimpleCircular<Funcion> selectAll();
 
-    ListaSimpleCircular<Funcion> buscar(String textoBusqueda);
+    public ListaSimpleCircular<Funcion> buscar(String textoBusqueda);
 
-    boolean insert(Funcion funcion);
+    public boolean insert(Funcion funcion);
 
-    boolean update(Funcion funcion);
+    public boolean update(Funcion funcion);
 
-    boolean delete(Funcion funcion);
+    public boolean delete(Funcion funcion);
 
-    Funcion buscarPorId(int id);
+    public Funcion buscarPorId(int id);
+
+    public ListaSimpleCircular<Funcion> selectProximasFunciones();
 }

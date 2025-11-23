@@ -4,30 +4,39 @@
  */
 package com.ues.edu.modelo;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  *
  * @author DELL LATITUDE
  */
-public class Boleto implements Comparable<Boleto>{
+public class Boleto implements Comparable<Boleto> {
+
     private int idBoleto;
-    private Date fechaVenta;
-    private Funcion funciones;
-    private FacturaTaquilla facturas;
+    private LocalDateTime fechaVenta;
+    private BigDecimal precioPagado;
+    private Funcion funcion;
+    private FacturaTaquilla factura;
     private Asiento asiento;
 
     public Boleto() {
     }
 
-    public Boleto(int idBoleto) {
+    public Boleto(int idBoleto, LocalDateTime fechaVenta, BigDecimal precioPagado, Funcion funcion, FacturaTaquilla factura, Asiento asiento) {
         this.idBoleto = idBoleto;
+        this.fechaVenta = fechaVenta;
+        this.precioPagado = precioPagado;
+        this.funcion = funcion;
+        this.factura = factura;
+        this.asiento = asiento;
     }
 
-    public Boleto(Date fechaVenta, Funcion funciones, FacturaTaquilla facturas, Asiento asiento) {
+    public Boleto(LocalDateTime fechaVenta, BigDecimal precioPagado, Funcion funcion, FacturaTaquilla factura, Asiento asiento) {
         this.fechaVenta = fechaVenta;
-        this.funciones = funciones;
-        this.facturas = facturas;
+        this.precioPagado = precioPagado;
+        this.funcion = funcion;
+        this.factura = factura;
         this.asiento = asiento;
     }
 
@@ -39,28 +48,36 @@ public class Boleto implements Comparable<Boleto>{
         this.idBoleto = idBoleto;
     }
 
-    public Date getFechaVenta() {
+    public LocalDateTime getFechaVenta() {
         return fechaVenta;
     }
 
-    public void setFechaVenta(Date fechaVenta) {
+    public void setFechaVenta(LocalDateTime fechaVenta) {
         this.fechaVenta = fechaVenta;
     }
 
-    public Funcion getFunciones() {
-        return funciones;
+    public BigDecimal getPrecioPagado() {
+        return precioPagado;
     }
 
-    public void setFunciones(Funcion funciones) {
-        this.funciones = funciones;
+    public void setPrecioPagado(BigDecimal precioPagado) {
+        this.precioPagado = precioPagado;
     }
 
-    public FacturaTaquilla getFacturas() {
-        return facturas;
+    public Funcion getFuncion() {
+        return funcion;
     }
 
-    public void setFacturas(FacturaTaquilla facturas) {
-        this.facturas = facturas;
+    public void setFuncion(Funcion funcion) {
+        this.funcion = funcion;
+    }
+
+    public FacturaTaquilla getFactura() {
+        return factura;
+    }
+
+    public void setFactura(FacturaTaquilla factura) {
+        this.factura = factura;
     }
 
     public Asiento getAsiento() {
@@ -72,16 +89,7 @@ public class Boleto implements Comparable<Boleto>{
     }
 
     @Override
-    public String toString() {
-        return "Boletos{" + "idBoleto=" + idBoleto + ", fechaVenta=" + fechaVenta + ", funciones=" + funciones + ", facturas=" + facturas + ", asiento=" + asiento + '}';
-    }
-   
-    @Override
     public int compareTo(Boleto o) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.fechaVenta.compareTo(o.fechaVenta);
     }
-    
-    
-    
-    
 }

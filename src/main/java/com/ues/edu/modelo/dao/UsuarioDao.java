@@ -101,11 +101,15 @@ public class UsuarioDao implements IUsuario {
 
     @Override
     public Usuario login(String usuario, String claveEncriptada) {
-        String sql = "SELECT u.id_usuario, u.nombre_usuario, e.id_empleado, e.nombre, e.apellido, r.id_rol, r.nombre_rol "
+
+        String sql = "SELECT u.id_usuario, u.nombre_usuario, u.password, "
+                + "e.id_empleado, e.nombre, e.apellido, e.dui, e.email, e.telefono, e.salario, "
+                + "r.id_rol, r.nombre_rol "
                 + "FROM usuarios u "
                 + "INNER JOIN empleados e ON u.id_empleado = e.id_empleado "
-                + "INNER JOIN roles r ON u.id_rol = r.id_rol"
+                + "INNER JOIN roles r ON u.id_rol = r.id_rol " // Aquí ya tienes el espacio corregido del error anterior
                 + "WHERE u.nombre_usuario = ? AND u.password = ?";
+
         return selectLogin(sql, usuario, claveEncriptada);
     }
 
@@ -245,9 +249,9 @@ public class UsuarioDao implements IUsuario {
 
     private Usuario selectLogin(String sql, String usuario, String claveEncriptada) {
         Usuario user = null;
-//        Connection con = null;
-//        PreparedStatement ps = null;
-//        ResultSet rs = null;
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
@@ -312,5 +316,44 @@ public class UsuarioDao implements IUsuario {
 
         // Devuelve el objeto Usuario completo (con el hash de password)
         return lista.isEmpty() ? null : lista.get(0);
+    }
+
+    @Override
+    public boolean existeNombreUsuario(String nombreUsuario) {
+        String sql = "SELECT 1 FROM usuarios WHERE nombre_usuario = ?";
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, nombreUsuario);
+
+            rs = ps.executeQuery();
+
+            // rs.next() devolverá true si encuentra al menos una fila (el usuario existe)
+            return rs.next();
+
+        } catch (SQLException e) {
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error de Consulta", "Error al verificar nombre de usuario.", DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    conectar.closeConexion(con);
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

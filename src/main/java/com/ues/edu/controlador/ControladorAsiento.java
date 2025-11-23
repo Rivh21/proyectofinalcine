@@ -119,7 +119,12 @@ public class ControladorAsiento {
 
     private void mostrar(ListaSimple<Asiento> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "FILA", "NÚMERO DE ASIENTO"};
         modelo.setColumnIdentifiers(titulos);
 

@@ -109,7 +109,12 @@ public class ControladorPeliculas {
 
     public void mostrar(ListaSimpleCircular<Pelicula> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "TÍTULO", "DURACIÓN MINUTOS", "GÉNERO", "CLASIFICACIÓN"};
         modelo.setColumnIdentifiers(titulos);
 

@@ -186,7 +186,12 @@ public class ControladorMetodoPago {
 
     public void mostrar(ListaSimple<MetodoPago> lista) {
         this.listaActualMostrada = lista;
-        modelo = new DefaultTableModel();
+        modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         String titulos[] = {"ID", "METODO DE PAGO"};
         modelo.setColumnIdentifiers(titulos);
         ArrayList<MetodoPago> listaMetodos = lista.toArray();
