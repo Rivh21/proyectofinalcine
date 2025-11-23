@@ -18,6 +18,7 @@ import com.ues.edu.utilidades.CustomDateFormatter;
 import com.ues.edu.utilidades.GeneradorID;
 import com.ues.edu.vista.ModalFactura;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -48,15 +49,12 @@ public class ControladorFactura {
         this.metodoPagoDao = new MetodoPagoDao();
 
         cargarListaDetalle();
-        cargarComboMetodosPago();
-        configurarEstadoInicial();
-        calcularTotales();
+        configurarMetodosPago();
+        configurarDescuentos();
+        configurarInputEfectivo();
+        configurarBotones();
 
-        // Eventos
-        onClickPagar();
-        onClickCancelar();
-        onClickTieneDescuento();
-        onClickComboDescuento();
+        calcularTotales();
     }
 
     public boolean isVentaRealizada() {
@@ -65,7 +63,6 @@ public class ControladorFactura {
 
     private void cargarListaDetalle() {
         DefaultListModel<Object> modeloLista = new DefaultListModel<>();
-
         modeloLista.addElement("--- DETALLES DE LA FUNCIÓN ---");
         modeloLista.addElement("Película: " + funcion.getPeliculaTitulo());
         modeloLista.addElement("Sala: " + funcion.getSalaNombre());
@@ -78,23 +75,170 @@ public class ControladorFactura {
             String info = (a.getFila() != null) ? a.getFila() + "-" + a.getNumero() : "ID: " + a.getIdAsiento();
             modeloLista.addElement("Asiento: " + info);
         }
-
         vista.listDetalleBoleto.setModel(modeloLista);
     }
 
-    private void cargarComboMetodosPago() {
+    private void configurarMetodosPago() {
         vista.cbMetodoDePago.removeAllItems();
+        vista.cbMetodoDePago.addItem(new MetodoPago(0, "--- Seleccione ---"));
+
         ListaSimple<MetodoPago> listaMetodos = metodoPagoDao.selectAll();
         ArrayList<MetodoPago> arrayMetodos = listaMetodos.toArray();
+
         if (arrayMetodos != null) {
             for (MetodoPago mp : arrayMetodos) {
                 vista.cbMetodoDePago.addItem(mp);
             }
         }
+        vista.cbMetodoDePago.addActionListener((e) -> {
+            MetodoPago mp = (MetodoPago) vista.cbMetodoDePago.getSelectedItem();
+
+            boolean esEfectivo = (mp != null && mp.getnombreMetodo().equalsIgnoreCase("EFECTIVO"));
+
+            vista.tfEfectivo.setEnabled(esEfectivo);
+            vista.tfEfectivo.setText("");
+
+            if (esEfectivo) {
+                vista.lbCambio.setVisible(true);
+                vista.lbCambio.setForeground(java.awt.Color.BLACK);
+                vista.lbCambio.setText("Cambio: $ 0.00");
+            } else {
+                vista.lbCambio.setVisible(false);
+                vista.lbCambio.setText("");
+            }
+        });
     }
 
-    private void configurarEstadoInicial() {
+    private void configurarDescuentos() {
         vista.cbDescuento.setEnabled(false);
+
+        vista.tienePromocion.addActionListener(e -> {
+            boolean estado = vista.tienePromocion.isSelected();
+            vista.cbDescuento.setEnabled(estado);
+            calcularTotales();
+        });
+
+        vista.cbDescuento.addActionListener(e -> calcularTotales());
+    }
+
+    private void configurarInputEfectivo() {
+        vista.tfEfectivo.setEnabled(false);
+        vista.lbCambio.setVisible(false);
+
+        vista.tfEfectivo.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                char c = evt.getKeyChar();
+                if (!Character.isDigit(c) && c != '.') {
+                    evt.consume();
+                    return;
+                }
+                if (c == '.' && vista.tfEfectivo.getText().contains(".")) {
+                    evt.consume();
+                }
+            }
+
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                String texto = vista.tfEfectivo.getText().trim();
+                if (texto.isEmpty() || texto.equals(".")) {
+                    vista.lbCambio.setText("Cambio: $ 0.00");
+                    vista.lbCambio.setForeground(java.awt.Color.BLACK);
+                    return;
+                }
+                try {
+                    double efectivo = Double.parseDouble(texto);
+                    double cambio = efectivo - totalConDescuento;
+
+                    if (cambio < 0) {
+                        vista.lbCambio.setForeground(java.awt.Color.RED);
+                        vista.lbCambio.setText("Faltan: $" + String.format("%.2f", Math.abs(cambio)));
+                    } else {
+                        vista.lbCambio.setForeground(new java.awt.Color(0, 150, 0));
+                        vista.lbCambio.setText("Cambio: $" + String.format("%.2f", cambio));
+                    }
+                } catch (NumberFormatException e) {
+                    vista.lbCambio.setText("Error");
+                }
+            }
+        });
+    }
+
+    private void configurarBotones() {
+        vista.btnCancelar.addActionListener(e -> vista.dispose());
+
+        vista.btnPagar.addActionListener(e -> {
+            if (usuario == null || usuario.getEmpleado() == null) {
+                JOptionPane.showMessageDialog(vista, "Error crítico: No hay empleado en sesión.");
+                return;
+            }
+
+            if (listaAsientos.isEmpty()) {
+                return;
+            }
+
+            MetodoPago mp = (MetodoPago) vista.cbMetodoDePago.getSelectedItem();
+            if (mp == null || mp.getidMetodoPago() <= 0) { // ID 0 es "--- Seleccione ---"
+                JOptionPane.showMessageDialog(vista, "Debe seleccionar un método de pago.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (mp.getnombreMetodo().equalsIgnoreCase("EFECTIVO")) {
+                try {
+                    String texto = vista.tfEfectivo.getText().trim();
+                    double efectivo = texto.isEmpty() ? 0.0 : Double.parseDouble(texto);
+
+                    if (BigDecimal.valueOf(efectivo).compareTo(BigDecimal.valueOf(totalConDescuento)) < 0) {
+                        JOptionPane.showMessageDialog(vista, "El efectivo es insuficiente.", "Pago Incompleto", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(vista, "Monto de efectivo inválido.", "Error", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
+
+            FacturaTaquilla factura = new FacturaTaquilla();
+            String codigoFactura;
+            do {
+                codigoFactura = GeneradorID.generarCodigoFactura();
+            } while (boletoDao.existeIdFactura(codigoFactura));
+
+            factura.setIdFacturaTaquilla(codigoFactura);
+            factura.setEmpleado(usuario.getEmpleado());
+
+            double descuentoAplicado = totalOriginal - totalConDescuento;
+            factura.setMontoTotal(BigDecimal.valueOf(totalConDescuento));
+            factura.setDescuentoAplicado(BigDecimal.valueOf(descuentoAplicado));
+            factura.setMetodoPago(mp);
+
+            List<Boleto> listaBoletos = new ArrayList<>();
+            BigDecimal totalBD = BigDecimal.valueOf(totalConDescuento);
+            BigDecimal cantidadBD = BigDecimal.valueOf(listaAsientos.size());
+            BigDecimal precioUnitario = totalBD.divide(cantidadBD, 2, RoundingMode.HALF_UP);
+
+            for (Asiento asiento : listaAsientos) {
+                Boleto b = new Boleto();
+                b.setAsiento(asiento);
+                b.setFuncion(funcion);
+                b.setPrecioPagado(precioUnitario);
+                b.setFechaVenta(java.time.LocalDateTime.now());
+                listaBoletos.add(b);
+            }
+
+            boolean exito = boletoDao.generarTransaccion(factura, listaBoletos);
+
+            if (exito) {
+                this.ventaRealizada = true;
+                JOptionPane.showMessageDialog(vista,
+                        "¡Venta Exitosa!\n"
+                        + "Código: " + codigoFactura + "\n"
+                        + "Total Pagado: $" + String.format("%.2f", totalConDescuento));
+                vista.dispose();
+            } else {
+                JOptionPane.showMessageDialog(vista, "Error al guardar la venta.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     private void calcularTotales() {
@@ -114,93 +258,14 @@ public class ControladorFactura {
                 case 3 ->
                     porcentaje = 0.60;
             }
-
             double descuento = totalOriginal * porcentaje;
             totalConDescuento = totalOriginal - descuento;
         }
-
-        vista.lbMontoTotal.setText(String.format("$ %.2f", totalConDescuento));
-    }
-
-    private void onClickTieneDescuento() {
-        vista.tienePromocion.addActionListener(e -> {
-            boolean estado = vista.tienePromocion.isSelected();
-            vista.cbDescuento.setEnabled(estado);
-            calcularTotales();
-        });
-    }
-
-    private void onClickComboDescuento() {
-        vista.cbDescuento.addActionListener(e -> {
-            calcularTotales();
-        });
-    }
-
-    private void onClickPagar() {
-        this.vista.btnPagar.addActionListener((e) -> {
-            if (usuario == null || usuario.getEmpleado() == null) {
-                JOptionPane.showMessageDialog(vista, "Error crítico: No hay empleado en sesión.");
-                return;
+        vista.lbMontoTotal.setText("Total: "+ String.format("$%.2f", totalConDescuento));
+        if (vista.tfEfectivo.isEnabled() && !vista.tfEfectivo.getText().isEmpty()) {
+            for (java.awt.event.KeyListener kl : vista.tfEfectivo.getKeyListeners()) {
+                kl.keyReleased(null);
             }
-
-            // Validación extra de seguridad
-            if (listaAsientos.isEmpty()) {
-                return;
-            }
-
-            FacturaTaquilla factura = new FacturaTaquilla();
-            String codigoFactura;
-            do {
-                codigoFactura = GeneradorID.generarCodigoFactura();
-            } while (boletoDao.existeIdFactura(codigoFactura));
-
-            factura.setIdFacturaTaquilla(codigoFactura);
-            factura.setEmpleado(usuario.getEmpleado());
-
-            double descuentoAplicado = totalOriginal - totalConDescuento;
-            factura.setMontoTotal(BigDecimal.valueOf(totalConDescuento));
-            factura.setDescuentoAplicado(BigDecimal.valueOf(descuentoAplicado));
-
-            Object item = vista.cbMetodoDePago.getSelectedItem();
-            if (item instanceof MetodoPago) {
-                factura.setMetodoPago((MetodoPago) item);
-            }
-
-            List<Boleto> listaBoletos = new ArrayList<>();
-
-            // CORRECCIÓN: Redondeo seguro para evitar ArithmeticException
-            BigDecimal totalBD = BigDecimal.valueOf(totalConDescuento);
-            BigDecimal cantidadBD = BigDecimal.valueOf(listaAsientos.size());
-
-            // Divide usando 2 decimales y redondeo estándar ("Half Up")
-            BigDecimal precioUnitario = totalBD.divide(cantidadBD, 2, java.math.RoundingMode.HALF_UP);
-
-            for (Asiento asiento : listaAsientos) {
-                Boleto b = new Boleto();
-                b.setAsiento(asiento);
-                b.setFuncion(funcion);
-                b.setPrecioPagado(precioUnitario);
-                listaBoletos.add(b);
-            }
-
-            boolean exito = boletoDao.generarTransaccion(factura, listaBoletos);
-
-            if (exito) {
-                this.ventaRealizada = true;
-                JOptionPane.showMessageDialog(vista,
-                        "¡Venta Exitosa!\n"
-                        + "Código: " + codigoFactura + "\n"
-                        + "Total: $" + String.format("%.2f", totalConDescuento));
-                vista.dispose();
-            } else {
-                JOptionPane.showMessageDialog(vista, "Error al guardar la venta en la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-    }
-
-    private void onClickCancelar() {
-        this.vista.btnCancelar.addActionListener((e) -> {
-            this.vista.dispose();
-        });
+        }
     }
 }

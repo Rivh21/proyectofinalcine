@@ -4,6 +4,10 @@
  */
 package com.ues.edu.vista.componentes;
 
+import com.ues.edu.controlador.ControladorLogin;
+import com.ues.edu.modelo.Usuario;
+import com.ues.edu.vista.Dashboard;
+import com.ues.edu.vista.Login;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
@@ -86,9 +90,34 @@ public class Footer extends javax.swing.JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                System.exit(0);
+                int confirmacion = javax.swing.JOptionPane.showConfirmDialog(
+                        null,
+                        "¿Está seguro que desea cerrar la sesión?",
+                        "Cerrar Sesión",
+                        javax.swing.JOptionPane.YES_NO_OPTION,
+                        javax.swing.JOptionPane.QUESTION_MESSAGE
+                );
+
+                if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
+                    javax.swing.JOptionPane.showMessageDialog(
+                            null,
+                            "¡Hasta pronto! Gracias por usar el sistema.",
+                            "Saliendo",
+                            javax.swing.JOptionPane.INFORMATION_MESSAGE
+                    );
+
+                    java.awt.Window parentWindow = javax.swing.SwingUtilities.getWindowAncestor(Footer.this);
+                    if (parentWindow != null) {
+                        parentWindow.dispose();
+                    }
+
+                    Login login = new Login();
+                    ControladorLogin controlador = new ControladorLogin(login);
+                    login.setVisible(true);
+                }
             }
-        });
+        }
+        );
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

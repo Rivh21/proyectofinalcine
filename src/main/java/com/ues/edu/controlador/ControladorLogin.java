@@ -53,7 +53,8 @@ public class ControladorLogin {
             Dashboard dash = new Dashboard(usuarioLogueado);
             dash.setVisible(true);
             DesktopNotify.setDefaultTheme(NotifyTheme.Green);
-            DesktopNotify.showDesktopMessage("Credenciales correctas", "Bienvenido/a", DesktopNotify.SUCCESS, 4000);
+            DesktopNotify.showDesktopMessage("Credenciales correctas", "Bienvenido/a " + usuarioLogueado.getEmpleado().getNombre()
+                    +"\n :)", DesktopNotify.SUCCESS, 4000);
         } else {
             vista.tfUsuario.setText("");
             vista.tfClave.setText("");

@@ -3,8 +3,8 @@
  */
 package com.ues.edu;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLightLaf;
+//import com.formdev.flatlaf.FlatDarkLaf;
+//import com.formdev.flatlaf.FlatLightLaf;
 import com.ues.edu.vista.Dashboard;
 import java.awt.Color;
 import javax.swing.SwingUtilities;
@@ -25,11 +25,11 @@ public class Test {
 //            ex.printStackTrace();
 //        }
 ////Tema Oscuro
-        try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            UIManager.setLookAndFeel(new FlatDarkLaf());
+//        } catch (UnsupportedLookAndFeelException ex) {
+//            ex.printStackTrace();
+//        }
 //        Dashboard db = new Dashboard();
 //        db.setVisible(true);
 

@@ -37,7 +37,8 @@ public class ControladorDetalleFactura {
    private void cargarDatosVisuales() {
         vista.cbMetodoDePago.removeAllItems();
         vista.cbMetodoDePago.addItem(factura.getMetodoPago().getnombreMetodo());
-        vista.lbMontoTotal.setText(String.format("$ %.2f", factura.getMontoTotal()));
+        vista.tfEfectivo.setVisible(false);
+        vista.lbMontoTotal.setText("Total: " + String.format("$%.2f", factura.getMontoTotal()));
         if (factura.getDescuentoAplicado().compareTo(BigDecimal.ZERO) > 0) {
             vista.tienePromocion.setSelected(true);
             vista.cbDescuento.removeAllItems();
