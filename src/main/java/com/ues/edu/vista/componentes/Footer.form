@@ -17,7 +17,9 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="554" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="toggleTema" min="-2" pref="60" max="-2" attributes="0"/>
+              <EmptySpace pref="488" max="32767" attributes="0"/>
               <Component id="lblSalir" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -28,6 +30,11 @@
           <Group type="102" alignment="1" attributes="0">
               <Component id="lblSalir" pref="55" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+              <Component id="toggleTema" min="-2" pref="31" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -43,6 +50,11 @@
             <EmptyBorder bottom="5" left="5" right="5" top="5"/>
           </Border>
         </Property>
+      </Properties>
+    </Component>
+    <Component class="com.ues.edu.vista.swing.ToggleSwitch" name="toggleTema">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="toggleSwitch1"/>
       </Properties>
     </Component>
   </SubComponents>

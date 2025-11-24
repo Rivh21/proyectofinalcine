@@ -23,7 +23,13 @@
             <groupId>org.mariadb.jdbc</groupId>
             <artifactId>mariadb-java-client</artifactId>
             <version>3.3.3</version>
-            
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/com.github.weisj/jsvg -->
+        <dependency>
+            <groupId>com.github.weisj</groupId>
+            <artifactId>jsvg</artifactId>
+            <version>1.6.1</version>
         </dependency>
         
         <!-- https://mvnrepository.com/artifact/com.formdev/flatlaf -->
@@ -39,19 +45,13 @@
             <version>3.6.2</version>
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/com.github.weisj/jsvg -->
-        <dependency>
-            <groupId>com.github.weisj</groupId>
-            <artifactId>jsvg</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-        
         <dependency>
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-intellij-themes</artifactId>
-            <version>3.6</version>
+            <version>3.6.2</version>
             <type>jar</type>
         </dependency>
+        
         <dependency>
             <groupId>com.toedter</groupId>
             <artifactId>jcalendar</artifactId>

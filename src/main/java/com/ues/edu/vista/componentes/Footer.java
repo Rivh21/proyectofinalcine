@@ -4,17 +4,23 @@
  */
 package com.ues.edu.vista.componentes;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.ues.edu.controlador.ControladorLogin;
 import com.ues.edu.modelo.Usuario;
 import com.ues.edu.vista.Dashboard;
 import com.ues.edu.vista.Login;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.UIManager;
 
 /**
  *
@@ -30,6 +36,7 @@ public class Footer extends javax.swing.JPanel {
         initComponents();
         setOpaque(false);
         initExitListener();
+        initThemeListener();
     }
 
     /**
@@ -42,16 +49,21 @@ public class Footer extends javax.swing.JPanel {
     private void initComponents() {
 
         lblSalir = new javax.swing.JLabel();
+        toggleTema = new com.ues.edu.vista.swing.ToggleSwitch();
 
         lblSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/logout1.png"))); // NOI18N
         lblSalir.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        toggleTema.setText("toggleSwitch1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(554, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(toggleTema, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 488, Short.MAX_VALUE)
                 .addComponent(lblSalir)
                 .addContainerGap())
         );
@@ -60,6 +72,10 @@ public class Footer extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(lblSalir, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addComponent(toggleTema, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -70,6 +86,38 @@ public class Footer extends javax.swing.JPanel {
         g2.setColor(getBackground());
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
         super.paintComponent(g);
+    }
+
+    private void initThemeListener() {
+        // Sincronizar estado inicial del botón con el tema actual
+        if (UIManager.getLookAndFeel() instanceof FlatDarkLaf) {
+            toggleTema.setSelected(false); // Modo Oscuro = Botón a la izquierda
+        } else {
+            toggleTema.setSelected(true);  // Modo Claro = Botón a la derecha
+        }
+
+        toggleTema.addActionListener(e -> {
+            EventQueue.invokeLater(() -> {
+                // Animación suave
+                FlatAnimatedLafChange.showSnapshot();
+
+                try {
+                    if (toggleTema.isSelected()) {
+                        // Cambiar a Claro
+                        UIManager.setLookAndFeel(new FlatLightLaf());
+                    } else {
+                        // Cambiar a Oscuro
+                        UIManager.setLookAndFeel(new FlatDarkLaf());
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Error cambiando tema: " + ex.getMessage());
+                }
+
+                // Actualiza toda la interfaz gráfica
+                FlatLaf.updateUI();
+                FlatAnimatedLafChange.hideSnapshotWithAnimation();
+            });
+        });
     }
 
     private void initExitListener() {
@@ -122,5 +170,6 @@ public class Footer extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblSalir;
+    private com.ues.edu.vista.swing.ToggleSwitch toggleTema;
     // End of variables declaration//GEN-END:variables
 }
