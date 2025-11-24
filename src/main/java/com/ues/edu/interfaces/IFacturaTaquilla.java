@@ -18,6 +18,8 @@ public interface IFacturaTaquilla {
     public ListaSimple<FacturaTaquilla> selectAllTo(String atributo, String condicion);
 
     public ListaSimple<FacturaTaquilla> buscar(String dato);
+    
+    public boolean anularFactura(String idFactura);
 
     public boolean update(FacturaTaquilla obj);
 

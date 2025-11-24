@@ -47,6 +47,8 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
             animateMenuWidth();
         });
         initComponents();
+        
+        menu1.initMenu(usuario);
 
         this.setLocationRelativeTo(null);
         setBackground(new Color(0, 0, 0, 0));
@@ -270,7 +272,7 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
 
             case "Factura Taquilla" -> {
                 Mantenimiento mantto = new Mantenimiento("Facturas");
-                ControladorLecturaFactura clf = new ControladorLecturaFactura(mantto);
+                ControladorLecturaFactura clf = new ControladorLecturaFactura(mantto, this.usuarioLogueado);
                 showJPanel(mantto);
             }
 

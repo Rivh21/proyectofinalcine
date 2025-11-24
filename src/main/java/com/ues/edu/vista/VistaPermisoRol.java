@@ -9,31 +9,32 @@ package com.ues.edu.vista;
  * @author radon
  */
 public class VistaPermisoRol extends javax.swing.JPanel {
-
-     public VistaPermisoRol() {
+    
+    public VistaPermisoRol() {
         this("Permisos del Rol");
     }
+
     public VistaPermisoRol(String titulo) {
         initComponents();
         this.lblTitulo.setText(titulo);
         fondo.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
-               
-               for (java.awt.Component comp : fondo.getComponents()) {
+                
+                for (java.awt.Component comp : fondo.getComponents()) {
                     if (comp instanceof javax.swing.JButton btn) {
                         btn.getModel().setArmed(false);
                         btn.setFocusable(false);
                         javax.swing.SwingUtilities.invokeLater(() -> btn.setFocusable(true));
                     }
                 }
-                btnCambios.setEnabled(true);
-                btnAsignar.setEnabled(false);
+                btnRegresar.setEnabled(true);
+                btnQuitarPermiso.setEnabled(false);
                 tbDatos.clearSelection();
                 fondo.requestFocusInWindow();
             }
         });
-    
+        
     }
 
     /**
@@ -46,14 +47,15 @@ public class VistaPermisoRol extends javax.swing.JPanel {
     private void initComponents() {
 
         fondo = new javax.swing.JPanel();
-        btnCambios = new javax.swing.JButton();
+        btnRegresar = new javax.swing.JButton();
         btnAsignar = new javax.swing.JButton();
         lblTitulo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDatos = new com.ues.edu.vista.swing.TablaConCheckboxes();
+        btnQuitarPermiso = new javax.swing.JButton();
 
-        btnCambios.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        btnCambios.setText("GUARDAR");
+        btnRegresar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        btnRegresar.setText("REGRESAR");
 
         btnAsignar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnAsignar.setText("ASIGNAR PERMISOS");
@@ -61,6 +63,9 @@ public class VistaPermisoRol extends javax.swing.JPanel {
         lblTitulo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
 
         jScrollPane1.setViewportView(tbDatos);
+
+        btnQuitarPermiso.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        btnQuitarPermiso.setText("QUITAR PERMISO");
 
         javax.swing.GroupLayout fondoLayout = new javax.swing.GroupLayout(fondo);
         fondo.setLayout(fondoLayout);
@@ -71,9 +76,12 @@ public class VistaPermisoRol extends javax.swing.JPanel {
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
                     .addGroup(fondoLayout.createSequentialGroup()
-                        .addComponent(btnCambios)
+                        .addComponent(btnRegresar)
                         .addGap(18, 18, 18)
-                        .addComponent(btnAsignar)))
+                        .addComponent(btnAsignar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnQuitarPermiso)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(50, 50, 50))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -83,13 +91,14 @@ public class VistaPermisoRol extends javax.swing.JPanel {
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fondoLayout.createSequentialGroup()
                 .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
+                .addGap(39, 39, 39)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCambios)
-                    .addComponent(btnAsignar))
+                    .addComponent(btnRegresar)
+                    .addComponent(btnAsignar)
+                    .addComponent(btnQuitarPermiso))
                 .addGap(30, 30, 30)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(111, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -107,7 +116,8 @@ public class VistaPermisoRol extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnAsignar;
-    public javax.swing.JButton btnCambios;
+    public javax.swing.JButton btnQuitarPermiso;
+    public javax.swing.JButton btnRegresar;
     private javax.swing.JPanel fondo;
     private javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JLabel lblTitulo;

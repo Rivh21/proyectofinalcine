@@ -10,26 +10,29 @@ import com.ues.edu.vista.ModalPermisoRol;
 import com.ues.edu.vista.VistaPermisoRol;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
-import java.awt.Window;
-import javax.swing.JComboBox;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 /**
- * 
+ *
  * @author radonay
  */
 public class ControladorPermisoRol {
 
     private final PermisoRolDao prDao;
     private final PermisoDao pDao;
+
     private int idRolActual;
     private String nombreRolActual;
     private VistaPermisoRol vistaActual;
-    private ListaSimple<PermisoRol> listaPermisoRolActual;
+
+    private int idPermisoRolSeleccionado = -1;
 
     public ControladorPermisoRol() {
         this.prDao = new PermisoRolDao();
@@ -40,14 +43,20 @@ public class ControladorPermisoRol {
         this.idRolActual = idRol;
         this.nombreRolActual = nombreRol;
         this.vistaActual = vista;
-        vista.lblTitulo.setText("Rol seleccionado:  " + nombreRol);
-        vista.btnCambios.addActionListener(e -> guardarCambiosPermisos(vista.tbDatos));
-        vista.btnAsignar.addActionListener(e -> mostrarModalAsignarPermiso());
+
+        vista.lblTitulo.setText("Rol seleccionado: " + nombreRol);
+        vista.btnQuitarPermiso.setEnabled(false);
+
+        onClickTabla();
+        onClickAsignar();
+        onClickRegresar();
+        onClickQuitarPermiso();
+
         recargarTabla();
     }
 
-    public void recargarTabla() {
-        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"ID_P", "Permiso", "Tiene permiso", "ID_PR"}, 0) {
+    private void recargarTabla() {
+        DefaultTableModel modelo = new DefaultTableModel(new Object[]{"ID_PR", "Permiso", "Activo", "ID_P"}, 0) {
             @Override
             public Class<?> getColumnClass(int column) {
                 return (column == 2) ? Boolean.class : super.getColumnClass(column);
@@ -59,125 +68,157 @@ public class ControladorPermisoRol {
             }
         };
 
-        JTable tabla = vistaActual.tbDatos;
-        tabla.setModel(modelo);
+        vistaActual.tbDatos.setModel(modelo);
+        ListaSimple<PermisoRol> lista = prDao.selectByRol(idRolActual);
 
-        this.listaPermisoRolActual = prDao.selectByRol(idRolActual);
-
-        for (PermisoRol pr : listaPermisoRolActual.toArray()) {
+        for (PermisoRol pr : lista.toArray()) {
             modelo.addRow(new Object[]{
-                pr.getPermiso().getIdPermiso(),
+                pr.getIdPermisoRol(),
                 pr.getPermiso().getNombrePermiso(),
                 pr.getTienePermiso(),
-                pr.getIdPermisoRol()
+                pr.getPermiso().getIdPermiso()
             });
         }
 
-        TableColumnModel tcm = tabla.getColumnModel();
+        TableColumnModel tcm = vistaActual.tbDatos.getColumnModel();
         if (tcm.getColumnCount() > 0) {
-            for (int col : new int[]{0, 3}) {
-                tcm.getColumn(col).setMinWidth(0);
-                tcm.getColumn(col).setMaxWidth(0);
-                tcm.getColumn(col).setPreferredWidth(0);
+            tcm.getColumn(0).setMinWidth(0);
+            tcm.getColumn(0).setMaxWidth(0);
+            tcm.getColumn(0).setPreferredWidth(0);
+
+            tcm.getColumn(3).setMinWidth(0);
+            tcm.getColumn(3).setMaxWidth(0);
+            tcm.getColumn(3).setPreferredWidth(0);
+        }
+    }
+
+    private void onClickTabla() {
+        vistaActual.tbDatos.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int rowVista = vistaActual.tbDatos.getSelectedRow();
+
+                if (rowVista >= 0) {
+                    int rowModelo = vistaActual.tbDatos.convertRowIndexToModel(rowVista);
+                    Object idValue = vistaActual.tbDatos.getModel().getValueAt(rowModelo, 0);
+                    idPermisoRolSeleccionado = (Integer) idValue;
+
+                    vistaActual.btnQuitarPermiso.setEnabled(idPermisoRolSeleccionado > 0);
+                } else {
+                    idPermisoRolSeleccionado = -1;
+                    vistaActual.btnQuitarPermiso.setEnabled(false);
+                }
             }
-            tcm.getColumn(2).setPreferredWidth(80);
-        }
+        });
     }
 
-    private void mostrarModalAsignarPermiso() {
-        ModalPermisoRol modal = new ModalPermisoRol(new JFrame(), true);
-        modal.setTitle("Asignar Permiso a Rol");
-        modal.lbRolSeleccionada.setText(nombreRolActual);
-        cargarPermisosDisponibles(modal.cmbPermisos);
-        modal.btnGuardar.addActionListener(e -> guardarNuevoPermiso(modal));
-        modal.setLocationRelativeTo(vistaActual);
-        modal.setVisible(true);
-    }
-
-    private void cargarPermisosDisponibles(JComboBox<String> cmbPermisos) {
-        cmbPermisos.removeAllItems();
-
-        // Todos los permisos
-        ListaSimple<Permiso> listaPermisos = pDao.selectAllPermisos();
-        var listaArray = listaPermisos.toArray();
-
-        // parte para permisos ya asignado
-        var asignadosArray = prDao.selectByRol(idRolActual).toArray();
-
-        for (Permiso permiso : listaArray) {
-            boolean yaAsignado = asignadosArray.stream()
-                    .anyMatch(pr -> pr.getPermiso().getIdPermiso() == permiso.getIdPermiso());
-            if (!yaAsignado) {
-                cmbPermisos.addItem(permiso.getNombrePermiso());
+    private void onClickQuitarPermiso() {
+        vistaActual.btnQuitarPermiso.addActionListener(e -> {
+            if (idPermisoRolSeleccionado == -1) {
+                JOptionPane.showMessageDialog(vistaActual, "Seleccione un permiso para quitar.");
+                return;
             }
-        }
 
-        if (cmbPermisos.getItemCount() == 0) {
-            cmbPermisos.addItem("No hay permisos disponibles");
-            cmbPermisos.setEnabled(false);
-        } else {
-            cmbPermisos.setEnabled(true);
-        }
-    }
+            int confirm = JOptionPane.showConfirmDialog(vistaActual,
+                    "¿Está seguro de quitar este permiso del rol?",
+                    "Confirmar Eliminación",
+                    JOptionPane.YES_NO_OPTION);
 
-    private void guardarNuevoPermiso(ModalPermisoRol modal) {
-        String nombrePermiso = (String) modal.cmbPermisos.getSelectedItem();
-        if (nombrePermiso == null || nombrePermiso.equals("No hay permisos disponibles")) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Seleccione un permiso válido.", DesktopNotify.FAIL, 4000L);
-            return;
-        }
-        var lista = pDao.obtenerIdPorNombre(nombrePermiso);
-        if (lista.isEmpty()) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "No se encontró el permiso.", DesktopNotify.FAIL, 4000L);
-            return;
-        }
-        Permiso permiso = lista.get(0);
-        boolean yaExiste = prDao.selectByRol(idRolActual).toArray().stream()
-                .anyMatch(pr -> pr.getPermiso().getIdPermiso() == permiso.getIdPermiso());
+            if (confirm == JOptionPane.YES_OPTION) {
+                PermisoRol prEliminar = new PermisoRol();
+                prEliminar.setIdPermisoRol(idPermisoRolSeleccionado);
 
-        if (yaExiste) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Este permiso ya está asignado a este rol.", DesktopNotify.FAIL, 4000L);
-            return;
-        }
-
-        PermisoRol nuevoPR = new PermisoRol(0, new Rol(idRolActual, nombreRolActual), permiso, true);
-        if (prDao.insert(nuevoPR)) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Green);
-            DesktopNotify.showDesktopMessage("Éxito", "Permiso asignado correctamente al rol.", DesktopNotify.SUCCESS, 4000L);
-            modal.dispose();
-            recargarTabla();
-        } else {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "No se pudo asignar el permiso.", DesktopNotify.FAIL, 4000L);
-        }
-    }
-
-    private void guardarCambiosPermisos(JTable tabla) {
-        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        int filasGuardadas = 0;
-
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            int idPermiso = (int) modelo.getValueAt(i, 0);
-            boolean tienePermiso = (boolean) modelo.getValueAt(i, 2);
-            if (prDao.actualizarEstadoPermiso(idRolActual, idPermiso, tienePermiso)) {
-                filasGuardadas++;
+                if (prDao.delete(prEliminar)) {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                    DesktopNotify.showDesktopMessage("Éxito", "Permiso eliminado del rol.", DesktopNotify.SUCCESS, 3000L);
+                    recargarTabla();
+                    vistaActual.btnQuitarPermiso.setEnabled(false);
+                    idPermisoRolSeleccionado = -1;
+                } else {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                    DesktopNotify.showDesktopMessage("Error", "No se pudo eliminar.", DesktopNotify.FAIL, 3000L);
+                }
             }
-        }
+        });
+    }
 
-        if (filasGuardadas > 0) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Green);
-            DesktopNotify.showDesktopMessage("Cambios guardados", "Se guardaron " + filasGuardadas + " cambios correctamente.", DesktopNotify.SUCCESS, 4000L);
-        } else {
-            DesktopNotify.setDefaultTheme(NotifyTheme.LightBlue);
-            DesktopNotify.showDesktopMessage("Sin cambios", "No se detectaron modificaciones que guardar.", DesktopNotify.INFORMATION, 4000L);
-        }
+    private void onClickAsignar() {
+        vistaActual.btnAsignar.addActionListener(e -> {
+            ModalPermisoRol modal = new ModalPermisoRol(new JFrame(), true);
+            modal.setTitle("Asignar Permiso");
+            modal.lbRolSeleccionada.setText(nombreRolActual);
 
-        Window window = SwingUtilities.getWindowAncestor(vistaActual);
-        if (window != null) {
-            window.dispose();
-        }
+            modal.cmbPermisos.removeAllItems();
+            ListaSimple<Permiso> listaPermisos = pDao.selectAllPermisos();
+            var todosLosPermisos = listaPermisos.toArray();
+            var asignados = prDao.selectByRol(idRolActual).toArray();
+
+            for (Permiso p : todosLosPermisos) {
+                boolean yaTiene = asignados.stream()
+                        .anyMatch(pr -> pr.getPermiso().getIdPermiso() == p.getIdPermiso());
+
+                if (!yaTiene) {
+                    modal.cmbPermisos.addItem(p.getNombrePermiso());
+                }
+            }
+
+            if (modal.cmbPermisos.getItemCount() == 0) {
+                modal.cmbPermisos.addItem("Sin permisos disponibles");
+                modal.cmbPermisos.setEnabled(false);
+                modal.btnGuardar.setEnabled(false);
+            }
+
+            modal.btnGuardar.addActionListener(evt -> {
+                String nombreP = (String) modal.cmbPermisos.getSelectedItem();
+                if (nombreP != null && !nombreP.equals("Sin permisos disponibles")) {
+                    var listaBusqueda = pDao.obtenerIdPorNombre(nombreP);
+                    if (!listaBusqueda.isEmpty()) {
+                        Permiso p = listaBusqueda.get(0);
+
+                        PermisoRol nuevoPR = new PermisoRol();
+                        Rol rol = new Rol();
+                        rol.setIdRol(idRolActual);
+                        nuevoPR.setRol(rol);
+                        nuevoPR.setPermiso(p);
+                        nuevoPR.setTienePermiso(true);
+
+                        if (prDao.insert(nuevoPR)) {
+                            DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                            DesktopNotify.showDesktopMessage("Éxito", "Permiso asignado.", DesktopNotify.SUCCESS, 3000L);
+                            modal.dispose();
+                            recargarTabla();
+                        } else {
+                            JOptionPane.showMessageDialog(modal, "Error al asignar.");
+                        }
+                    }
+                }
+            });
+
+            modal.setLocationRelativeTo(vistaActual);
+            modal.setVisible(true);
+        });
+    }
+
+    private void onClickRegresar() {
+        vistaActual.btnRegresar.addActionListener(e -> {
+            DefaultTableModel modelo = (DefaultTableModel) vistaActual.tbDatos.getModel();
+
+            for (int i = 0; i < modelo.getRowCount(); i++) {
+                int idPR = (int) modelo.getValueAt(i, 0);
+                boolean valorActual = (boolean) modelo.getValueAt(i, 2);
+
+                // Actualiza el registro
+                PermisoRol prObj = new PermisoRol();
+                prObj.setIdPermisoRol(idPR);
+                prObj.setTienePermiso(valorActual);
+
+                prDao.update(prObj);
+            }
+
+            java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(vistaActual);
+            if (window != null) {
+                window.dispose();
+            }
+        });
     }
 }

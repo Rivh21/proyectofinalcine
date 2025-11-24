@@ -9,13 +9,14 @@ import java.util.List;
 
 /**
  *
- * @author DELL LATITUDE
+ * @author jorge
  */
-public class FacturaTaquilla implements Comparable<FacturaTaquilla>{
+public class FacturaTaquilla implements Comparable<FacturaTaquilla> {
 
     private String idFacturaTaquilla;
     private BigDecimal MontoTotal;
     private BigDecimal descuentoAplicado;
+    private String estado; 
     private Usuario usuarios;
     private MetodoPago metodoPago;
     private Empleado empleado;
@@ -23,23 +24,28 @@ public class FacturaTaquilla implements Comparable<FacturaTaquilla>{
 
     public FacturaTaquilla() {
         this.descuentoAplicado = BigDecimal.ZERO;
+        this.estado = "VALIDA"; 
     }
 
-    public FacturaTaquilla(String idFacturaTaquilla, BigDecimal MontoTotal, BigDecimal descuentoAplicado, Usuario usuarios, MetodoPago metodoPago, Empleado empleado) {
+    public FacturaTaquilla(String idFacturaTaquilla, BigDecimal MontoTotal, BigDecimal descuentoAplicado, String estado, Usuario usuarios, MetodoPago metodoPago, Empleado empleado) {
         this.idFacturaTaquilla = idFacturaTaquilla;
         this.MontoTotal = MontoTotal;
         this.descuentoAplicado = descuentoAplicado;
+        this.estado = estado;
         this.usuarios = usuarios;
         this.metodoPago = metodoPago;
         this.empleado = empleado;
     }
 
-    public FacturaTaquilla(BigDecimal MontoTotal, BigDecimal descuentoAplicado, Usuario usuarios, MetodoPago metodoPago, Empleado empleado) {
-        this.MontoTotal = MontoTotal;
-        this.descuentoAplicado = descuentoAplicado;
-        this.usuarios = usuarios;
-        this.metodoPago = metodoPago;
-        this.empleado = empleado;
+    public void calcularImportes(double precioUnitario, int cantidadBoletos, double porcentajeDescuento) {
+        BigDecimal precio = BigDecimal.valueOf(precioUnitario);
+        BigDecimal cantidad = BigDecimal.valueOf(cantidadBoletos);
+        BigDecimal porcentaje = BigDecimal.valueOf(porcentajeDescuento);
+        BigDecimal totalBruto = precio.multiply(cantidad);
+        BigDecimal montoDescontado = totalBruto.multiply(porcentaje);
+        BigDecimal totalNeto = totalBruto.subtract(montoDescontado);
+        this.descuentoAplicado = montoDescontado;
+        this.MontoTotal = totalNeto;
     }
 
     public String getIdFacturaTaquilla() {
@@ -64,6 +70,14 @@ public class FacturaTaquilla implements Comparable<FacturaTaquilla>{
 
     public void setDescuentoAplicado(BigDecimal descuentoAplicado) {
         this.descuentoAplicado = descuentoAplicado;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public Usuario getUsuarios() {
@@ -102,5 +116,4 @@ public class FacturaTaquilla implements Comparable<FacturaTaquilla>{
     public int compareTo(FacturaTaquilla o) {
         return this.idFacturaTaquilla.compareTo(o.idFacturaTaquilla);
     }
-
 }

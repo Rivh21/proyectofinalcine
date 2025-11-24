@@ -33,7 +33,7 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
 
     @Override
     public ListaSimple<FacturaTaquilla> selectAll() {
-        String sql = "SELECT ft.id_factura_taquilla, ft.monto_total, ft.descuento_aplicado, "
+        String sql = "SELECT ft.id_factura_taquilla, ft.monto_total, ft.descuento_aplicado, ft.estado, "
                 + "e.id_empleado, e.nombre, e.apellido, "
                 + "mp.id_metodo_pago, mp.nombre_metodo "
                 + "FROM facturas_taquillas ft "
@@ -44,7 +44,7 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
 
     @Override
     public ListaSimple<FacturaTaquilla> selectAllTo(String atributo, String condicion) {
-        String sql = "SELECT ft.id_factura_taquilla, ft.monto_total, ft.descuento_aplicado, "
+        String sql = "SELECT ft.id_factura_taquilla, ft.monto_total, ft.descuento_aplicado, ft.estado, "
                 + "e.id_empleado, e.nombre, e.apellido, "
                 + "mp.id_metodo_pago, mp.nombre_metodo "
                 + "FROM facturas_taquillas ft "
@@ -56,7 +56,7 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
 
     @Override
     public ListaSimple<FacturaTaquilla> buscar(String dato) {
-        String sql = "SELECT ft.id_factura_taquilla, ft.monto_total, ft.descuento_aplicado, "
+        String sql = "SELECT ft.id_factura_taquilla, ft.monto_total, ft.descuento_aplicado, ft.estado, "
                 + "e.id_empleado, e.nombre, e.apellido, "
                 + "mp.id_metodo_pago, mp.nombre_metodo "
                 + "FROM facturas_taquillas ft "
@@ -64,6 +64,56 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
                 + "JOIN metodo_pago mp ON ft.id_metodo_pago = mp.id_metodo_pago "
                 + "WHERE ft.id_factura_taquilla LIKE '" + dato + "%' OR mp.nombre_metodo LIKE '" + dato + "%'";
         return select(sql);
+    }
+
+    @Override
+    public boolean anularFactura(String idFactura) {
+        Connection localCon = null;
+        PreparedStatement psAnular = null;
+        PreparedStatement psLiberar = null;
+
+        try {
+            localCon = conectar.getConexion();
+            localCon.setAutoCommit(false);
+
+            String sqlAnular = "UPDATE facturas_taquillas SET estado = 'ANULADA', monto_total = 0.00 WHERE id_factura_taquilla = ?";
+            psAnular = localCon.prepareStatement(sqlAnular);
+            psAnular.setString(1, idFactura);
+            psAnular.executeUpdate();
+
+            String sqlLiberar = "DELETE FROM boletos WHERE id_factura_taquilla = ?";
+            psLiberar = localCon.prepareStatement(sqlLiberar);
+            psLiberar.setString(1, idFactura);
+            psLiberar.executeUpdate();
+
+            localCon.commit();
+            return true;
+
+        } catch (SQLException e) {
+            try {
+                if (localCon != null) {
+                    localCon.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error", "No se pudo anular la factura.", DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (psAnular != null) {
+                    psAnular.close();
+                }
+                if (psLiberar != null) {
+                    psLiberar.close();
+                }
+                conectar.closeConexion(localCon);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -82,7 +132,7 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
             return true;
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error al Eliminar", "No se puede eliminar la factura. Debe anular primero los boletos.", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error al Eliminar", "No se puede eliminar físicamente. Use la opción Anular.", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
@@ -108,6 +158,7 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
                 obj.setIdFacturaTaquilla(rs.getString("id_factura_taquilla"));
                 obj.setMontoTotal(rs.getBigDecimal("monto_total"));
                 obj.setDescuentoAplicado(rs.getBigDecimal("descuento_aplicado"));
+                obj.setEstado(rs.getString("estado"));
 
                 Empleado emp = new Empleado();
                 emp.setIdEmpleado(rs.getInt("id_empleado"));

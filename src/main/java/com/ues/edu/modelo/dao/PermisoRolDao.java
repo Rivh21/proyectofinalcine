@@ -11,10 +11,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * 
- * @author jorge 
+ *
+ * @author jorge
  */
 public class PermisoRolDao implements IPermisoRol {
 
@@ -29,7 +31,9 @@ public class PermisoRolDao implements IPermisoRol {
 
     @Override
     public ListaSimple<PermisoRol> selectAll() {
-        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, r.id_rol, r.nombre_rol, p.id_permiso, p.nombre_permiso "
+        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, "
+                + "r.id_rol, r.nombre_rol, "
+                + "p.id_permiso, p.nombre_permiso "
                 + "FROM permiso_rol pr "
                 + "JOIN roles r ON pr.id_rol = r.id_rol "
                 + "JOIN permisos p ON pr.id_permiso = p.id_permiso";
@@ -38,7 +42,9 @@ public class PermisoRolDao implements IPermisoRol {
 
     @Override
     public ListaSimple<PermisoRol> selectAllTo(String atributo, String condicion) {
-        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, r.id_rol, r.nombre_rol, p.id_permiso, p.nombre_permiso "
+        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, "
+                + "r.id_rol, r.nombre_rol, "
+                + "p.id_permiso, p.nombre_permiso "
                 + "FROM permiso_rol pr "
                 + "JOIN roles r ON pr.id_rol = r.id_rol "
                 + "JOIN permisos p ON pr.id_permiso = p.id_permiso "
@@ -48,7 +54,9 @@ public class PermisoRolDao implements IPermisoRol {
 
     @Override
     public ListaSimple<PermisoRol> buscar(String dato) {
-        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, r.id_rol, r.nombre_rol, p.id_permiso, p.nombre_permiso "
+        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, "
+                + "r.id_rol, r.nombre_rol, "
+                + "p.id_permiso, p.nombre_permiso "
                 + "FROM permiso_rol pr "
                 + "JOIN roles r ON pr.id_rol = r.id_rol "
                 + "JOIN permisos p ON pr.id_permiso = p.id_permiso "
@@ -58,7 +66,8 @@ public class PermisoRolDao implements IPermisoRol {
 
     @Override
     public boolean insert(PermisoRol obj) {
-        String sql = "INSERT INTO permiso_rol(id_rol, id_permiso, tiene_permiso) VALUES (?, ?, ?)";
+        // Por defecto al insertar asignamos tiene_permiso = 1 (true)
+        String sql = "INSERT INTO permiso_rol(id_rol, id_permiso, tiene_permiso) VALUES (?, ?, 1)";
         return alterarRegistro(sql, obj);
     }
 
@@ -82,13 +91,147 @@ public class PermisoRolDao implements IPermisoRol {
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
         return false;
+    }
+
+    // --- Implementación de métodos específicos de la interfaz ---
+    @Override
+    public ListaSimple<PermisoRol> selectByRol(int idRol) {
+        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, "
+                + "r.id_rol, r.nombre_rol, "
+                + "p.id_permiso, p.nombre_permiso "
+                + "FROM permiso_rol pr "
+                + "JOIN roles r ON pr.id_rol = r.id_rol "
+                + "JOIN permisos p ON pr.id_permiso = p.id_permiso "
+                + "WHERE pr.id_rol = " + idRol;
+        return select(sql);
+    }
+
+    @Override
+    public boolean actualizarEstadoPermiso(int idRol, int idPermiso, boolean tienePermiso) {
+        String sql = "UPDATE permiso_rol SET tiene_permiso=? WHERE id_rol=? AND id_permiso=?";
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.setBoolean(1, tienePermiso);
+            ps.setInt(2, idRol);
+            ps.setInt(3, idPermiso);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error", "No se pudo actualizar el estado del permiso.", DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public ListaSimple<Permiso> selectAllPermisos() {
+        ListaSimple<Permiso> lista = new ListaSimple<>();
+        String sql = "SELECT id_permiso, nombre_permiso FROM permisos ORDER BY nombre_permiso";
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Permiso p = new Permiso(rs.getInt("id_permiso"), rs.getString("nombre_permiso"));
+                lista.insertar(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
+    }
+
+    @Override
+    public ListaSimple<Permiso> obtenerIdPorNombre(String nombrePermiso) {
+        ListaSimple<Permiso> lista = new ListaSimple<>();
+        String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE nombre_permiso = ?";
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, nombrePermiso);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Permiso p = new Permiso(rs.getInt("id_permiso"), rs.getString("nombre_permiso"));
+                lista.insertar(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
+    }
+
+    @Override
+    public boolean existePermisoRol(int idRol, int idPermiso) {
+        boolean existe = false;
+        String sql = "SELECT 1 FROM permiso_rol WHERE id_rol = ? AND id_permiso = ?";
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idRol);
+            ps.setInt(2, idPermiso);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                existe = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return existe;
     }
 
     private ListaSimple<PermisoRol> select(String sql) {
@@ -110,13 +253,15 @@ public class PermisoRolDao implements IPermisoRol {
                 lista.insertar(pr);
             }
         } catch (Exception e) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Consulta M:M", "Error al cargar la lista de relaciones Permiso/Rol.", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -126,7 +271,6 @@ public class PermisoRolDao implements IPermisoRol {
     }
 
     private boolean alterarRegistro(String sql, PermisoRol obj) {
-        PreparedStatement ps = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
@@ -134,7 +278,7 @@ public class PermisoRolDao implements IPermisoRol {
             if (sql.contains("INSERT")) {
                 ps.setInt(1, obj.getRol().getIdRol());
                 ps.setInt(2, obj.getPermiso().getIdPermiso());
-                ps.setBoolean(3, obj.getTienePermiso());
+                // El tercer parametro ya está hardcodeado como 1 en el SQL de insert
             } else if (sql.contains("UPDATE")) {
                 ps.setBoolean(1, obj.getTienePermiso());
             }
@@ -143,11 +287,13 @@ public class PermisoRolDao implements IPermisoRol {
             return true;
         } catch (SQLException e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Guardado", "Error al guardar o actualizar la relación.", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error al guardar datos.", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                if (ps != null) ps.close();
+                if (ps != null) {
+                    ps.close();
+                }
                 conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -156,114 +302,40 @@ public class PermisoRolDao implements IPermisoRol {
         return false;
     }
 
-    // --- Métodos adicionales con ListaSimple ---
+    @Override
+    public List<String> obtenerNombresPermisosPorRol(int idRol) {
+        List<String> permisos = new ArrayList<>();
 
-    public ListaSimple<PermisoRol> selectByRol(int idRol) {
-        String sql = "SELECT pr.id_permiso_rol, pr.tiene_permiso, r.id_rol, r.nombre_rol, p.id_permiso, p.nombre_permiso "
-                + "FROM permiso_rol pr "
-                + "JOIN roles r ON pr.id_rol = r.id_rol "
-                + "JOIN permisos p ON pr.id_permiso = p.id_permiso "
-                + "WHERE pr.id_rol=" + idRol;
-        return select(sql);
-    }
+        // Seleccionael nombre del permiso de la tabla permisos
+        // Uniendo con la tabla intermedia donde el rol coincida Y tenga el permiso activo (true/1)
+        String sql = "SELECT p.nombre_permiso "
+                + "FROM permisos p "
+                + "JOIN permiso_rol pr ON p.id_permiso = pr.id_permiso "
+                + "WHERE pr.id_rol = ? AND pr.tiene_permiso = 1";
 
-    public boolean actualizarEstadoPermiso(int idRol, int idPermiso, boolean tienePermiso) {
-        String sql = "UPDATE permiso_rol SET tiene_permiso=? WHERE id_rol=? AND id_permiso=?";
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
-            ps.setBoolean(1, tienePermiso);
-            ps.setInt(2, idRol);
-            ps.setInt(3, idPermiso);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Actualización", "Error al actualizar el estado del permiso.", DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
-        } finally {
-            try {
-                if (ps != null) ps.close();
-                conectar.closeConexion(con);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
-    }
-
-    // ✅ Ahora usa ListaSimple en lugar de List
-    public ListaSimple<Permiso> selectAllPermisos() {
-        ListaSimple<Permiso> lista = new ListaSimple<>();
-        String sql = "SELECT id_permiso, nombre_permiso FROM permisos ORDER BY nombre_permiso";
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Permiso p = new Permiso(rs.getInt("id_permiso"), rs.getString("nombre_permiso"));
-                lista.insertar(p);
-            }
-        } catch (Exception e) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Consulta", "Error al cargar la lista de Permisos.", DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                conectar.closeConexion(con);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return lista;
-    }
-
-    public ListaSimple<Permiso> obtenerIdPorNombre(String nombrePermiso) {
-        ListaSimple<Permiso> lista = new ListaSimple<>();
-        String sql = "SELECT id_permiso, nombre_permiso FROM permisos WHERE nombre_permiso = ?";
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
-            ps.setString(1, nombrePermiso);
-            rs = ps.executeQuery();
-            if (rs.next()) {
-                Permiso p = new Permiso(rs.getInt("id_permiso"), rs.getString("nombre_permiso"));
-                lista.insertar(p);
-            }
-        } catch (Exception e) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Búsqueda", "Error al buscar el ID del Permiso.", DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) rs.close();
-                if (ps != null) ps.close();
-                conectar.closeConexion(con);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return lista;
-    }
-     public boolean existePermisoRol(int idRol, int idPermiso) {
-        boolean existe = false;
-        try {
-            String sql = "SELECT COUNT(*) FROM rol_permiso WHERE id_rol = ? AND id_permiso = ?";
-            PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, idRol);
-            ps.setInt(2, idPermiso);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                existe = rs.getInt(1) > 0;
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                permisos.add(rs.getString("nombre_permiso"));
             }
-            rs.close();
-            ps.close();
-            con.close();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (Exception ex) {
+            }
         }
-        return existe;
+        return permisos;
     }
 }
-

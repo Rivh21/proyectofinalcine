@@ -7,6 +7,7 @@ package com.ues.edu.interfaces;
 import com.ues.edu.modelo.Permiso;
 import com.ues.edu.modelo.PermisoRol;
 import com.ues.edu.modelo.estructuras.ListaSimple;
+import java.util.List;
 
 /**
  *
@@ -35,5 +36,7 @@ public interface IPermisoRol {
     ListaSimple<Permiso> obtenerIdPorNombre(String nombrePermiso);
 
     boolean existePermisoRol(int idRol, int idPermiso);
+    
+    List<String> obtenerNombresPermisosPorRol(int idRol);
 
 }

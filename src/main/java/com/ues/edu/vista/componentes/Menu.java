@@ -5,6 +5,8 @@
 package com.ues.edu.vista.componentes;
 
 import com.ues.edu.modelo.ModeloMenu;
+import com.ues.edu.modelo.Usuario;
+import com.ues.edu.modelo.dao.PermisoRolDao;
 import com.ues.edu.vista.swing.ListaMenu;
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -24,9 +26,8 @@ import javax.swing.JFrame;
  */
 public class Menu extends javax.swing.JPanel {
 
-    private ModeloMenu data;
-    private boolean seleccionado;
-    private boolean hover;
+    private Usuario usuarioActual;
+    private List<String> permisosDelUsuario;
 
     /**
      * Creates new form Menu
@@ -35,54 +36,86 @@ public class Menu extends javax.swing.JPanel {
         initComponents();
         setOpaque(false);
         listaMenu1.setOpaque(false);
-        init();
-//        lbTitulo.setForeground(Color.LIGHT_GRAY);
         lbTitulo.setForeground(Color.WHITE);
+        this.permisosDelUsuario = new ArrayList<>();
     }
 
-    private void init() {
-        // --- SUBMENU: NucleoCine ---
-        List<ModeloMenu> subMenusNucleo = new ArrayList<>();
-        subMenusNucleo.add(new ModeloMenu("movie", "Peliculas", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("sala", "Salas", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("asiento", "Asientos", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("funcion", "Funciones", ModeloMenu.TipoMenu.MENU));
-        subMenusNucleo.add(new ModeloMenu("Prueba", ModeloMenu.TipoMenu.MENU));//agreggar
+    public void initMenu(Usuario usuario) {
+        this.usuarioActual = usuario;
 
-        // --- SUBMENÚ: Producto ---
-        List<ModeloMenu> subMenusConcesion = new ArrayList<>();
-        subMenusConcesion.add(new ModeloMenu("hand_package", "Producto", ModeloMenu.TipoMenu.MENU));
-        subMenusConcesion.add(new ModeloMenu("inventario", "Lote Inventario", ModeloMenu.TipoMenu.MENU));
+        if (usuario != null && usuario.getRol() != null) {
+            PermisoRolDao dao = new PermisoRolDao();
+            this.permisosDelUsuario = dao.obtenerNombresPermisosPorRol(usuario.getRol().getIdRol());
+        }
 
-        // --- SUBMENU: Gestion Interna ---
-        List<ModeloMenu> subMenusGestion = new ArrayList<>();
-        subMenusGestion.add(new ModeloMenu("grupo", "Empleados", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("user", "Usuarios", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("asignar_rol", "Roles", ModeloMenu.TipoMenu.MENU));
-        subMenusGestion.add(new ModeloMenu("permiso", "Permisos", ModeloMenu.TipoMenu.MENU));
-//        subMenusGestion.add(new ModeloMenu("moderator-24","Roles y Permisos", ModeloMenu.TipoMenu.MENU));
+        construirMenu();
+    }
 
-        // ---SUBMENU: Ventas ---
-        List<ModeloMenu> subMenuVentas = new ArrayList<>();
-        subMenuVentas.add(new ModeloMenu("factura", "Factura Taquilla", ModeloMenu.TipoMenu.MENU));
-        subMenuVentas.add(new ModeloMenu("factura", "Factura Concesion", ModeloMenu.TipoMenu.MENU));
-        subMenuVentas.add(new ModeloMenu("ticket", "Boletos", ModeloMenu.TipoMenu.MENU));
-        subMenuVentas.add(new ModeloMenu("payments", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
+    private boolean tienePermiso(String nombrePermiso) {
+        if (usuarioActual != null && "ADMINISTRADOR".equalsIgnoreCase(usuarioActual.getRol().getNombreRol())) {
+            return true;
+        }
+        return permisosDelUsuario.contains(nombrePermiso);
+    }
 
-        // -----------------------------------------------------------
-        // AÑADIR AL MENU PRINCIPAL
-        // ÍTEM PADRE (Tipo: SUB_MENU)
+    private void construirMenu() {
         listaMenu1.addItem(new ModeloMenu("home_24", "INICIO", ModeloMenu.TipoMenu.MENU));
-//        listaMenu1.addItem(new ModeloMenu(" ", " ", ModeloMenu.TipoMenu.VACIO));
-        listaMenu1.addItem(new ModeloMenu("theaters", "Nucleo Del Cine", subMenusNucleo));
-        listaMenu1.addItem(new ModeloMenu("settings", "Gestion Interna", subMenusGestion));
 
-        // ÍTEM PADRE (Tipo: SUB_MENU)
-        listaMenu1.addItem(new ModeloMenu("storefront", "Productos", subMenusConcesion));
+        // --- 1. CARTELERA (Antes preguntabas por Peliculas, Salas, etc. Ahora solo por el GRUPO) ---
+        if (tienePermiso("GESTIONAR_CARTELERA")) {
+            List<ModeloMenu> subMenusNucleo = new ArrayList<>();
+            subMenusNucleo.add(new ModeloMenu("movie", "Peliculas", ModeloMenu.TipoMenu.MENU));
+            subMenusNucleo.add(new ModeloMenu("sala", "Salas", ModeloMenu.TipoMenu.MENU));
+            subMenusNucleo.add(new ModeloMenu("asiento", "Asientos", ModeloMenu.TipoMenu.MENU));
+            subMenusNucleo.add(new ModeloMenu("funcion", "Funciones", ModeloMenu.TipoMenu.MENU));
 
-        listaMenu1.addItem(new ModeloMenu("sell", "Ventas", subMenuVentas));
+            listaMenu1.addItem(new ModeloMenu("theaters", "Nucleo Del Cine", subMenusNucleo));
+        }
+
+        // --- 2. RRHH (Usuarios, Roles, Empleados) ---
+        if (tienePermiso("GESTIONAR_RRHH")) {
+            List<ModeloMenu> subMenusGestion = new ArrayList<>();
+            subMenusGestion.add(new ModeloMenu("grupo", "Empleados", ModeloMenu.TipoMenu.MENU));
+            subMenusGestion.add(new ModeloMenu("user", "Usuarios", ModeloMenu.TipoMenu.MENU));
+            subMenusGestion.add(new ModeloMenu("asignar_rol", "Roles", ModeloMenu.TipoMenu.MENU));
+            subMenusGestion.add(new ModeloMenu("permiso", "Permisos", ModeloMenu.TipoMenu.MENU));
+
+            listaMenu1.addItem(new ModeloMenu("settings", "Gestion Interna", subMenusGestion));
+        }
+
+        // --- 3. PRODUCTOS (Nuevo permiso sugerido) ---
+        if (tienePermiso("GESTIONAR_INVENTARIO")) {
+            List<ModeloMenu> subMenusConcesion = new ArrayList<>();
+            subMenusConcesion.add(new ModeloMenu("hand_package", "Producto", ModeloMenu.TipoMenu.MENU));
+            subMenusConcesion.add(new ModeloMenu("inventario", "Lote Inventario", ModeloMenu.TipoMenu.MENU));
+
+            listaMenu1.addItem(new ModeloMenu("storefront", "Productos", subMenusConcesion));
+        }
+
+        // --- 4. VENTAS ---
+        if (tienePermiso("VER_VENTAS")) {
+            List<ModeloMenu> subMenuVentas = new ArrayList<>();
+
+            subMenuVentas.add(new ModeloMenu("factura", "Factura Taquilla", ModeloMenu.TipoMenu.MENU));
+
+            // Si quieres separar confitería, usa GESTIONAR_INVENTARIO o crea VER_CONFITERIA
+            if (tienePermiso("GESTIONAR_INVENTARIO") || tienePermiso("VER_VENTAS")) {
+                subMenuVentas.add(new ModeloMenu("factura", "Factura Concesion", ModeloMenu.TipoMenu.MENU));
+            }
+
+            subMenuVentas.add(new ModeloMenu("ticket", "Boletos", ModeloMenu.TipoMenu.MENU));
+
+            // Métodos de pago solo para Admins o Gerentes
+            if (tienePermiso("GESTIONAR_SISTEMA")) {
+                subMenuVentas.add(new ModeloMenu("payments", "Metodo de Pago", ModeloMenu.TipoMenu.MENU));
+            }
+
+            listaMenu1.addItem(new ModeloMenu("sell", "Ventas", subMenuVentas));
+        }
+
         listaMenu1.addItem(new ModeloMenu(" ", " ", ModeloMenu.TipoMenu.VACIO));
-
+        listaMenu1.revalidate();
+        listaMenu1.repaint();
     }
 
     /**
