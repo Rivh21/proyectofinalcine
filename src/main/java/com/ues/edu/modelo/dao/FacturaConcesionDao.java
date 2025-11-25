@@ -8,13 +8,15 @@ import com.ues.edu.modelo.*;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 import ds.desktop.notify.DesktopNotify;
 import java.sql.*;
+import com.ues.edu.modelo.dao.LotesInventarioDao;
+
 /**
  *
  * @author radon
  */
 public class FacturaConcesionDao implements IFacturaConcesion {
 
-    private final Conexion conectar;
+    Conexion conectar;
 
     public FacturaConcesionDao() {
         conectar = new Conexion();
@@ -35,8 +37,10 @@ public class FacturaConcesionDao implements IFacturaConcesion {
     @Override
     public FacturaConcesion buscarPorId(int id) {
         FacturaConcesion factura = null;
+
         String sql = "SELECT f.id_factura_concesion, f.monto_total, f.id_metodo_pago, f.id_empleado " +
                      "FROM factura_concesion f WHERE f.id_factura_concesion = ?";
+
         try (Connection con = conectar.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -65,6 +69,21 @@ public class FacturaConcesionDao implements IFacturaConcesion {
     }
 
     @Override
+    public ListaSimple<FacturaConcesion> buscar(String texto) {
+        String sql = "SELECT f.id_factura_concesion, f.monto_total, " +
+                     "f.id_metodo_pago, f.id_empleado, " +
+                     "e.nombre AS nombre_empleado, m.nombre_metodo " +
+                     "FROM factura_concesion f " +
+                     "LEFT JOIN empleados e ON f.id_empleado = e.id_empleado " +
+                     "LEFT JOIN metodo_pago m ON f.id_metodo_pago = m.id_metodo_pago " +
+                     "WHERE f.id_factura_concesion LIKE '%" + texto + "%' " +
+                     "OR e.nombre LIKE '%" + texto + "%' " +
+                     "OR m.nombre_metodo LIKE '%" + texto + "%' " +
+                     "ORDER BY f.id_factura_concesion ASC";
+        return select(sql);
+    }
+
+    @Override
     public boolean insert(FacturaConcesion factura) {
         String sql = "INSERT INTO factura_concesion(monto_total, id_metodo_pago, id_empleado) VALUES (?, ?, ?)";
         return alterarRegistro(sql, factura, true);
@@ -80,6 +99,7 @@ public class FacturaConcesionDao implements IFacturaConcesion {
     @Override
     public boolean delete(FacturaConcesion factura) {
         eliminarDetalles(factura.getIdFacturaConcesion());
+
         String sql = "DELETE FROM factura_concesion WHERE id_factura_concesion=?";
         try (Connection con = conectar.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -96,16 +116,16 @@ public class FacturaConcesionDao implements IFacturaConcesion {
         return false;
     }
 
-   
-
     private ListaSimple<FacturaConcesion> select(String sql) {
         ListaSimple<FacturaConcesion> lista = new ListaSimple<>();
+
         try (Connection con = conectar.getConexion();
              PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 FacturaConcesion f = new FacturaConcesion();
+
                 f.setIdFacturaConcesion(rs.getInt("id_factura_concesion"));
                 f.setMontoTotal(rs.getDouble("monto_total"));
 
@@ -124,6 +144,7 @@ public class FacturaConcesionDao implements IFacturaConcesion {
                 }
 
                 f.setDetalleConcesion(selectDetalles(f.getIdFacturaConcesion()));
+
                 lista.insertar(f);
             }
 
@@ -135,6 +156,7 @@ public class FacturaConcesionDao implements IFacturaConcesion {
     }
 
     private boolean alterarRegistro(String sql, FacturaConcesion factura, boolean insertar) {
+
         Connection con = null;
         PreparedStatement psFactura = null;
         boolean exito = false;
@@ -149,24 +171,38 @@ public class FacturaConcesionDao implements IFacturaConcesion {
             psFactura.setInt(2, factura.getMetodoPago() != null ? factura.getMetodoPago().getidMetodoPago() : 0);
             psFactura.setInt(3, factura.getEmpleado() != null ? factura.getEmpleado().getIdEmpleado() : 0);
 
-            if (!insertar) psFactura.setInt(4, factura.getIdFacturaConcesion());
+            if (!insertar) {
+                psFactura.setInt(4, factura.getIdFacturaConcesion());
+            }
 
             psFactura.executeUpdate();
 
             int facturaId;
+
             if (insertar) {
                 ResultSet rs = psFactura.getGeneratedKeys();
                 if (rs.next()) {
                     facturaId = rs.getInt(1);
                     factura.setIdFacturaConcesion(facturaId);
-                    insertarDetalles(factura.getDetalleConcesion(), facturaId);
+                    insertarDetalles(factura.getDetalleConcesion(), facturaId, con);
+
+                    LotesInventarioDao lotesDao = new LotesInventarioDao();
+                    var detalles = factura.getDetalleConcesion().toArray();
+                    for (int i = 0; i < detalles.size(); i++) {
+                        DetalleConcesion d = detalles.get(i);
+                        int idProducto = d.getProducto().getIdProducto();
+                        int cantidad = d.getCantidad();
+                        if (!lotesDao.consumir(idProducto, cantidad)) {
+                            throw new SQLException("Error crítico: Falló al consumir el stock para producto ID: " + idProducto);
+                        }
+                    }
                     exito = true;
                 }
                 rs.close();
             } else {
                 facturaId = factura.getIdFacturaConcesion();
-                eliminarDetalles(facturaId);
-                insertarDetalles(factura.getDetalleConcesion(), facturaId);
+                eliminarDetalles(facturaId, con);
+                insertarDetalles(factura.getDetalleConcesion(), facturaId, con);
                 exito = true;
             }
 
@@ -174,25 +210,39 @@ public class FacturaConcesionDao implements IFacturaConcesion {
             else con.rollback();
 
         } catch (SQLException e) {
-            try { if (con != null) con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
-            DesktopNotify.showDesktopMessage("Error", "Error al guardar factura. Transacción revertida.", DesktopNotify.ERROR, 5000);
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            DesktopNotify.showDesktopMessage("Error", "Error al guardar factura o consumir stock. Transacción revertida.", DesktopNotify.ERROR, 5000);
+            e.printStackTrace();
+            return false;
+        } catch (Exception e) { 
+            if (con != null) {
+                try { con.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
+            }
+            DesktopNotify.showDesktopMessage("Error", "Error interno. Transacción revertida.", DesktopNotify.ERROR, 5000);
             e.printStackTrace();
             return false;
         } finally {
-            try { if (psFactura != null) psFactura.close(); if (con != null) con.setAutoCommit(true); if (con != null) con.close(); } catch (SQLException ex) { ex.printStackTrace(); }
+            try {
+                if (psFactura != null) psFactura.close();
+                if (con != null) con.setAutoCommit(true);
+                if (con != null) con.close();
+            } catch (SQLException ex) { ex.printStackTrace(); }
         }
-
         return exito;
     }
 
     private ListaSimple<DetalleConcesion> selectDetalles(int facturaId) {
         ListaSimple<DetalleConcesion> lista = new ListaSimple<>();
+
         String sql = "SELECT dc.id_detalle_concesion, dc.id_producto, dc.cantidad, dc.precio_unitario, " +
                      "(dc.cantidad * dc.precio_unitario) AS subtotal, " +
                      "p.nombre AS nombre_producto " +
                      "FROM detalle_concesion dc " +
                      "JOIN producto p ON dc.id_producto = p.id_producto " +
                      "WHERE dc.id_factura_concesion=?";
+
         try (Connection con = conectar.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -201,6 +251,7 @@ public class FacturaConcesionDao implements IFacturaConcesion {
 
             while (rs.next()) {
                 DetalleConcesion d = new DetalleConcesion();
+
                 d.setIdDetalle(rs.getInt("id_detalle_concesion"));
                 d.setCantidad(rs.getInt("cantidad"));
                 d.setPrecioUnitario(rs.getDouble("precio_unitario"));
@@ -221,17 +272,36 @@ public class FacturaConcesionDao implements IFacturaConcesion {
         return lista;
     }
 
+    private void insertarDetalles(ListaSimple<DetalleConcesion> detalles, int facturaId, Connection con) throws SQLException {
+        if (detalles == null) return;
+
+        String sql = "INSERT INTO detalle_concesion(id_factura_concesion, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            var lista = detalles.toArray();
+            for (int i = 0; i < lista.size(); i++) {
+                DetalleConcesion d = lista.get(i);
+                ps.setInt(1, facturaId);
+                ps.setInt(2, d.getProducto().getIdProducto());
+                ps.setInt(3, d.getCantidad());
+                ps.setDouble(4, d.getPrecioUnitario());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+        }
+    }
+
     private void insertarDetalles(ListaSimple<DetalleConcesion> detalles, int facturaId) {
         if (detalles == null) return;
 
-        String sql = "INSERT INTO detalle_concesion(id_factura_concesion, id_producto, cantidad, precio_unitario) " +
-                     "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO detalle_concesion(id_factura_concesion, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
 
         try (Connection con = conectar.getConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             var lista = detalles.toArray();
-            for (DetalleConcesion d : lista) {
+            for (int i = 0; i < lista.size(); i++) {
+                DetalleConcesion d = lista.get(i);
                 ps.setInt(1, facturaId);
                 ps.setInt(2, d.getProducto().getIdProducto());
                 ps.setInt(3, d.getCantidad());
@@ -243,6 +313,14 @@ public class FacturaConcesionDao implements IFacturaConcesion {
         } catch (SQLException e) {
             DesktopNotify.showDesktopMessage("Error", "Error al insertar detalles", DesktopNotify.ERROR, 5000);
             e.printStackTrace();
+        }
+    }
+
+    private void eliminarDetalles(int facturaId, Connection con) throws SQLException {
+        String sql = "DELETE FROM detalle_concesion WHERE id_factura_concesion=?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, facturaId);
+            ps.execute();
         }
     }
 
@@ -263,6 +341,7 @@ public class FacturaConcesionDao implements IFacturaConcesion {
     private MetodoPago buscarMetodoPago(int id) {
         MetodoPagoDao dao = new MetodoPagoDao();
         ListaSimple<MetodoPago> lista = dao.selectAll();
+
         for (MetodoPago mp : lista.toArray()) {
             if (mp.getidMetodoPago() == id) return mp;
         }
@@ -272,6 +351,7 @@ public class FacturaConcesionDao implements IFacturaConcesion {
     private Empleado buscarEmpleado(int id) {
         EmpleadoDao dao = new EmpleadoDao();
         ListaSimple<Empleado> lista = dao.selectAll();
+
         for (Empleado e : lista.toArray()) {
             if (e.getIdEmpleado() == id) return e;
         }

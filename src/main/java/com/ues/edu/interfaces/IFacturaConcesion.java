@@ -3,25 +3,29 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.ues.edu.interfaces;
+import com.ues.edu.modelo.FacturaConcesion;
+import com.ues.edu.modelo.estructuras.ListaSimple;
 
 /**
  *
  * @author radon
  */
-
-
-import com.ues.edu.modelo.FacturaConcesion;
-import com.ues.edu.modelo.estructuras.ListaSimple;
-
 public interface IFacturaConcesion {
 
+   
     ListaSimple<FacturaConcesion> selectAll();
 
+ 
+    ListaSimple<FacturaConcesion> buscar(String texto);
+
+  
     FacturaConcesion buscarPorId(int id);
 
     boolean insert(FacturaConcesion factura);
 
+  
     boolean update(FacturaConcesion factura);
 
+ 
     boolean delete(FacturaConcesion factura);
 }

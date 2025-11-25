@@ -3,15 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 package com.ues.edu.interfaces;
+import com.ues.edu.modelo.DetalleConcesion;
+import com.ues.edu.modelo.estructuras.Pila;
 
 /**
  *
  * @author radon
  */
-
-
-import com.ues.edu.modelo.DetalleConcesion;
-import com.ues.edu.modelo.estructuras.Pila;
 
 public interface IDetalleConcesion {
 
