@@ -12,20 +12,11 @@ import com.ues.edu.modelo.estructuras.ListaSimple;
  */
 public interface IFacturaConcesion {
 
-   
     ListaSimple<FacturaConcesion> selectAll();
-
- 
     ListaSimple<FacturaConcesion> buscar(String texto);
-
-  
     FacturaConcesion buscarPorId(int id);
-
     boolean insert(FacturaConcesion factura);
-
-  
     boolean update(FacturaConcesion factura);
-
- 
     boolean delete(FacturaConcesion factura);
+    boolean anularFacturaConcesion(int idFactura);
 }

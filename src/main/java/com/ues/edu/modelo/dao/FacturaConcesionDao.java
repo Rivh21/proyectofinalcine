@@ -357,4 +357,24 @@ public class FacturaConcesionDao implements IFacturaConcesion {
         }
         return null;
     }
+    public boolean anularFacturaConcesion(int idFactura) {
+    String sql = "DELETE FROM factura_concesion WHERE id_factura_concesion = ?";
+
+    try (Connection con = conectar.getConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, idFactura);
+
+        int filas = ps.executeUpdate();
+        return filas > 0;
+
+    } catch (SQLException e) {
+        DesktopNotify.showDesktopMessage("Error", 
+                "No se pudo anular la factura", 
+                DesktopNotify.ERROR, 4000);
+        e.printStackTrace();
+        return false;
+    }
+}
+
 }

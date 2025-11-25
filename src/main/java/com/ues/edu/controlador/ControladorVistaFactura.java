@@ -12,7 +12,12 @@ import com.ues.edu.modelo.DetalleConcesion;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 import com.ues.edu.modelo.Usuario;
 import com.ues.edu.modelo.Empleado;
+import com.ues.edu.modelo.dao.PermisoRolDao;
+import ds.desktop.notify.DesktopNotify;
+import ds.desktop.notify.NotifyTheme;
 import java.awt.Frame;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 /**
@@ -20,66 +25,130 @@ import javax.swing.table.DefaultTableModel;
  * @author radon
  */
 public class ControladorVistaFactura {
-    
+
     private final VistaFactura vista;
     private final FacturaConcesionDao facturaDao;
     private final Usuario usuarioLoggeado;
+
+    private List<String> permisosUsuario;
 
     public ControladorVistaFactura(VistaFactura vista, Usuario usuario) {
         this.vista = vista;
         this.facturaDao = new FacturaConcesionDao();
         this.usuarioLoggeado = usuario;
 
+        cargarPermisos();
         inicializarTabla();
         cargarTablaFacturas();
+        configurarSeguridadBotones();
 
-       
         onClickNuevaFactura();
         onClickVerFactura();
+        onClickAnularFactura();
     }
 
+    private void cargarPermisos() {
+        if (usuarioLoggeado != null && usuarioLoggeado.getRol() != null) {
+            PermisoRolDao prDao = new PermisoRolDao();
+            permisosUsuario = prDao.obtenerNombresPermisosPorRol(
+                    usuarioLoggeado.getRol().getIdRol()
+            );
+        } else {
+            permisosUsuario = new ArrayList<>();
+        }
+    }
+
+    private boolean tienePermiso(String permiso) {
+        if (usuarioLoggeado != null &&
+            "ADMINISTRADOR".equalsIgnoreCase(usuarioLoggeado.getRol().getNombreRol())) {
+            return true;
+        }
+        return permisosUsuario.contains(permiso);
+    }
+
+    private void configurarSeguridadBotones() {
+
+        vista.btnAnular.setVisible(false);
+        vista.tbDatos.getSelectionModel().addListSelectionListener(e -> {
+
+            if (!e.getValueIsAdjusting()) {
+                int row = vista.tbDatos.getSelectedRow();
+                boolean hayFila = (row != -1);
+                if (hayFila) {
+                    boolean permiso = tienePermiso("ANULAR_FACTURAS") || tienePermiso("ACCESO_TOTAL");
+                    vista.btnAnular.setVisible(permiso);
+                    vista.btnAnular.setEnabled(permiso);
+                } else {
+                    vista.btnAnular.setVisible(false);
+                    vista.btnAnular.setEnabled(false);
+                }
+            }
+
+        });
+    }
     private void inicializarTabla() {
         DefaultTableModel modelo = new DefaultTableModel() {
             @Override public boolean isCellEditable(int row, int column) { return false; }
         };
-        modelo.setColumnIdentifiers(new Object[]{"ID", "Total", "Método Pago", "Empleado"});
+
+        modelo.setColumnIdentifiers(new Object[]{
+                "ID", "Total", "Método Pago", "Empleado"
+        });
+
         vista.tbDatos.setModel(modelo);
     }
 
-   
+    public void cargarTablaFacturas() {
+        DefaultTableModel modelo = (DefaultTableModel) vista.tbDatos.getModel();
+        modelo.setRowCount(0);
+
+        ListaSimple<FacturaConcesion> facturas = facturaDao.selectAll();
+
+        for (FacturaConcesion f : facturas.toArray()) {
+
+            modelo.addRow(new Object[]{
+                f.getIdFacturaConcesion(),
+                String.format("%.2f", f.getMontoTotal()),
+                f.getMetodoPago() != null ? f.getMetodoPago().getnombreMetodo() : "N/A",
+                f.getEmpleado() != null ? f.getEmpleado().getNombre() : "N/A"
+            });
+        }
+    }
+
     private void onClickNuevaFactura() {
         vista.btnNuevaFactura.addActionListener(e -> {
             Frame owner = JOptionPane.getFrameForComponent(vista);
             ModalFactCon modal = new ModalFactCon(owner, true, "Nueva Factura");
 
-            int idEmpleadoLoggeado;
             try {
-                idEmpleadoLoggeado = this.usuarioLoggeado.getEmpleado().getIdEmpleado();
+                int idEmpleadoLoggeado = this.usuarioLoggeado.getEmpleado().getIdEmpleado();
+
+                new ControladorModalFactCon(modal, this, idEmpleadoLoggeado);
+
+                modal.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent e) {
+                        cargarTablaFacturas();
+                    }
+                });
+
+                modal.setVisible(true);
+
             } catch (NullPointerException ex) {
-                JOptionPane.showMessageDialog(vista, "Error: No se pudo obtener la información de sesión del empleado.", "Error Crítico", JOptionPane.ERROR_MESSAGE);
-                return;
+                JOptionPane.showMessageDialog(vista,
+                        "Error: No se pudo obtener la información del empleado.",
+                        "Error Crítico",
+                        JOptionPane.ERROR_MESSAGE);
             }
-
-        
-            new ControladorModalFactCon(modal, this, idEmpleadoLoggeado);
-
-         
-            modal.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(java.awt.event.WindowEvent e) {
-                    cargarTablaFacturas();
-                }
-            });
-
-            modal.setVisible(true);
         });
     }
-
     private void onClickVerFactura() {
         vista.btnVerFactura.addActionListener(e -> {
+
             int fila = vista.tbDatos.getSelectedRow();
             if (fila == -1) {
-                JOptionPane.showMessageDialog(vista, "Seleccione una factura primero.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(vista, "Seleccione una factura primero.",
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
@@ -88,46 +157,71 @@ public class ControladorVistaFactura {
                 FacturaConcesion factura = facturaDao.buscarPorId(idFactura);
 
                 if (factura == null) {
-                    JOptionPane.showMessageDialog(vista, "No se encontró la factura con ID: " + idFactura, "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(vista,
+                            "No se encontró la factura con ID: " + idFactura,
+                            "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 Frame owner = JOptionPane.getFrameForComponent(vista);
-                ModalFacturaInfo modal = new ModalFacturaInfo(owner, true, "Detalle Factura #" + idFactura);
+                ModalFacturaInfo modal = new ModalFacturaInfo(owner, true,
+                        "Detalle Factura #" + idFactura);
 
                 new ControladorModalFactura(modal, factura);
-
                 modal.setVisible(true);
 
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(vista, "Error al obtener ID de la factura.", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(vista, "Error al cargar el detalle: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                ex.printStackTrace();
+                JOptionPane.showMessageDialog(vista,
+                        "Error al cargar el detalle: " + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
     }
 
+    private void onClickAnularFactura() {
+        vista.btnAnular.addActionListener(e -> {
 
+            int fila = vista.tbDatos.getSelectedRow();
 
-    public void cargarTablaFacturas() {
-        DefaultTableModel modelo = (DefaultTableModel) vista.tbDatos.getModel();
-        modelo.setRowCount(0);
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(vista, "Seleccione una factura primero.",
+                        "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
 
-        ListaSimple<FacturaConcesion> facturas = facturaDao.selectAll();
+            if (!tienePermiso("ANULAR_FACTURAS") && !tienePermiso("ACCESO_TOTAL")) {
+                JOptionPane.showMessageDialog(vista, "No tiene permisos para anular facturas.",
+                        "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        for (int i = 0; i < facturas.toArray().size(); i++) {
-            FacturaConcesion f = facturas.get(i);
+            int idFactura = Integer.parseInt(vista.tbDatos.getValueAt(fila, 0).toString());
 
-            String metodoPagoNombre = f.getMetodoPago() != null ? f.getMetodoPago().getnombreMetodo() : "N/A";
-            String empleadoNombre = f.getEmpleado() != null ? f.getEmpleado().getNombre() : "N/A";
+            int confirm = JOptionPane.showConfirmDialog(vista,
+                    "¿Está seguro de ANULAR esta factura?\nEsta acción no se puede deshacer.",
+                    "Confirmar Anulación",
+                    JOptionPane.YES_NO_OPTION);
 
-            modelo.addRow(new Object[]{
-                f.getIdFacturaConcesion(),
-                String.format("%.2f", f.getMontoTotal()),
-                metodoPagoNombre,
-                empleadoNombre
-            });
-        }
+            if (confirm == JOptionPane.YES_OPTION) {
+
+                boolean exito = facturaDao.anularFacturaConcesion(idFactura);
+
+                if (exito) {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Green);
+                    DesktopNotify.showDesktopMessage("Éxito",
+                            "Factura anulada correctamente.",
+                            DesktopNotify.SUCCESS, 3000L);
+
+                    cargarTablaFacturas();
+
+                } else {
+                    DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                    DesktopNotify.showDesktopMessage("Error",
+                            "No se pudo anular la factura.",
+                            DesktopNotify.FAIL, 3000L);
+                }
+            }
+        });
     }
 }
+

@@ -35,6 +35,7 @@ public class VistaFactura extends javax.swing.JPanel {
                 }
                 btnNuevaFactura.setEnabled(true);
                 btnVerFactura.setEnabled(true);
+                 btnAnular.setEnabled(false);
                 tbDatos.clearSelection();
                 fondo.requestFocusInWindow();
             }
@@ -57,12 +58,13 @@ public class VistaFactura extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tbDatos = new javax.swing.JTable();
         lblTitulo = new javax.swing.JLabel();
+        btnAnular = new javax.swing.JButton();
 
         btnNuevaFactura.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnNuevaFactura.setText("NUEVA FACTURA");
 
         btnVerFactura.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        btnVerFactura.setText("VER FACTURA");
+        btnVerFactura.setText("DETALLES");
 
         tfBuscar.setFont(new java.awt.Font("Roboto", 1, 12)); // NOI18N
 
@@ -83,6 +85,9 @@ public class VistaFactura extends javax.swing.JPanel {
 
         lblTitulo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
 
+        btnAnular.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        btnAnular.setText("ANULAR");
+
         javax.swing.GroupLayout fondoLayout = new javax.swing.GroupLayout(fondo);
         fondo.setLayout(fondoLayout);
         fondoLayout.setHorizontalGroup(
@@ -96,6 +101,8 @@ public class VistaFactura extends javax.swing.JPanel {
                 .addComponent(btnNuevaFactura)
                 .addGap(18, 18, 18)
                 .addComponent(btnVerFactura)
+                .addGap(18, 18, 18)
+                .addComponent(btnAnular)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -112,7 +119,8 @@ public class VistaFactura extends javax.swing.JPanel {
                 .addGap(53, 53, 53)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnNuevaFactura)
-                    .addComponent(btnVerFactura))
+                    .addComponent(btnVerFactura)
+                    .addComponent(btnAnular))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(32, Short.MAX_VALUE))
@@ -132,6 +140,7 @@ public class VistaFactura extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JButton btnAnular;
     public javax.swing.JButton btnNuevaFactura;
     public javax.swing.JButton btnVerFactura;
     public javax.swing.JPanel fondo;
