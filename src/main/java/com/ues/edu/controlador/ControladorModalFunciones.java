@@ -1,10 +1,8 @@
-package com.ues.edu.controlador;
-
-/**
- *
- * @author radon
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
+package com.ues.edu.controlador;
 import com.ues.edu.modelo.Funcion;
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.Sala;
@@ -17,10 +15,13 @@ import com.ues.edu.vista.VistaListado;
 import com.ues.edu.utilidades.Validaciones;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
-
 import java.time.LocalDateTime;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
+/**
+ * 
+ * @author radon
+ */
 
 public class ControladorModalFunciones {
 

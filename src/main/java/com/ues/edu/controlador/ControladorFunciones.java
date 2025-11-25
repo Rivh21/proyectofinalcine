@@ -1,5 +1,8 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.Funcion;
 import com.ues.edu.modelo.dao.FuncionDAO;
 import com.ues.edu.modelo.dao.PeliculaDAO;
@@ -10,18 +13,19 @@ import com.ues.edu.vista.Mantenimiento;
 import com.ues.edu.vista.ModalFunciones;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
-
+/**
+ * 
+ * @author radon
+ */
 public class ControladorFunciones {
 
     private final Mantenimiento mantto;

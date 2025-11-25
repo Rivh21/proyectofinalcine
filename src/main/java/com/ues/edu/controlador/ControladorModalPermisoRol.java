@@ -1,5 +1,8 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.Permiso;
 import com.ues.edu.modelo.PermisoRol;
 import com.ues.edu.modelo.Rol;
@@ -12,7 +15,7 @@ import ds.desktop.notify.NotifyTheme;
 
 /**
  * 
- * @author radonay
+ * @author radon
  */
 public class ControladorModalPermisoRol {
 

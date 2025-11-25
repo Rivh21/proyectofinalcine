@@ -1,5 +1,8 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.dao.PeliculaDAO;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
@@ -11,6 +14,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
+/**
+ * 
+ * @author radon
+ */
 
 public class ControladorListadoPeliculas {
 

@@ -3,21 +3,19 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.ues.edu.modelo.dao;
-
-/**
- *
- * @author radon
- */
-
 import com.ues.edu.interfaces.IProducto;
 import com.ues.edu.modelo.Producto;
 import com.ues.edu.modelo.estructuras.Pila;
 import com.ues.edu.modelo.estructuras.ArbolBB;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
-
 import java.sql.*;
 import java.util.ArrayList;
+
+/**
+ *
+ * @author radon
+ */
 
 public class ProductoDao implements IProducto {
 

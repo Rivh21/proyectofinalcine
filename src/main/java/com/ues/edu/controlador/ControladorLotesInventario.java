@@ -1,14 +1,15 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.LotesInventario;
 import com.ues.edu.modelo.dao.LotesInventarioDao;
 import com.ues.edu.modelo.estructuras.PrioridadCola;
 import com.ues.edu.vista.Mantenimiento;
 import com.ues.edu.vista.ModalLotesInventario;
-
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -19,7 +20,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 import java.util.ArrayList;
-
+/**
+ * 
+ * @author radon
+ */
 public class ControladorLotesInventario {
 
     private final Mantenimiento mantto;

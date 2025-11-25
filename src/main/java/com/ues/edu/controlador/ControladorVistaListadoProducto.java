@@ -3,23 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.ues.edu.controlador;
-
-/**
- *
- * @author radon
- */
 import com.ues.edu.modelo.Producto;
 import com.ues.edu.modelo.dao.ProductoDao;
 import com.ues.edu.vista.VistaListado;
-
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
-
 import java.util.ArrayList;
 
+/**
+ *
+ * @author radon
+ */
 public class ControladorVistaListadoProducto {
 
     DefaultTableModel modelo;

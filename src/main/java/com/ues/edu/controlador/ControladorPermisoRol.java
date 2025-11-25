@@ -1,5 +1,8 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.dao.PermisoDao;
 import com.ues.edu.modelo.dao.PermisoRolDao;
 import com.ues.edu.modelo.Permiso;
@@ -20,8 +23,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
 /**
- *
- * @author radonay
+ * 
+ * @author radon
  */
 public class ControladorPermisoRol {
 

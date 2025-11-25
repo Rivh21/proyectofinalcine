@@ -106,5 +106,8 @@ public class Empleado implements Comparable<Empleado> {
     public String toString() {
         return this.nombre + " " + this.apellido;
     }
+    public Empleado(int idEmpleado) {
+    this.idEmpleado = idEmpleado;
+}
 
 }

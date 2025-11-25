@@ -51,4 +51,8 @@ public class MetodoPago implements Comparable<MetodoPago>{
          MetodoPago actual = this;
       return (actual.getnombreMetodo().compareToIgnoreCase(o.getnombreMetodo()));
     }
+    public MetodoPago(int idMetodoPago) {
+    this.idMetodoPago = idMetodoPago;
+}
+
 }

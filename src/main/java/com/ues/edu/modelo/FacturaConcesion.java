@@ -1,37 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ues.edu.modelo;
 
-import java.util.List;
+import com.ues.edu.modelo.estructuras.ListaSimple;
 
-/**
- *
- * @author DELL LATITUDE
- */
+
 public class FacturaConcesion implements Comparable<FacturaConcesion> {
 
     private int idFacturaConcesion;
     private Double montoTotal;
-    private Usuario usuarios;
     private MetodoPago metodoPago;
     private Empleado empleado;
-    private List<DetalleConsecion> detalleconsecion;
+    private ListaSimple<DetalleConcesion> detalleConcesion;
 
     public FacturaConcesion() {
-    }
-
-    public FacturaConcesion(int idFacturaConcesion) {
-        this.idFacturaConcesion = idFacturaConcesion;
-    }
-
-    public FacturaConcesion(Double montoTotal, Usuario usuarios, MetodoPago metodoPago, Empleado empleado, List<DetalleConsecion> detalleconsecion) {
-        this.montoTotal = montoTotal;
-        this.usuarios = usuarios;
-        this.metodoPago = metodoPago;
-        this.empleado = empleado;
-        this.detalleconsecion = detalleconsecion;
+        detalleConcesion = new ListaSimple<>();
     }
 
     public int getIdFacturaConcesion() {
@@ -50,14 +31,6 @@ public class FacturaConcesion implements Comparable<FacturaConcesion> {
         this.montoTotal = montoTotal;
     }
 
-    public Usuario getUsuarios() {
-        return usuarios;
-    }
-
-    public void setUsuarios(Usuario usuarios) {
-        this.usuarios = usuarios;
-    }
-
     public MetodoPago getMetodoPago() {
         return metodoPago;
     }
@@ -74,22 +47,20 @@ public class FacturaConcesion implements Comparable<FacturaConcesion> {
         this.empleado = empleado;
     }
 
-    public List<DetalleConsecion> getDetalleconsecion() {
-        return detalleconsecion;
+    // ELIMINADO: getFecha() y setFecha(LocalDateTime fecha)
+    // El atributo 'fecha' ya no existe
+
+    public ListaSimple<DetalleConcesion> getDetalleConcesion() {
+        return detalleConcesion;
     }
 
-    public void setDetalleconsecion(List<DetalleConsecion> detalleconsecion) {
-        this.detalleconsecion = detalleconsecion;
-    }
-
-    @Override
-    public String toString() {
-        return "FacturaConcesion{" + "idFacturaConcesion=" + idFacturaConcesion + ", montoTotal=" + montoTotal + ", usuarios=" + usuarios + ", metodoPago=" + metodoPago + ", empleado=" + empleado + ", detalleconsecion=" + detalleconsecion + '}';
+    public void setDetalleConcesion(ListaSimple<DetalleConcesion> detalleConcesion) {
+        this.detalleConcesion = detalleConcesion;
     }
 
     @Override
     public int compareTo(FacturaConcesion o) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        // CORREGIDO: Como 'fecha' fue eliminada, usamos 'idFacturaConcesion' para Comparable.
+        return Integer.compare(this.idFacturaConcesion, o.getIdFacturaConcesion());
     }
-
 }

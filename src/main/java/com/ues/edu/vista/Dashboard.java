@@ -18,6 +18,7 @@ import com.ues.edu.controlador.ControladorPrueba;
 import com.ues.edu.controlador.ControladorRol;
 import com.ues.edu.controlador.ControladorSala;
 import com.ues.edu.controlador.ControladorUsuario;
+import com.ues.edu.controlador.ControladorVistaFactura;
 import com.ues.edu.interfaces.HeaderMenuListener;
 import com.ues.edu.interfaces.MenuSelectionListener;
 import com.ues.edu.modelo.Usuario;
@@ -275,6 +276,20 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 ControladorLecturaFactura clf = new ControladorLecturaFactura(mantto, this.usuarioLogueado);
                 showJPanel(mantto);
             }
+            case "Factura Concesion" -> {
+    // 1. Crear la vista de facturas de concesión
+    VistaFactura vistaFactura = new VistaFactura("Facturas Concesion");
+
+    // 2. Crear el controlador, pasándole la vista y el objeto Usuario loggeado.
+    // 🏆 ¡Esto garantiza que el ID del empleado se pase correctamente!
+    ControladorVistaFactura controladorFactura = new ControladorVistaFactura(vistaFactura, this.usuarioLogueado);
+
+    // 3. Mostrar la vista en el panel principal o contenedor
+    showJPanel(vistaFactura);
+}
+            
+        
+            
 
             case "Boletos" -> {
                 VistaBoletos vb = new VistaBoletos("Boletos");

@@ -1,11 +1,16 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
 package com.ues.edu.modelo.dao;
-
 import com.ues.edu.interfaces.ILotesInventario;
 import com.ues.edu.modelo.LotesInventario;
 import com.ues.edu.modelo.estructuras.PrioridadCola;
-
 import java.sql.*;
-
+/**
+ *
+ * @author radon
+ */
 public class LotesInventarioDao implements ILotesInventario {
 
     private PrioridadCola<LotesInventario> cola = new PrioridadCola<>(3);
@@ -183,4 +188,106 @@ public class LotesInventarioDao implements ILotesInventario {
         }
         return null;
     }
+    public int obtenerCantidadDisponible(int idProducto) { 
+        String sql = "SELECT COALESCE(SUM(cantidad_disponible), 0) AS total_disponible " +
+                     "FROM lotes_inventario " +
+                     "WHERE id_producto = ?";
+
+        try (Connection conn = new Conexion().getConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, idProducto);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total_disponible");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public boolean consumir(int idProducto, int cantidadAconsumir) {
+        
+   
+        String sqlSelectLotes = "SELECT id_lote, cantidad_disponible FROM lotes_inventario "
+                              + "WHERE id_producto = ? AND cantidad_disponible > 0 "
+                              + "ORDER BY fecha_caducidad ASC"; 
+
+        String sqlUpdateLote = "UPDATE lotes_inventario SET cantidad_disponible = ? WHERE id_lote = ?";
+        String sqlDeleteLote = "DELETE FROM lotes_inventario WHERE id_lote = ?";
+
+        int cantidadRestante = cantidadAconsumir;
+        Connection conn = null;
+
+        try {
+            conn = new Conexion().getConexion();
+            conn.setAutoCommit(false); 
+
+            
+            try (PreparedStatement psSelect = conn.prepareStatement(sqlSelectLotes)) {
+                psSelect.setInt(1, idProducto);
+
+                try (ResultSet rs = psSelect.executeQuery()) {
+                    while (rs.next() && cantidadRestante > 0) {
+                        int idLote = rs.getInt("id_lote");
+                        int disponible = rs.getInt("cantidad_disponible");
+
+                        if (disponible <= cantidadRestante) {
+                         
+                            cantidadRestante -= disponible;
+                            
+                            try (PreparedStatement psDelete = conn.prepareStatement(sqlDeleteLote)) {
+                                psDelete.setInt(1, idLote);
+                                psDelete.executeUpdate();
+                            }
+                        } else {
+                            
+                            int nuevaCantidad = disponible - cantidadRestante;
+                            
+                            try (PreparedStatement psUpdate = conn.prepareStatement(sqlUpdateLote)) {
+                                psUpdate.setInt(1, nuevaCantidad);
+                                psUpdate.setInt(2, idLote);
+                                psUpdate.executeUpdate();
+                            }
+                            cantidadRestante = 0; 
+                        }
+                    }
+                }
+            }
+
+            if (cantidadRestante == 0) {
+                conn.commit(); 
+                return true;
+            } else {
+                conn.rollback(); 
+                System.err.println("Advertencia: No se pudo consumir el stock completo para ID " + idProducto + ". Cantidad restante: " + cantidadRestante);
+                return false; 
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (conn != null) {
+                try {
+                    conn.rollback(); 
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+  
+
+    
 }
