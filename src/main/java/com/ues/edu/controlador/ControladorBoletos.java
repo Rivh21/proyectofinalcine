@@ -12,6 +12,7 @@ import com.ues.edu.modelo.dao.BoletoDao;
 import com.ues.edu.modelo.dao.FuncionDAO;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 import com.ues.edu.modelo.estructuras.Pila;
+import com.ues.edu.utilidades.CustomDateFormatter;
 import com.ues.edu.vista.ModalFactura;
 import com.ues.edu.vista.VistaBoletos;
 import com.ues.edu.vista.VistaListado;
@@ -63,7 +64,9 @@ public class ControladorBoletos implements ActionListener {
         onClickFactura();
 
         this.vista.lbPantalla.setVisible(false);
+        this.vista.lbPrecio.setText("");
         this.vista.lbTotal.setText("");
+        this.vista.lbHorario.setText("");
         this.vista.lbSala.setText("");
         this.vista.lbFuncion.setText("");
     }
@@ -73,6 +76,8 @@ public class ControladorBoletos implements ActionListener {
 
         if (this.funcionActual != null) {
             this.vista.lbPantalla.setVisible(true);
+            this.vista.lbHorario.setText("HORARIO: " + CustomDateFormatter.format(funcionActual.getFechaHoraInicio()));
+            this.vista.lbPrecio.setText("PRECIO BOLETO: $" + String.format("%.2f", funcionActual.getPrecioBoleto()));
             this.vista.lbTotal.setText("Total: $ 0.00");
             this.vista.lbSala.setText("SALA: " + funcionActual.getSalaNombre());
             this.vista.lbFuncion.setText("FUNCIÓN: " + funcionActual.getPeliculaTitulo().toUpperCase());

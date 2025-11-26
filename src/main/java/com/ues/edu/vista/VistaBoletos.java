@@ -48,6 +48,8 @@ public class VistaBoletos extends javax.swing.JPanel {
         lbSala = new javax.swing.JLabel();
         btnFactura = new javax.swing.JButton();
         lbFuncion = new javax.swing.JLabel();
+        lbPrecio = new javax.swing.JLabel();
+        lbHorario = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
 
         lblTitulo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
@@ -60,7 +62,7 @@ public class VistaBoletos extends javax.swing.JPanel {
         );
         panelAsientosLayout.setVerticalGroup(
             panelAsientosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 334, Short.MAX_VALUE)
+            .addGap(0, 244, Short.MAX_VALUE)
         );
 
         lbPantalla.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
@@ -78,6 +80,12 @@ public class VistaBoletos extends javax.swing.JPanel {
         lbFuncion.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         lbFuncion.setText("NOMBRE FUNCIÓN");
 
+        lbPrecio.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
+        lbPrecio.setText("PRECIO BOLETO");
+
+        lbHorario.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
+        lbHorario.setText("HORARIO:");
+
         lbTotal.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         lbTotal.setText("TOTAL $");
 
@@ -87,7 +95,9 @@ public class VistaBoletos extends javax.swing.JPanel {
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(lbHorario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(465, 465, 465)
                 .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(fondoLayout.createSequentialGroup()
                 .addGap(144, 144, 144)
@@ -99,11 +109,17 @@ public class VistaBoletos extends javax.swing.JPanel {
                 .addGap(471, 471, 471))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
                 .addGap(42, 42, 42)
-                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnFactura)
-                    .addComponent(btnSelectFuncion)
-                    .addComponent(lbFuncion, javax.swing.GroupLayout.PREFERRED_SIZE, 668, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(fondoLayout.createSequentialGroup()
+                        .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnSelectFuncion)
+                            .addComponent(lbFuncion, javax.swing.GroupLayout.PREFERRED_SIZE, 433, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 299, Short.MAX_VALUE))
+                    .addGroup(fondoLayout.createSequentialGroup()
+                        .addComponent(btnFactura)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lbPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)))
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lbSala, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -113,20 +129,27 @@ public class VistaBoletos extends javax.swing.JPanel {
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fondoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbHorario, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lbFuncion, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbSala))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnSelectFuncion)
-                    .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addComponent(btnFactura)
-                .addGap(52, 52, 52)
+                    .addGroup(fondoLayout.createSequentialGroup()
+                        .addComponent(btnSelectFuncion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnFactura))
+                    .addGroup(fondoLayout.createSequentialGroup()
+                        .addGap(33, 33, 33)
+                        .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lbPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(53, 53, 53)
                 .addComponent(lbPantalla, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelAsientos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -201,7 +224,9 @@ private void crearEfectoPantalla(int ancho, int alto) {
     private javax.swing.JPanel fondo;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.JLabel lbFuncion;
+    public javax.swing.JLabel lbHorario;
     public javax.swing.JLabel lbPantalla;
+    public javax.swing.JLabel lbPrecio;
     public javax.swing.JLabel lbSala;
     public javax.swing.JLabel lbTotal;
     private javax.swing.JLabel lblTitulo;
