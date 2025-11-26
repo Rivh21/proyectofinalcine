@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ues.edu.modelo.dao;
 
 import com.ues.edu.interfaces.IMetodoPago;
@@ -14,16 +10,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- *
- * @author jorge
- */
 public class MetodoPagoDao implements IMetodoPago {
 
     Conexion conectar;
-    Connection con;
-    PreparedStatement ps;
-    ResultSet rs;
 
     public MetodoPagoDao() {
         conectar = new Conexion();
@@ -31,21 +20,86 @@ public class MetodoPagoDao implements IMetodoPago {
 
     @Override
     public ListaSimple<MetodoPago> selectAll() {
-        String sql = "SELECT * FROM metodo_pago";
+        String sql = "SELECT id_metodo_pago, nombre_metodo FROM metodo_pago";
         return select(sql);
     }
 
     @Override
     public ListaSimple<MetodoPago> selectAllTo(String atributo, String condicion) {
-        String sql = "SELECT * FROM metodo_pago WHERE " + atributo + "='" + condicion + "'";
-        return select(sql);
+        if (!atributo.matches("[a-zA-Z0-9_]+")) {
+            return new ListaSimple<>(); 
+        }
+        
+        String sql = "SELECT id_metodo_pago, nombre_metodo FROM metodo_pago WHERE " + atributo + " = ?";
+        ListaSimple<MetodoPago> lista = new ListaSimple();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, condicion);
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                MetodoPago obj = new MetodoPago();
+                obj.setidMetodoPago(rs.getInt("id_metodo_pago"));
+                obj.setnombreMetodo(rs.getString("nombre_metodo"));
+                lista.insertar(obj);
+            }
+
+        } catch (Exception e) {
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error", "Error en consulta selectAllTo: " + e.getMessage(), DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
     }
 
     @Override
     public ListaSimple<MetodoPago> buscar(String dato) {
-        String sql = "SELECT * FROM metodo_pago WHERE "
-                + " nombre_metodo like '" + dato + "%'";
-        return select(sql);
+        String sql = "SELECT id_metodo_pago, nombre_metodo FROM metodo_pago WHERE nombre_metodo LIKE ?";
+        ListaSimple<MetodoPago> lista = new ListaSimple();
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.setString(1, dato + "%");
+            rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                MetodoPago obj = new MetodoPago();
+                obj.setidMetodoPago(rs.getInt("id_metodo_pago"));
+                obj.setnombreMetodo(rs.getString("nombre_metodo"));
+                lista.insertar(obj);
+            }
+
+        } catch (Exception e) {
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error", "Error en búsqueda: " + e.getMessage(), DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
     }
 
     @Override
@@ -62,20 +116,22 @@ public class MetodoPagoDao implements IMetodoPago {
 
     @Override
     public boolean delete(MetodoPago obj) {
-          String sql = "DELETE FROM metodo_pago WHERE id_metodo_pago='" + obj.getidMetodoPago()+ "'";
+        String sql = "DELETE FROM metodo_pago WHERE id_metodo_pago = ?";
+        Connection con = null;
         PreparedStatement ps = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
+            ps.setInt(1, obj.getidMetodoPago());
             ps.execute();
             return true;
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Error en sql", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error al eliminar método de pago.", DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                ps.close();
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -85,7 +141,8 @@ public class MetodoPagoDao implements IMetodoPago {
     }
 
     private ListaSimple<MetodoPago> select(String sql) {
-       ListaSimple<MetodoPago> lista = new ListaSimple();
+        ListaSimple<MetodoPago> lista = new ListaSimple();
+        Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         MetodoPago obj = null;
@@ -102,45 +159,42 @@ public class MetodoPagoDao implements IMetodoPago {
 
         } catch (Exception e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Error en sql", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error en select general: " + e.getMessage(), DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                conectar.closeConexion(con);
+                if (rs != null) rs.close();
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
             } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return lista;
     }
 
     private boolean alterarRegistro(String sql, MetodoPago obj) {
+        Connection con = null;
         PreparedStatement ps = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
             ps.setString(1, obj.getnombreMetodo());
+            
             ps.execute();
             return true;
         } catch (SQLException e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "Error en sql", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage("Error", "Error al alterar registro: " + e.getMessage(), DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
             try {
-                ps.close();
+                if (ps != null) ps.close();
                 conectar.closeConexion(con);
             } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return false;
-    
     }
-
 }

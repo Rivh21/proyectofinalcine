@@ -1,5 +1,8 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.ClasificacionPelicula;
 import com.ues.edu.modelo.GeneroPelicula;
 import com.ues.edu.modelo.Pelicula;
@@ -40,8 +43,7 @@ public class ControladorModalPeliculas {
     }
 
     private void onClickGuardar() {
-        mp.btnGuardar.addActionListener(e -> {
-            if (validarCampos()) {
+        mp.btnGuardar.addActionListener(e -> {if (validarCampos()) {
                 if (peliculaSelect == null) {
                     agregarPelicula();
                 } else {
@@ -98,11 +100,19 @@ public class ControladorModalPeliculas {
             mp.tfTitulo1.requestFocus();
             return false;
         }
-        if (!titulo.matches("[a-zA-Z0-9 ]+")) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "El Título solo puede contener letras y números", DesktopNotify.ERROR, 3000);
-            mp.tfTitulo1.requestFocus();
-            return false;
+        String permitidos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789áéíóúÁÉÍÓÚñÑ ' -:,.!?&";
+        for (char c : titulo.toCharArray()) {
+            if (permitidos.indexOf(c) == -1) {
+                DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+                DesktopNotify.showDesktopMessage(
+                        "Error",
+                        "El Título contiene caracteres no válidos (solo letras, números, espacios y signos de puntuación comunes)",
+                        DesktopNotify.ERROR,
+                        4000
+                );
+                mp.tfTitulo1.requestFocus();
+                return false;
+            }
         }
 
         String duracionStr = mp.tfDuracion.getText().trim();
