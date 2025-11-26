@@ -22,7 +22,7 @@ public class ModalAsientos extends javax.swing.JDialog {
         initComponents();
         setLocationRelativeTo(null);
         lbTitulo.setText(titulo);
-        tfFilaInicial.setPlaceholder("Fila Inicial (Desde A hasta F)");
+        tfFilaInicial.setPlaceholder("Fila Inicial (Desde A hasta F)(1 a 6 filas)");
 
         fondo.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override

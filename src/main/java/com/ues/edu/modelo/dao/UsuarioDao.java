@@ -65,14 +65,14 @@ public class UsuarioDao implements IUsuario {
     @Override
     public boolean insert(Usuario obj) {
         String sql = "INSERT INTO usuarios(id_rol, id_empleado, nombre_usuario, password)VALUES(?,?,?,?)";
-        return insertarRegistro(sql, obj);
+        return ejecutarInsert(sql, obj);
     }
 
     @Override
     public boolean update(Usuario obj) {
         String sql = "UPDATE usuarios SET id_rol=?, id_empleado=?, nombre_usuario=?, password=? "
                 + "WHERE id_usuario=" + obj.getIdUsuario();
-        return editarRegistro(sql, obj);
+        return ejecutarUpdate(sql, obj);
     }
 
     @Override
@@ -101,38 +101,49 @@ public class UsuarioDao implements IUsuario {
 
     @Override
     public Usuario login(String usuario, String claveEncriptada) {
-
         String sql = "SELECT u.id_usuario, u.nombre_usuario, u.password, "
                 + "e.id_empleado, e.nombre, e.apellido, e.dui, e.email, e.telefono, e.salario, "
                 + "r.id_rol, r.nombre_rol "
                 + "FROM usuarios u "
                 + "INNER JOIN empleados e ON u.id_empleado = e.id_empleado "
-                + "INNER JOIN roles r ON u.id_rol = r.id_rol " // Aquí ya tienes el espacio corregido del error anterior
+                + "INNER JOIN roles r ON u.id_rol = r.id_rol "
                 + "WHERE u.nombre_usuario = ? AND u.password = ?";
+        return ejecutarLogin(sql, usuario, claveEncriptada);
+    }
 
-        return selectLogin(sql, usuario, claveEncriptada);
+    public Usuario selectUsuarioParaEdicion(int idUsuario) {
+        String sql = "SELECT u.id_usuario, u.nombre_usuario, u.password, "
+                + "e.id_empleado, e.nombre, e.apellido, "
+                + "r.id_rol, r.nombre_rol "
+                + "FROM usuarios u "
+                + "INNER JOIN roles r ON u.id_rol = r.id_rol "
+                + "LEFT JOIN empleados e ON u.id_empleado = e.id_empleado "
+                + "WHERE u.id_usuario = " + idUsuario;
+
+        ListaSimple<Usuario> lista = select(sql);
+        return lista.isEmpty() ? null : lista.get(0);
+    }
+
+    @Override
+    public boolean existeNombreUsuario(String nombreUsuario) {
+        String sql = "SELECT 1 FROM usuarios WHERE nombre_usuario = ?";
+        return ejecutarExisteNombreUsuario(sql, nombreUsuario);
     }
 
     private ListaSimple<Usuario> select(String sql) {
         ListaSimple<Usuario> lista = new ListaSimple();
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Usuario obj = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             while (rs.next()) {
-                obj = new Usuario();
+                Usuario obj = new Usuario();
                 obj.setIdUsuario(rs.getInt("id_usuario"));
                 obj.setNombreUsuario(rs.getString("nombre_usuario"));
 
                 try {
-                    // Si la columna 'password' existe en el ResultSet (solo en la edición) se mapea
                     obj.setPassword(rs.getString("password"));
                 } catch (SQLException ignore) {
-                    // Si la columna NO existe (en selectAll), el valor queda como null, lo cual es seguro.
                 }
 
                 Empleado empleado = new Empleado();
@@ -162,7 +173,6 @@ public class UsuarioDao implements IUsuario {
                     ps.close();
                 }
                 conectar.closeConexion(con);
-                conectar.closeConexion(con);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -170,18 +180,18 @@ public class UsuarioDao implements IUsuario {
         return lista;
     }
 
-    private boolean insertarRegistro(String sql, Usuario obj) {
+    private boolean ejecutarInsert(String sql, Usuario obj) {
         try {
             con = conectar.getConexion();
-            PreparedStatement psUsuario = con.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
             con.setAutoCommit(false);
 
-            psUsuario.setInt(1, obj.getRol().getIdRol());
-            psUsuario.setInt(2, obj.getEmpleado().getIdEmpleado());
-            psUsuario.setString(3, obj.getNombreUsuario());
-            psUsuario.setString(4, obj.getPassword());
+            ps.setInt(1, obj.getRol().getIdRol());
+            ps.setInt(2, obj.getEmpleado().getIdEmpleado());
+            ps.setString(3, obj.getNombreUsuario());
+            ps.setString(4, obj.getPassword());
 
-            int filasAfectadas = psUsuario.executeUpdate();
+            int filasAfectadas = ps.executeUpdate();
             con.commit();
             return filasAfectadas > 0;
 
@@ -196,25 +206,30 @@ public class UsuarioDao implements IUsuario {
             DesktopNotify.showDesktopMessage("Error", "Error al insertar usuario: " + e.getMessage(), DesktopNotify.ERROR, 3000);
             e.printStackTrace();
         } finally {
-            conectar.closeConexion(con);
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
         return false;
-
     }
 
-    private boolean editarRegistro(String sql, Usuario obj) {
-        PreparedStatement psUsuario = null;
+    private boolean ejecutarUpdate(String sql, Usuario obj) {
         try {
             con = conectar.getConexion();
-            psUsuario = con.prepareStatement(sql);
+            ps = con.prepareStatement(sql);
             con.setAutoCommit(false);
 
-            psUsuario.setInt(1, obj.getRol().getIdRol());
-            psUsuario.setInt(2, obj.getEmpleado().getIdEmpleado());
-            psUsuario.setString(3, obj.getNombreUsuario());
-            psUsuario.setString(4, obj.getPassword());
+            ps.setInt(1, obj.getRol().getIdRol());
+            ps.setInt(2, obj.getEmpleado().getIdEmpleado());
+            ps.setString(3, obj.getNombreUsuario());
+            ps.setString(4, obj.getPassword());
 
-            int filasAfectadas = psUsuario.executeUpdate();
+            int filasAfectadas = ps.executeUpdate();
             con.commit();
             return filasAfectadas > 0;
 
@@ -230,28 +245,22 @@ public class UsuarioDao implements IUsuario {
 
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
             DesktopNotify.showDesktopMessage("Error", "Error al actualizar usuario: " + e.getMessage(), DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
             return false;
 
         } finally {
             try {
-                if (psUsuario != null) {
-                    psUsuario.close();
+                if (ps != null) {
+                    ps.close();
                 }
-                if (con != null) {
-                    conectar.closeConexion(con);
-                }
+                conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    private Usuario selectLogin(String sql, String usuario, String claveEncriptada) {
+    private Usuario ejecutarLogin(String sql, String usuario, String claveEncriptada) {
         Usuario user = null;
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
@@ -292,9 +301,7 @@ public class UsuarioDao implements IUsuario {
                 if (ps != null) {
                     ps.close();
                 }
-                if (con != null) {
-                    conectar.closeConexion(con);
-                }
+                conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -302,39 +309,13 @@ public class UsuarioDao implements IUsuario {
         return user;
     }
 
-    public Usuario selectUsuarioParaEdicion(int idUsuario) {
-        String sql = "SELECT u.id_usuario, u.nombre_usuario, u.password, "
-                + "e.id_empleado, e.nombre, e.apellido, "
-                + "r.id_rol, r.nombre_rol "
-                + "FROM usuarios u "
-                + "INNER JOIN roles r ON u.id_rol = r.id_rol "
-                + "LEFT JOIN empleados e ON u.id_empleado = e.id_empleado " // LEFT JOIN para empleados opcionales
-                + "WHERE u.id_usuario = " + idUsuario;
-
-        // Llama al método base 'select' que ahora es capaz de mapear el password
-        ListaSimple<Usuario> lista = select(sql);
-
-        // Devuelve el objeto Usuario completo (con el hash de password)
-        return lista.isEmpty() ? null : lista.get(0);
-    }
-
-    @Override
-    public boolean existeNombreUsuario(String nombreUsuario) {
-        String sql = "SELECT 1 FROM usuarios WHERE nombre_usuario = ?";
-        Connection con = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
+    private boolean ejecutarExisteNombreUsuario(String sql, String nombreUsuario) {
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
             ps.setString(1, nombreUsuario);
-
             rs = ps.executeQuery();
-
-            // rs.next() devolverá true si encuentra al menos una fila (el usuario existe)
             return rs.next();
-
         } catch (SQLException e) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
             DesktopNotify.showDesktopMessage("Error de Consulta", "Error al verificar nombre de usuario.", DesktopNotify.ERROR, 3000);
@@ -348,9 +329,7 @@ public class UsuarioDao implements IUsuario {
                 if (ps != null) {
                     ps.close();
                 }
-                if (con != null) {
-                    conectar.closeConexion(con);
-                }
+                conectar.closeConexion(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }

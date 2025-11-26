@@ -68,52 +68,9 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
 
     @Override
     public boolean anularFactura(String idFactura) {
-        Connection localCon = null;
-        PreparedStatement psAnular = null;
-        PreparedStatement psLiberar = null;
-
-        try {
-            localCon = conectar.getConexion();
-            localCon.setAutoCommit(false);
-
-            String sqlAnular = "UPDATE facturas_taquillas SET estado = 'ANULADA', monto_total = 0.00 WHERE id_factura_taquilla = ?";
-            psAnular = localCon.prepareStatement(sqlAnular);
-            psAnular.setString(1, idFactura);
-            psAnular.executeUpdate();
-
-            String sqlLiberar = "DELETE FROM boletos WHERE id_factura_taquilla = ?";
-            psLiberar = localCon.prepareStatement(sqlLiberar);
-            psLiberar.setString(1, idFactura);
-            psLiberar.executeUpdate();
-
-            localCon.commit();
-            return true;
-
-        } catch (SQLException e) {
-            try {
-                if (localCon != null) {
-                    localCon.rollback();
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "No se pudo anular la factura.", DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                if (psAnular != null) {
-                    psAnular.close();
-                }
-                if (psLiberar != null) {
-                    psLiberar.close();
-                }
-                conectar.closeConexion(localCon);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        String sqlAnular = "UPDATE facturas_taquillas SET estado = 'ANULADA', monto_total = 0.00 WHERE id_factura_taquilla = ?";
+        String sqlLiberar = "DELETE FROM boletos WHERE id_factura_taquilla = ?";
+        return ejecutarAnularFactura(sqlAnular, sqlLiberar, idFactura);
     }
 
     @Override
@@ -219,5 +176,52 @@ public class FacturaTaquillaDao implements IFacturaTaquilla {
             }
         }
         return false;
+    }
+
+    private boolean ejecutarAnularFactura(String sqlAnular, String sqlLiberar, String idFactura) {
+        Connection localCon = null;
+        PreparedStatement psAnular = null;
+        PreparedStatement psLiberar = null;
+
+        try {
+            localCon = conectar.getConexion();
+            localCon.setAutoCommit(false);
+
+            psAnular = localCon.prepareStatement(sqlAnular);
+            psAnular.setString(1, idFactura);
+            psAnular.executeUpdate();
+
+            psLiberar = localCon.prepareStatement(sqlLiberar);
+            psLiberar.setString(1, idFactura);
+            psLiberar.executeUpdate();
+
+            localCon.commit();
+            return true;
+
+        } catch (SQLException e) {
+            try {
+                if (localCon != null) {
+                    localCon.rollback();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error", "No se pudo anular la factura.", DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (psAnular != null) {
+                    psAnular.close();
+                }
+                if (psLiberar != null) {
+                    psLiberar.close();
+                }
+                conectar.closeConexion(localCon);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

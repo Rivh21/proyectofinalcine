@@ -40,6 +40,149 @@ public class BoletoDao implements IBoleto {
     @Override
     public boolean existeIdFactura(String id) {
         String sql = "SELECT 1 FROM facturas_taquillas WHERE id_factura_taquilla = ? LIMIT 1";
+        return ejecutarExisteIdFactura(sql, id);
+    }
+
+    @Override
+    public HashSet<Integer> getAsientosOcupados(int idFuncion) {
+        String sql = "SELECT id_asiento FROM boletos WHERE id_funcion = ?";
+        return ejecutarGetAsientosOcupados(sql, idFuncion);
+    }
+
+    @Override
+    public ListaSimple<Boleto> getBoletosPorFactura(String idFactura) {
+        String sql = "SELECT p.titulo, s.nombre_sala, f.fecha_hora_inicio, b.precio_pagado, b.fecha_venta, a.fila, a.numero "
+                + "FROM boletos b "
+                + "JOIN funciones f ON b.id_funcion = f.id_funcion "
+                + "JOIN peliculas p ON f.id_pelicula = p.id_pelicula "
+                + "JOIN salas s ON f.id_sala = s.id_sala "
+                + "JOIN asientos a ON b.id_asiento = a.id_asiento "
+                + "WHERE b.id_factura_taquilla = ?";
+        return ejecutarGetBoletosPorFactura(sql, idFactura);
+    }
+
+    @Override
+    public ListaSimple<Boleto> selectAll() {
+        String sql = "SELECT b.id_boleto, b.fecha_venta, b.precio_pagado, ft.id_factura_taquilla, f.id_funcion, a.id_asiento "
+                + "FROM boletos b JOIN facturas_taquillas ft ON b.id_factura_taquilla = ft.id_factura_taquilla "
+                + "JOIN funciones f ON b.id_funcion = f.id_funcion "
+                + "JOIN asientos a ON b.id_asiento = a.id_asiento";
+        return select(sql);
+    }
+
+    @Override
+    public ListaSimple<Boleto> selectAllTo(String atributo, String condicion) {
+        String sql = "SELECT b.id_boleto, b.fecha_venta, b.precio_pagado, ft.id_factura_taquilla, f.id_funcion, a.id_asiento "
+                + "FROM boletos b JOIN facturas_taquillas ft ON b.id_factura_taquilla = ft.id_factura_taquilla "
+                + "JOIN funciones f ON b.id_funcion = f.id_funcion "
+                + "JOIN asientos a ON b.id_asiento = a.id_asiento "
+                + "WHERE b." + atributo + " LIKE '" + condicion + "%'";
+        return select(sql);
+    }
+
+    @Override
+    public boolean generarTransaccion(FacturaTaquilla factura, List<Boleto> boletosVenta) {
+        String sqlFactura = "INSERT INTO facturas_taquillas(id_factura_taquilla, id_empleado, id_metodo_pago, monto_total, descuento_aplicado) VALUES (?, ?, ?, ?, ?)";
+        String sqlBoleto = "INSERT INTO boletos(id_asiento, id_factura_taquilla, id_funcion, fecha_venta, precio_pagado) VALUES (?, ?, ?, NOW(), ?)";
+        return ejecutarGenerarTransaccion(sqlFactura, sqlBoleto, factura, boletosVenta);
+    }
+
+    @Override
+    public boolean update(Boleto obj) {
+        String sql = "UPDATE boletos SET precio_pagado=? WHERE id_boleto=" + obj.getIdBoleto();
+        return alterarRegistro(sql, obj);
+    }
+
+    @Override
+    public boolean delete(Boleto obj) {
+        String sql = "DELETE FROM boletos WHERE id_boleto='" + obj.getIdBoleto() + "'";
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            ps.execute();
+            return true;
+        } catch (Exception e) {
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error al Eliminar", "Fallo al eliminar boleto.", DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    private ListaSimple<Boleto> select(String sql) {
+        ListaSimple<Boleto> lista = new ListaSimple();
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Boleto obj = new Boleto();
+                Timestamp timestamp = rs.getTimestamp("fecha_venta");
+                LocalDateTime fechaVenta = timestamp.toLocalDateTime();
+                BigDecimal precioPagado = rs.getBigDecimal("precio_pagado");
+
+                obj.setIdBoleto(rs.getInt("id_boleto"));
+                obj.setPrecioPagado(precioPagado);
+                obj.setFechaVenta(fechaVenta);
+
+                lista.insertar(obj);
+            }
+        } catch (Exception e) {
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error de Consulta", "Error al cargar la lista de boletos.", DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
+    }
+
+    private boolean alterarRegistro(String sql, Boleto obj) {
+        try {
+            con = conectar.getConexion();
+            ps = con.prepareStatement(sql);
+            if (sql.trim().toUpperCase().startsWith("UPDATE")) {
+                ps.setBigDecimal(1, obj.getPrecioPagado());
+            }
+            ps.execute();
+            return true;
+        } catch (SQLException e) {
+            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
+            DesktopNotify.showDesktopMessage("Error de Edición", "Error al editar el boleto.", DesktopNotify.ERROR, 3000);
+            e.printStackTrace();
+        } finally {
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+                conectar.closeConexion(con);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    private boolean ejecutarExisteIdFactura(String sql, String id) {
         try {
             con = conectar.getConexion();
             ps = con.prepareStatement(sql);
@@ -64,9 +207,7 @@ public class BoletoDao implements IBoleto {
         }
     }
 
-    @Override
-    public HashSet<Integer> getAsientosOcupados(int idFuncion) {
-        String sql = "SELECT id_asiento FROM boletos WHERE id_funcion = ?";
+    private HashSet<Integer> ejecutarGetAsientosOcupados(String sql, int idFuncion) {
         HashSet<Integer> asientosOcupados = new HashSet<>();
         try {
             con = conectar.getConexion();
@@ -97,16 +238,7 @@ public class BoletoDao implements IBoleto {
         return asientosOcupados;
     }
 
-    @Override
-    public ListaSimple<Boleto> getBoletosPorFactura(String idFactura) {
-        String sql = "SELECT p.titulo, s.nombre_sala, f.fecha_hora_inicio, b.precio_pagado, b.fecha_venta, a.fila, a.numero "
-                + "FROM boletos b "
-                + "JOIN funciones f ON b.id_funcion = f.id_funcion "
-                + "JOIN peliculas p ON f.id_pelicula = p.id_pelicula "
-                + "JOIN salas s ON f.id_sala = s.id_sala "
-                + "JOIN asientos a ON b.id_asiento = a.id_asiento "
-                + "WHERE b.id_factura_taquilla = ?";
-
+    private ListaSimple<Boleto> ejecutarGetBoletosPorFactura(String sql, String idFactura) {
         ListaSimple<Boleto> lista = new ListaSimple<>();
         try {
             con = conectar.getConexion();
@@ -151,30 +283,7 @@ public class BoletoDao implements IBoleto {
         return lista;
     }
 
-    @Override
-    public ListaSimple<Boleto> selectAll() {
-        String sql = "SELECT b.id_boleto, b.fecha_venta, b.precio_pagado, ft.id_factura_taquilla, f.id_funcion, a.id_asiento "
-                + "FROM boletos b JOIN facturas_taquillas ft ON b.id_factura_taquilla = ft.id_factura_taquilla "
-                + "JOIN funciones f ON b.id_funcion = f.id_funcion "
-                + "JOIN asientos a ON b.id_asiento = a.id_asiento";
-        return select(sql);
-    }
-
-    @Override
-    public ListaSimple<Boleto> selectAllTo(String atributo, String condicion) {
-        String sql = "SELECT b.id_boleto, b.fecha_venta, b.precio_pagado, ft.id_factura_taquilla, f.id_funcion, a.id_asiento "
-                + "FROM boletos b JOIN facturas_taquillas ft ON b.id_factura_taquilla = ft.id_factura_taquilla "
-                + "JOIN funciones f ON b.id_funcion = f.id_funcion "
-                + "JOIN asientos a ON b.id_asiento = a.id_asiento "
-                + "WHERE b." + atributo + " LIKE '" + condicion + "%'";
-        return select(sql);
-    }
-
-    @Override
-    public boolean generarTransaccion(FacturaTaquilla factura, List<Boleto> boletosVenta) {
-        String sqlFactura = "INSERT INTO facturas_taquillas(id_factura_taquilla, id_empleado, id_metodo_pago, monto_total, descuento_aplicado) VALUES (?, ?, ?, ?, ?)";
-        String sqlBoleto = "INSERT INTO boletos(id_asiento, id_factura_taquilla, id_funcion, fecha_venta, precio_pagado) VALUES (?, ?, ?, NOW(), ?)";
-
+    private boolean ejecutarGenerarTransaccion(String sqlFactura, String sqlBoleto, FacturaTaquilla factura, List<Boleto> boletosVenta) {
         Connection localCon = null;
         PreparedStatement psFactura = null;
         PreparedStatement psBoleto = null;
@@ -188,7 +297,7 @@ public class BoletoDao implements IBoleto {
             psFactura.setInt(2, factura.getEmpleado().getIdEmpleado());
             psFactura.setInt(3, factura.getMetodoPago().getidMetodoPago());
             psFactura.setBigDecimal(4, factura.getMontoTotal());
-            psFactura.setBigDecimal(5, factura.getDescuentoAplicado()); // Nueva columna
+            psFactura.setBigDecimal(5, factura.getDescuentoAplicado());
 
             psFactura.executeUpdate();
             String idFacturaStr = factura.getIdFacturaTaquilla();
@@ -223,7 +332,6 @@ public class BoletoDao implements IBoleto {
             return false;
 
         } finally {
-            // CERRAR RECURSOS
             try {
                 if (psFactura != null) {
                     psFactura.close();
@@ -236,102 +344,5 @@ public class BoletoDao implements IBoleto {
                 ex.printStackTrace();
             }
         }
-    }
-
-    @Override
-    public boolean update(Boleto obj) {
-        String sql = "UPDATE boletos SET precio_pagado=? WHERE id_boleto=" + obj.getIdBoleto();
-        return alterarRegistro(sql, obj);
-    }
-
-    @Override
-    public boolean delete(Boleto obj) {
-        String sql = "DELETE FROM boletos WHERE id_boleto='" + obj.getIdBoleto() + "'";
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
-            ps.execute();
-            return true;
-        } catch (Exception e) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error al Eliminar", "Fallo al eliminar boleto.", DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                conectar.closeConexion(con);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return false;
-    }
-
-    private ListaSimple<Boleto> select(String sql) {
-        ListaSimple<Boleto> lista = new ListaSimple();
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                Boleto obj = new Boleto();
-
-                Timestamp timestamp = rs.getTimestamp("fecha_venta");
-                LocalDateTime fechaVenta = timestamp.toLocalDateTime();
-                BigDecimal precioPagado = rs.getBigDecimal("precio_pagado");
-
-                obj.setIdBoleto(rs.getInt("id_boleto"));
-                obj.setPrecioPagado(precioPagado);
-                obj.setFechaVenta(fechaVenta);
-
-                lista.insertar(obj);
-            }
-        } catch (Exception e) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Consulta", "Error al cargar la lista de boletos.", DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (ps != null) {
-                    ps.close();
-                }
-                conectar.closeConexion(con);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return lista;
-    }
-
-    private boolean alterarRegistro(String sql, Boleto obj) {
-        PreparedStatement ps = null;
-        try {
-            con = conectar.getConexion();
-            ps = con.prepareStatement(sql);
-
-            ps.setBigDecimal(1, obj.getPrecioPagado());
-
-            ps.execute();
-            return true;
-        } catch (SQLException e) {
-            DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error de Edición", "Error al editar el boleto.", DesktopNotify.ERROR, 3000);
-            e.printStackTrace();
-        } finally {
-            try {
-                if (ps != null) {
-                    ps.close();
-                }
-                conectar.closeConexion(con);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        return false;
     }
 }
