@@ -159,6 +159,7 @@ public class Footer extends javax.swing.JPanel {
                         parentWindow.dispose();
                     }
 
+                    // Llama de nuevo al login.
                     Login login = new Login();
                     ControladorLogin controlador = new ControladorLogin(login);
                     login.setVisible(true);

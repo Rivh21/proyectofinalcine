@@ -48,8 +48,9 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
             animateMenuWidth();
         });
         initComponents();
-        
+
         menu1.initMenu(usuario);
+        header1.setDatosUsuario(usuario);
 
         this.setLocationRelativeTo(null);
         setBackground(new Color(0, 0, 0, 0));
@@ -277,19 +278,10 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 showJPanel(mantto);
             }
             case "Factura Concesion" -> {
-    // 1. Crear la vista de facturas de concesión
-    VistaFactura vistaFactura = new VistaFactura("Facturas Concesion");
-
-    // 2. Crear el controlador, pasándole la vista y el objeto Usuario loggeado.
-    // 🏆 ¡Esto garantiza que el ID del empleado se pase correctamente!
-    ControladorVistaFactura controladorFactura = new ControladorVistaFactura(vistaFactura, this.usuarioLogueado);
-
-    // 3. Mostrar la vista en el panel principal o contenedor
-    showJPanel(vistaFactura);
-}
-            
-        
-            
+                VistaFactura vistaFactura = new VistaFactura("Facturas Concesion");
+                ControladorVistaFactura controladorFactura = new ControladorVistaFactura(vistaFactura, this.usuarioLogueado);
+                showJPanel(vistaFactura);
+            }
 
             case "Boletos" -> {
                 VistaBoletos vb = new VistaBoletos("Boletos");
@@ -299,9 +291,6 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
 
             case "INICIO" -> {
                 showJPanel(null);
-            }
-            case "SALIR" -> {
-
             }
         }
     }

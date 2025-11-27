@@ -5,6 +5,7 @@
 package com.ues.edu.vista.componentes;
 
 import com.ues.edu.interfaces.HeaderMenuListener;
+import com.ues.edu.modelo.Usuario;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -22,11 +23,24 @@ public class Header extends javax.swing.JPanel {
     /**
      * Creates new form Header
      */
-
     public Header() {
         initComponents();
         setOpaque(false);
         initToggleListener();
+    }
+
+    public void setDatosUsuario(Usuario usuario) {
+        if (usuario != null && usuario.getEmpleado() != null) {
+            String nombre = usuario.getEmpleado().getNombre();
+            String rol = (usuario.getRol() != null) ? usuario.getRol().getNombreRol().toUpperCase() : "";
+            String textoHtml = "<html>"
+                    + "Hola, " + nombre
+                    + "<br>"
+                    + "<i><font color='#999999' size='3'>" + rol + "</font></i>"
+                    + "</html>";
+
+            lbUsuario.setText(textoHtml);
+        }
     }
 
     public void setMenuToggleListener(HeaderMenuListener listener) {
@@ -44,9 +58,12 @@ public class Header extends javax.swing.JPanel {
 
         lblMenu = new javax.swing.JLabel();
         relojLabel1 = new com.ues.edu.vista.swing.RelojLabel();
+        lbUsuario = new javax.swing.JLabel();
 
         lblMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/menu.png"))); // NOI18N
         lblMenu.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        lbUsuario.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -55,19 +72,27 @@ public class Header extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblMenu)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lbUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(relojLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(lblMenu, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
-                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(15, 15, 15)
-                .addComponent(relojLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblMenu, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lbUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(relojLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)))))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -81,19 +106,19 @@ public class Header extends javax.swing.JPanel {
     }
 
     private void initToggleListener() {
-        // Usa el componente lblMenu, que es tu botón de menú
         lblMenu.addMouseListener(new MouseAdapter() {
             @Override
-            public void mousePressed(MouseEvent e) { 
+            public void mousePressed(MouseEvent e) {
                 if (listener != null) {
-                    listener.toggleMenuVisibility(); 
+                    listener.toggleMenuVisibility();
                 }
             }
-           
+
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    public javax.swing.JLabel lbUsuario;
     private javax.swing.JLabel lblMenu;
     private com.ues.edu.vista.swing.RelojLabel relojLabel1;
     // End of variables declaration//GEN-END:variables
