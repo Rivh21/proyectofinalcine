@@ -100,7 +100,6 @@ public class Asiento implements Comparable<Asiento> {
         int resultadoFila = this.fila.compareToIgnoreCase(o.getFila());
 
         if (resultadoFila == 0) {
-            // Si la fila es la misma, compara el número (1, 2, 3...)
             return Integer.compare(this.numero, o.getNumero());
         }
         return resultadoFila;

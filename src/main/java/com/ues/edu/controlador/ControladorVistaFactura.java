@@ -122,16 +122,13 @@ public class ControladorVistaFactura {
 
             try {
                 int idEmpleadoLoggeado = this.usuarioLoggeado.getEmpleado().getIdEmpleado();
-
                 new ControladorModalFactCon(modal, this, idEmpleadoLoggeado);
-
                 modal.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosed(java.awt.event.WindowEvent e) {
                         cargarTablaFacturas();
                     }
                 });
-
                 modal.setVisible(true);
 
             } catch (NullPointerException ex) {

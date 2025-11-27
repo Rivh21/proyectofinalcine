@@ -20,7 +20,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class TestLogin {
 
     public static void main(String[] args) {
-        // Tema oscuro
          try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
         } catch (UnsupportedLookAndFeelException ex) {
@@ -29,23 +28,6 @@ public class TestLogin {
         Login login = new Login();
         ControladorLogin cl = new ControladorLogin(login);
         login.setVisible(true);
-
-// Tema claro
-//        try {
-//            FlatLightLaf.setup();
-//            UIManager.put("Panel.background", Color.WHITE);
-//            UIManager.put("TextComponent.background", Color.WHITE);
-//            UIManager.put("List.background", Color.WHITE);
-//
-//        } catch (Exception ex) {
-//            System.err.println("Falló la configuración del tema.");
-//        }
-//
-//        SwingUtilities.invokeLater(() -> {
-//            Login login = new Login();
-//            ControladorLogin cl = new ControladorLogin(login);
-//            login.setVisible(true);
-//        });
     }
 
 }

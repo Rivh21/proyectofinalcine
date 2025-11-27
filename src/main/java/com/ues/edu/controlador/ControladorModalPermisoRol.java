@@ -85,10 +85,8 @@ public class ControladorModalPermisoRol {
                 DesktopNotify.WARNING, 3000);
             return;
         }
-
         try {
             ListaSimple<Permiso> lista = permisoDao.obtenerIdPorNombre(nombrePermiso);
-
             if (lista == null || lista.isEmpty()) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error",
@@ -96,11 +94,8 @@ public class ControladorModalPermisoRol {
                     DesktopNotify.ERROR, 3000);
                 return;
             }
-
             Permiso permiso = lista.get(0);
-
             boolean yaExiste = permisoRolDao.selectByRol(idRol).toArray().stream().anyMatch(pr -> pr.getPermiso().getIdPermiso() == permiso.getIdPermiso());
-
             if (yaExiste) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error",

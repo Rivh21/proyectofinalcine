@@ -9,8 +9,6 @@ import com.ues.edu.modelo.estructuras.Pila;
  *
  * @author radon
  */
-
-
 public interface IProducto {
 
     Pila<Producto> selectAll();

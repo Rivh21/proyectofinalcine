@@ -49,13 +49,13 @@ public class ControladorProducto {
     }
 
     public ProductoDao getDaoProducto() {
-        return daoProducto; // Getter para que ModalProducto use el mismo DAO
+        return daoProducto; 
     }
 
     private void onClickAgregar() {
         mantto.btnAgregar.addActionListener((e) -> {
             ModalProducto mp = new ModalProducto(new JFrame(), true, "Agregar Producto");
-            ControladorModalProducto cmp = new ControladorModalProducto(this, mp);// usa DAO compartido
+            ControladorModalProducto cmp = new ControladorModalProducto(this, mp);
             mp.setVisible(true);
         });
     }
@@ -63,7 +63,7 @@ public class ControladorProducto {
     private void onClickEditar() {
         mantto.btnEditar.addActionListener((e) -> {
             ModalProducto mp = new ModalProducto(new JFrame(), true, "Editar Producto");
-            ControladorModalProducto cmp = new ControladorModalProducto(this, mp);// usa DAO compartido
+            ControladorModalProducto cmp = new ControladorModalProducto(this, mp);
             mp.setVisible(true);
         });
     }
@@ -75,7 +75,6 @@ public class ControladorProducto {
                         "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
             int op = JOptionPane.showConfirmDialog(
                     this.mantto,
                     "¿Seguro que desea eliminar el producto " + productoSelect.getNombre() + "?",
@@ -105,19 +104,15 @@ public class ControladorProducto {
             public void keyReleased(KeyEvent e) {
                 String texto = mantto.tfBuscar.getText().trim();
                 Pila<Producto> pila;
-
                 if (texto.isEmpty()) {
                     pila = daoProducto.selectAll();
                 } else {
                     Producto porId = null;
                     Producto porNombre = null;
-
                     if (texto.matches("\\d+")) {
                         porId = daoProducto.buscar(Integer.parseInt(texto));
                     }
-
                     porNombre = daoProducto.buscarNombre(texto);
-
                     pila = new Pila<>();
                     if (porId != null) {
                         pila.push(porId);
@@ -179,7 +174,6 @@ public class ControladorProducto {
                                 break;
                             }
                         }
-
                         boolean sel = (productoSelect != null);
                         mantto.btnEditar.setEnabled(sel);
                         mantto.btnEliminar.setEnabled(sel);

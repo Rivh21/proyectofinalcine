@@ -26,7 +26,7 @@ public class ControladorModalProducto {
     public ControladorModalProducto(ControladorProducto controladorProducto, ModalProducto mp, Producto productoSelect) {
         this.controladorProducto = controladorProducto;
         this.mp = mp;
-        this.dao = controladorProducto.getDaoProducto(); // usar mismo DAO
+        this.dao = controladorProducto.getDaoProducto(); 
         this.productoSelect = productoSelect;
 
         if (productoSelect != null) cargarDatos();
@@ -82,7 +82,7 @@ public class ControladorModalProducto {
             }
 
             if (exito) {
-                controladorProducto.cargarLista(); // refresca la tabla
+                controladorProducto.cargarLista(); 
                 mp.dispose();
             }
         });

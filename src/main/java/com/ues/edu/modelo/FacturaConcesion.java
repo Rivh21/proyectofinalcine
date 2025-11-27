@@ -1,7 +1,14 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.ues.edu.modelo;
 import com.ues.edu.modelo.estructuras.ListaSimple;
 import com.ues.edu.utilidades.GeneradorID;
-
+/**
+ *
+ * @author radon
+ */
 public class FacturaConcesion implements Comparable<FacturaConcesion> {
 
     private String idFacturaConcesion;

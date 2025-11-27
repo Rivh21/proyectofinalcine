@@ -41,9 +41,7 @@ public class ControladorModalListaProductos {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int selectedRow = vista.tbDatos.getSelectedRow();
-                
                 vista.btnSeleccionar.setEnabled(selectedRow != -1);
-
                 if (e.getClickCount() == 2 && selectedRow != -1) {
                     asignarProductoSeleccionado();
                 }
@@ -88,12 +86,9 @@ public class ControladorModalListaProductos {
             JOptionPane.showMessageDialog(vista, "Seleccione un producto", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         DefaultTableModel modelo = (DefaultTableModel) vista.tbDatos.getModel();
-
         String nombre = modelo.getValueAt(fila, 1).toString();
         String precio = modelo.getValueAt(fila, 2).toString();
-
         modalFact.lbProducto.setText("Producto: " + nombre);
         modalFact.tfPrecio.setText(precio);
 

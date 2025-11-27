@@ -14,7 +14,6 @@ import java.util.List;
  * @author radon
  */
 public interface IPermisoRol {
-    //cambios inter
      ListaSimple<PermisoRol> selectAll();
 
     ListaSimple<PermisoRol> selectAllTo(String atributo, String condicion);

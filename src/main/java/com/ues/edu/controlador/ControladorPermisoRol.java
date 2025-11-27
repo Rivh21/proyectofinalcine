@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 
@@ -46,10 +47,8 @@ public class ControladorPermisoRol {
         this.idRolActual = idRol;
         this.nombreRolActual = nombreRol;
         this.vistaActual = vista;
-
         vista.lblTitulo.setText("Rol seleccionado: " + nombreRol);
         vista.btnQuitarPermiso.setEnabled(false);
-
         onClickTabla();
         onClickAsignar();
         onClickRegresar();
@@ -64,7 +63,6 @@ public class ControladorPermisoRol {
             public Class<?> getColumnClass(int column) {
                 return (column == 2) ? Boolean.class : super.getColumnClass(column);
             }
-
             @Override
             public boolean isCellEditable(int row, int column) {
                 return column == 2;
@@ -82,7 +80,6 @@ public class ControladorPermisoRol {
                 pr.getPermiso().getIdPermiso()
             });
         }
-
         TableColumnModel tcm = vistaActual.tbDatos.getColumnModel();
         if (tcm.getColumnCount() > 0) {
             tcm.getColumn(0).setMinWidth(0);
@@ -94,7 +91,6 @@ public class ControladorPermisoRol {
             tcm.getColumn(3).setPreferredWidth(0);
         }
     }
-
     private void onClickTabla() {
         vistaActual.tbDatos.addMouseListener(new MouseAdapter() {
             @Override
@@ -114,7 +110,6 @@ public class ControladorPermisoRol {
             }
         });
     }
-
     private void onClickQuitarPermiso() {
         vistaActual.btnQuitarPermiso.addActionListener(e -> {
             if (idPermisoRolSeleccionado == -1) {
@@ -144,7 +139,6 @@ public class ControladorPermisoRol {
             }
         });
     }
-
     private void onClickAsignar() {
         vistaActual.btnAsignar.addActionListener(e -> {
             ModalPermisoRol modal = new ModalPermisoRol(new JFrame(), true);
@@ -209,19 +203,12 @@ public class ControladorPermisoRol {
             for (int i = 0; i < modelo.getRowCount(); i++) {
                 int idPR = (int) modelo.getValueAt(i, 0);
                 boolean valorActual = (boolean) modelo.getValueAt(i, 2);
-
-                // Actualiza el registro
                 PermisoRol prObj = new PermisoRol();
                 prObj.setIdPermisoRol(idPR);
                 prObj.setTienePermiso(valorActual);
-
                 prDao.update(prObj);
             }
-
-            java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(vistaActual);
-            if (window != null) {
-                window.dispose();
-            }
+            SwingUtilities.getWindowAncestor(vistaActual).dispose();
         });
     }
 }

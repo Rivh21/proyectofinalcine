@@ -37,40 +37,27 @@ public class ControladorLecturaFactura {
     FacturaTaquillaDao daoFactura;
     private ListaSimple<FacturaTaquilla> listaActualMostrada;
 
-    // Seguridad
     private Usuario usuarioActual;
     private List<String> permisosUsuario;
 
-    // Modificamos el constructor para recibir el Usuario
     public ControladorLecturaFactura(Mantenimiento mantto, Usuario usuario) {
         this.mantto = mantto;
         this.usuarioActual = usuario;
         this.daoFactura = new FacturaTaquillaDao();
         this.listaActualMostrada = daoFactura.selectAll();
-
-        // Cargar permisos del usuario
         cargarPermisos();
-
-        // Configuración inicial de botones
         this.mantto.btnAgregar.setText("DETALLES");
         this.mantto.btnAgregar.setEnabled(false);
-
         this.mantto.btnEditar.setText("ANULAR");
-
-        // Lógica de seguridad visual: 
-        // Si no tiene permiso de anular, ocultamos el botón permanentemente para que no estorbe
         if (tienePermiso("ANULAR_FACTURAS") || tienePermiso("ACCESO_TOTAL")) {
             this.mantto.btnEditar.setVisible(true);
         } else {
             this.mantto.btnEditar.setVisible(false);
         }
         this.mantto.btnEditar.setEnabled(false); // Deshabilitado hasta seleccionar
-
         this.mantto.btnEliminar.setVisible(false);
-
         configurarSeleccion();
         forzarBoton();
-
         onClickDetalles();
         onClickAnular();
         keyReleasedBuscar();
@@ -113,16 +100,10 @@ public class ControladorLecturaFactura {
                         }
                     }
 
-                    // 1. Botón Detalles (Siempre habilitado si hay selección)
                     mantto.btnAgregar.setEnabled(true);
-
-                    // 2. Botón Anular (Con Seguridad y Lógica de Negocio)
                     boolean tienePermiso = tienePermiso("ANULAR_FACTURAS") || tienePermiso("ACCESO_TOTAL");
                     boolean esValida = facturaSelect != null && !"ANULADA".equals(facturaSelect.getEstado());
-
-                    // Solo se habilita si TIENE PERMISO y la factura NO ESTÁ YA ANULADA
                     mantto.btnEditar.setEnabled(tienePermiso && esValida);
-
                 } else {
                     facturaSelect = null;
                     mantto.btnAgregar.setEnabled(false);
@@ -131,7 +112,6 @@ public class ControladorLecturaFactura {
             }
         });
     }
-
     private void onClickDetalles() {
         this.mantto.btnAgregar.addActionListener(e -> {
             if (facturaSelect != null) {
@@ -145,7 +125,6 @@ public class ControladorLecturaFactura {
 
     private void onClickAnular() {
         this.mantto.btnEditar.addActionListener(e -> {
-            // Doble verificación de seguridad al hacer clic
             if (!tienePermiso("ANULAR_FACTURAS") && !tienePermiso("ACCESO_TOTAL")) {
                 JOptionPane.showMessageDialog(mantto, "No tiene permisos para realizar esta acción.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -156,13 +135,10 @@ public class ControladorLecturaFactura {
                         "¿Está seguro de ANULAR esta factura?\nEsta acción liberará los asientos y no se puede deshacer.",
                         "Confirmar Anulación",
                         JOptionPane.YES_NO_OPTION);
-
                 if (confirm == JOptionPane.YES_OPTION) {
                     if (daoFactura.anularFactura(facturaSelect.getIdFacturaTaquilla())) {
                         DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                         DesktopNotify.showDesktopMessage("Éxito", "Factura anulada correctamente.", DesktopNotify.SUCCESS, 3000L);
-
-                        // Recargar datos
                         this.listaActualMostrada = daoFactura.selectAll();
                         mostrar(listaActualMostrada);
                         this.mantto.tbDatos.clearSelection();
@@ -201,7 +177,6 @@ public class ControladorLecturaFactura {
         };
         String titulos[] = {"ID", "VENDEDOR", "MÉTODO", "TOTAL", "DESCUENTO", "ESTADO"};
         modelo.setColumnIdentifiers(titulos);
-
         ArrayList<FacturaTaquilla> facturas = lista.toArray();
         if (facturas != null) {
             for (FacturaTaquilla fc : facturas) {

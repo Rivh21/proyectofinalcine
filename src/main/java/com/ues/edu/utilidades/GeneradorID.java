@@ -18,12 +18,12 @@ public class GeneradorID {
         StringBuilder sb = new StringBuilder("FAC-"); // Prefijo
         Random r = new Random();
 
-        // Generamos 6 caracteres aleatorios
+        // Genera 6 caracteres aleatorios
         for (int i = 0; i < 6; i++) {
             int index = r.nextInt(letras.length());
             sb.append(letras.charAt(index));
         }
 
-        return sb.toString(); // Retorna algo como "FAC-9X2J1M"
+        return sb.toString(); // Retorna la factura "FAC-9X2J1M"
     }
 }

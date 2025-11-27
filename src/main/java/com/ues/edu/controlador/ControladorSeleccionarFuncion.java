@@ -26,7 +26,7 @@ import javax.swing.table.TableRowSorter;
 public class ControladorSeleccionarFuncion {
 
     private DefaultTableModel modelo;
-    private ControladorBoletos controladorBoletos; // Referencia al controlador principal
+    private ControladorBoletos controladorBoletos; 
     private FuncionDAO daoFuncion;
     private VistaListado vistaLista;
     private Funcion funcionSelect;
@@ -48,8 +48,6 @@ public class ControladorSeleccionarFuncion {
     private void onClickSeleccionar() {
         this.vistaLista.btnSeleccionar.addActionListener((e) -> {
             if (funcionSelect != null) {
-
-                // Confirmación
                 int respuesta = JOptionPane.showConfirmDialog(
                         vistaLista,
                         "¿Desea seleccionar la función de: " + funcionSelect.getPeliculaTitulo() + "?",
@@ -57,7 +55,6 @@ public class ControladorSeleccionarFuncion {
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE
                 );
-
                 if (respuesta == JOptionPane.YES_OPTION) {
                     controladorBoletos.cargarFuncion(funcionSelect);
                     this.vistaLista.dispose();
@@ -105,7 +102,6 @@ public class ControladorSeleccionarFuncion {
             }
         });
     }
-
     public void mostrar(ListaSimpleCircular<Funcion> lista) {
         this.listaActualMostrada = lista;
         modelo = new DefaultTableModel() {
@@ -114,7 +110,6 @@ public class ControladorSeleccionarFuncion {
                 return false;
             }
         };
-
         String titulos[] = {"ID", "PELÍCULA", "SALA", "FECHA Y HORA", "PRECIO"};
         modelo.setColumnIdentifiers(titulos);
 
@@ -125,17 +120,14 @@ public class ControladorSeleccionarFuncion {
                 f.getIdFuncion(),
                 f.getPeliculaTitulo(),
                 f.getSalaNombre(),
-                CustomDateFormatter.format(f.getFechaHoraInicio()), // Formato legible
+                CustomDateFormatter.format(f.getFechaHoraInicio()), 
                 String.format("$ %.2f", f.getPrecioBoleto())
             };
             modelo.addRow(fila);
         }
-
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
         this.vistaLista.tbDatos.setRowSorter(sorter);
         this.vistaLista.tbDatos.setModel(modelo);
-
-        // Ajustar anchos visuales
         int[] anchosFijos = {30, 200, 100, 120, 60};
         ajustarAnchoColumnas(anchosFijos);
     }
@@ -148,18 +140,13 @@ public class ControladorSeleccionarFuncion {
     }
 
     private ListaSimpleCircular<Funcion> filtrarListaEnMemoria(String texto) {
-        // Si no hay texto, traemos todas las proximas funciones de nuevo
         if (texto == null || texto.trim().isEmpty()) {
             return daoFuncion.selectProximasFunciones();
         }
-
-        // Obtenemos la lista original completa para filtrar sobre ella
         ListaSimpleCircular<Funcion> listaOrigen = daoFuncion.selectProximasFunciones();
         ListaSimpleCircular<Funcion> listaFiltrada = new ListaSimpleCircular<>();
         String busqueda = texto.trim().toLowerCase();
-
         for (Funcion f : listaOrigen.toArray()) {
-            // Filtramos por Nombre de Película o Nombre de Sala
             if (f.getPeliculaTitulo().toLowerCase().contains(busqueda)
                     || f.getSalaNombre().toLowerCase().contains(busqueda)) {
                 listaFiltrada.insertar(f);

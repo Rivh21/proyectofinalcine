@@ -14,27 +14,17 @@ public class FuncionHoy implements Comparable<FuncionHoy> {
     private String nombreSala;
     private String estado; 
     
-    // Atributo interno, NO visible en la JTable
     private int idFuncion; 
 
     public FuncionHoy() {}
-
-    // -------------------------------------------------------------------
-    // MÉTODO compareTo (Implementación de Comparable)
-    // -------------------------------------------------------------------
     @Override
     public int compareTo(FuncionHoy otraFuncion) {
-        // 1. Comparamos por la hora de inicio (el campo clave para el orden de la cartelera)
         int horaComparison = this.horaInicio.compareTo(otraFuncion.horaInicio);
         if (horaComparison != 0) {
             return horaComparison;
         }
-        // 2. Si las horas son idénticas, usamos el ID como desempate
         return Integer.compare(this.idFuncion, otraFuncion.idFuncion); 
     }
-
-    // --- Getters y Setters ---
-
     public int getIdFuncion() {
         return idFuncion;
     }

@@ -86,12 +86,9 @@ public class DetalleConcesion implements Comparable<DetalleConcesion> {
         this.producto = producto;
     }
 
-    // --------------------------------------------------------------------
-    //   compareTo NECESARIO para que ListaSimple funcione sin errores
-    // --------------------------------------------------------------------
     @Override
     public int compareTo(DetalleConcesion o) {
-        if (o == null) return 1;                    // Evita NullPointer
+        if (o == null) return 1;                   
         return Integer.compare(this.idDetalle, o.getIdDetalle());
     }
 

@@ -46,15 +46,12 @@ public class ControladorModalSala {
                 DesktopNotify.showDesktopMessage("Error", "Debe ingresar el nombre de la sala", DesktopNotify.ERROR, 3000);
                 return;
             }
-
             Sala existente = dao.buscarPorNombre(nombre);
-
             if (existente != null && (salaSelect == null || existente.getIdSala() != salaSelect.getIdSala())) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Error", "Ya existe una sala con ese nombre", DesktopNotify.ERROR, 3000);
                 return;
             }
-
             boolean exito;
             if (salaSelect == null) {
                 Sala nuevaSala = new Sala(0, nombre);
@@ -63,7 +60,6 @@ public class ControladorModalSala {
                 salaSelect.setNombreSala(nombre);
                 exito = dao.update(salaSelect);
             }
-
             if (exito) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                 DesktopNotify.showDesktopMessage("OK", "Sala guardada correctamente", DesktopNotify.SUCCESS, 3000);

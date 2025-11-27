@@ -99,7 +99,6 @@ public class ControladorModalFunciones {
 
             if (daoFuncion.insert(funcion)) {
 
-                // ✔ NOTIFICACIÓN DE AGREGADO
                 DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                 DesktopNotify.showDesktopMessage(
                         "Función agregada",
@@ -132,7 +131,6 @@ public class ControladorModalFunciones {
 
             if (daoFuncion.update(funcionSelect)) {
 
-                // ✔ NOTIFICACIÓN DE ACTUALIZACIÓN
                 DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                 DesktopNotify.showDesktopMessage(
                         "Función actualizada",

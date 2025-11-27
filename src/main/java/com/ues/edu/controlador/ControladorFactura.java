@@ -178,7 +178,7 @@ public class ControladorFactura {
             }
 
             MetodoPago mp = (MetodoPago) vista.cbMetodoDePago.getSelectedItem();
-            if (mp == null || mp.getidMetodoPago() <= 0) { // ID 0 es "--- Seleccione ---"
+            if (mp == null || mp.getidMetodoPago() <= 0) { 
                 JOptionPane.showMessageDialog(vista, "Debe seleccionar un método de pago.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }

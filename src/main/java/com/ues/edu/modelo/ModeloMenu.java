@@ -98,22 +98,22 @@ public class ModeloMenu {
     }
 
     public Icon toIcon() {
-        // 1. Verifica si hay un nombre de icono para buscar
+        // Verifica si hay un nombre de icono para buscar
         if (this.icono == null || this.icono.trim().isEmpty()) {
             return null;
         }
-        // 2. Construye la ruta usando la barra diagonal inicial  
+        // Construye la ruta usando la barra diagonal inicial  
         String path = "/iconos/" + this.icono + ".png";
 
-        // 3. Intenta obtener el recurso.
+        // Intenta obtener el recurso.
         java.net.URL location = getClass().getResource(path);
 
-        // 4. Verifica si el recurso fue encontrado
+        // Verifica si el recurso fue encontrado
         if (location == null) {
             System.err.println("ERROR: Recurso de icono NO ENCONTRADO en la ruta: " + path);
             return new ImageIcon();
         }
-        // 5. Si se encuentra, crea y devuelve el ImageIcon
+        // Si se encuentra, crea y devuelve el ImageIcon
         return new ImageIcon(location);
     }
 }

@@ -21,7 +21,13 @@ public class FuncionHoyDAO {
     ResultSet rs;
 
     private final String SQL_SELECT_HOY = 
-        "SELECT F.id_funcion, TIME_FORMAT(F.fecha_hora_inicio, '%H:%i') AS Hora_Inicio, P.titulo AS Pelicula, S.nombre_sala AS Sala, CASE WHEN NOW() < F.fecha_hora_inicio THEN 'POR INICIAR' WHEN NOW() BETWEEN F.fecha_hora_inicio AND DATE_ADD(F.fecha_hora_inicio, INTERVAL P.duracion_minutos MINUTE) THEN 'EN CURSO' ELSE 'TERMINADA' END AS Estado_Funcion_Detallado FROM funciones F JOIN peliculas P ON F.id_pelicula = P.id_pelicula JOIN salas S ON F.id_sala = S.id_sala WHERE DATE(F.fecha_hora_inicio) = CURDATE() ORDER BY F.fecha_hora_inicio ASC";
+        "SELECT F.id_funcion, TIME_FORMAT(F.fecha_hora_inicio, '%H:%i') AS Hora_Inicio, P.titulo "
+            + "AS Pelicula, S.nombre_sala AS Sala, CASE WHEN NOW() < F.fecha_hora_inicio "
+            + "THEN 'POR INICIAR' WHEN NOW() BETWEEN F.fecha_hora_inicio AND DATE_ADD"
+            + "(F.fecha_hora_inicio, INTERVAL P.duracion_minutos MINUTE) THEN 'EN CURSO' "
+            + "ELSE 'TERMINADA' END AS Estado_Funcion_Detallado FROM funciones F JOIN peliculas "
+            + "P ON F.id_pelicula = P.id_pelicula JOIN salas S ON F.id_sala = S.id_sala WHERE DATE(F.fecha_hora_inicio)"
+            + " = CURDATE() ORDER BY F.fecha_hora_inicio ASC";
 
     public FuncionHoyDAO() {
         conectar = new Conexion(); 

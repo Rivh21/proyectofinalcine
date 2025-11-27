@@ -101,8 +101,6 @@ public class ControladorFunciones {
             if (op == JOptionPane.YES_OPTION) {
 
                 if (daoFuncion.delete(funcionSelect)) {
-
-                    // ✔ Notificación original (NO SE REMOVE)
                     DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                     DesktopNotify.showDesktopMessage(
                             "OK",
@@ -114,8 +112,6 @@ public class ControladorFunciones {
                     mostrar(daoFuncion.selectAll());
 
                 } else {
-
-                    // ✔ Notificación original (NO SE REMOVE)
                     DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                     DesktopNotify.showDesktopMessage(
                             "Error",

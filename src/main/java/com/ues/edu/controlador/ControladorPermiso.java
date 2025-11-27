@@ -49,21 +49,18 @@ public class ControladorPermiso {
     private void onClickAgregar() {
         this.mantto.btnAgregar.addActionListener((e) -> {
             String permiso = JOptionPane.showInputDialog("Permiso");
-
             if (permiso == null) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Cancelado", "Operación cancelada por el usuario",
                         DesktopNotify.WARNING, 3000);
                 return;
             }
-
             if (permiso.trim().isEmpty()) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Campo vacío", "Debe ingresar un permiso válido",
                         DesktopNotify.WARNING, 3000);
                 return;
             }
-
             permisoSelect = new Permiso(permiso.toUpperCase());
             if (!existePermiso()) {
                 if (daoPermiso.insert(permisoSelect)) {
@@ -92,14 +89,12 @@ public class ControladorPermiso {
                         DesktopNotify.WARNING, 3000);
                 return;
             }
-
             if (permiso.trim().isEmpty()) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
                 DesktopNotify.showDesktopMessage("Campo vacío", "Debe ingresar un nombre válido",
                         DesktopNotify.WARNING, 3000);
                 return;
             }
-
             permisoSelect.setNombrePermiso(permiso.toUpperCase());
 
             if (!existePermiso()) {
@@ -115,7 +110,6 @@ public class ControladorPermiso {
             } else {
                 JOptionPane.showMessageDialog(null, "El método de pago ya existe", "Error", JOptionPane.ERROR_MESSAGE);
             }
-
             permisoSelect = null;
             mostrar(daoPermiso.selectAll());
         });

@@ -343,7 +343,7 @@ public class ControladorModalFactCon {
         }
 
         FacturaConcesion nueva = new FacturaConcesion();
-        nueva.setIdFacturaConcesion(GeneradorID.generarCodigoFactura()); // <- ID generado aquí
+        nueva.setIdFacturaConcesion(GeneradorID.generarCodigoFactura()); 
         nueva.setMontoTotal(total);
         nueva.setMetodoPago(metodoPago);
         nueva.setEmpleado(new Empleado(idEmpleadoActual));
