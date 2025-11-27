@@ -153,8 +153,9 @@ public class ControladorVistaFactura {
             }
 
             try {
-                int idFactura = Integer.parseInt(vista.tbDatos.getValueAt(fila, 0).toString());
+                String idFactura = vista.tbDatos.getValueAt(fila, 0).toString();
                 FacturaConcesion factura = facturaDao.buscarPorId(idFactura);
+
 
                 if (factura == null) {
                     JOptionPane.showMessageDialog(vista,
@@ -194,8 +195,8 @@ public class ControladorVistaFactura {
                         "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            int idFactura = Integer.parseInt(vista.tbDatos.getValueAt(fila, 0).toString());
+            String idFactura = vista.tbDatos.getValueAt(fila, 0).toString();
+         
 
             int confirm = JOptionPane.showConfirmDialog(vista,
                     "¿Está seguro de ANULAR esta factura?\nEsta acción no se puede deshacer.",

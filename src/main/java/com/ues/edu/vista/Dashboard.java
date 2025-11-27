@@ -10,6 +10,7 @@ import com.ues.edu.controlador.ControladorEmpleado;
 import com.ues.edu.controlador.ControladorFunciones;
 import com.ues.edu.controlador.ControladorLecturaFactura;
 import com.ues.edu.controlador.ControladorLotesInventario;
+import com.ues.edu.controlador.ControladorMenuPrincipal;
 import com.ues.edu.controlador.ControladorMetodoPago;
 import com.ues.edu.controlador.ControladorPeliculas;
 import com.ues.edu.controlador.ControladorPermiso;
@@ -290,7 +291,9 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
             }
 
             case "INICIO" -> {
-                showJPanel(null);
+                MenuPrincipal vistaCartelera = new MenuPrincipal(); 
+                ControladorMenuPrincipal controladorCartelera = new ControladorMenuPrincipal(vistaCartelera);
+                showJPanel(vistaCartelera);
             }
         }
     }

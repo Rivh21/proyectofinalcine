@@ -1,9 +1,8 @@
-package com.ues.edu.controlador;
-
-/**
- *
- * @author radon
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
+package com.ues.edu.controlador;
 import com.ues.edu.modelo.Pelicula;
 import com.ues.edu.modelo.dao.PeliculaDAO;
 import com.ues.edu.modelo.estructuras.ListaSimpleCircular;
@@ -20,6 +19,10 @@ import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
+/**
+ *
+ * @author radon
+ */
 
 public class ControladorPeliculas {
 
@@ -32,7 +35,7 @@ public class ControladorPeliculas {
     public ControladorPeliculas(Mantenimiento mantto) {
         daoPelicula = new PeliculaDAO();
         this.mantto = mantto;
-        this.listaActualMostrada = daoPelicula.selectAll(); // ← cambio
+        this.listaActualMostrada = daoPelicula.selectAll(); 
         onClickTabla();
         onClickAgregar();
         onClickEditar();
@@ -77,7 +80,7 @@ public class ControladorPeliculas {
 
             if (op == javax.swing.JOptionPane.YES_OPTION) {
 
-                if (daoPelicula.delete(peliculaSelect)) {  // ← cambio
+                if (daoPelicula.delete(peliculaSelect)) { 
                     DesktopNotify.setDefaultTheme(NotifyTheme.Green);
                     DesktopNotify.showDesktopMessage("OK", "Película eliminada", DesktopNotify.SUCCESS, 3000);
                     mostrar(daoPelicula.selectAll()); // ← cambio
@@ -97,7 +100,7 @@ public class ControladorPeliculas {
                 ListaSimpleCircular<Pelicula> lista;
 
                 if (textoBusqueda.isEmpty()) {
-                    lista = daoPelicula.selectAll(); // ← cambio
+                    lista = daoPelicula.selectAll();
                 } else {
                     lista = daoPelicula.buscar(textoBusqueda);
                 }

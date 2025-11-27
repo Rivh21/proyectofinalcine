@@ -1,5 +1,8 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
 package com.ues.edu.modelo.dao;
-
 import com.ues.edu.interfaces.IPelicula;
 import com.ues.edu.modelo.ClasificacionPelicula;
 import com.ues.edu.modelo.GeneroPelicula;
@@ -14,6 +17,7 @@ import java.util.ArrayList;
  *
  * @author radon
  */
+
 public class PeliculaDAO implements IPelicula {
 
     private final Conexion conectar = new Conexion();
@@ -90,10 +94,11 @@ public class PeliculaDAO implements IPelicula {
                 p.setIdPelicula(rs.getInt("id_pelicula"));
                 p.setTitulo(rs.getString("titulo"));
                 p.setDuracionMinutos(rs.getInt("duracion_minutos"));
-
-                // BD -> ENUM
                 p.setGenero(GeneroPelicula.valueOf(rs.getString("genero")));
-                p.setClasificacion(ClasificacionPelicula.valueOf(rs.getString("clasificacion")));
+                String valorClas = rs.getString("clasificacion"); 
+                String codigo = valorClas.split("-")[0];          
+
+                p.setClasificacion(ClasificacionPelicula.valueOf(codigo));
 
                 lista.insertar(p);
             }
@@ -121,9 +126,9 @@ public class PeliculaDAO implements IPelicula {
             ps.setString(1, obj.getTitulo());
             ps.setInt(2, obj.getDuracionMinutos());
 
-            // ENUM -> BD
+           
             ps.setString(3, obj.getGenero().name());
-            ps.setString(4, obj.getClasificacion().name());
+            ps.setString(4, obj.getClasificacion().toString());
 
             ps.execute();
             return true;
@@ -148,5 +153,5 @@ public class PeliculaDAO implements IPelicula {
         }
         return null;
     }
-
 }
+

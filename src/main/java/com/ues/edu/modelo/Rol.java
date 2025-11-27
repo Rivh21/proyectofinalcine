@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author DELL LATITUDE
+ * @author radon
  */
 public class Rol implements Comparable<Rol> {
 

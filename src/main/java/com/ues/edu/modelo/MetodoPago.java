@@ -6,7 +6,7 @@ package com.ues.edu.modelo;
 
 /**
  *
- * @author DELL LATITUDE
+ * @author radon
  */
 public class MetodoPago implements Comparable<MetodoPago>{
     private int idMetodoPago;

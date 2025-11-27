@@ -1,11 +1,17 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
+ */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.Producto;
 import com.ues.edu.modelo.dao.ProductoDao;
 import com.ues.edu.vista.ModalProducto;
 import ds.desktop.notify.DesktopNotify;
 import ds.desktop.notify.NotifyTheme;
-
+/**
+ *
+ * @author radon
+ */
 public class ControladorModalProducto {
 
     private final ControladorProducto controladorProducto;

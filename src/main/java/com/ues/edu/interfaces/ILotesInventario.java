@@ -8,8 +8,6 @@ package com.ues.edu.interfaces;
  *
  * @author radon
  */
-
-
 import com.ues.edu.modelo.LotesInventario;
 import com.ues.edu.modelo.estructuras.PrioridadCola;
 

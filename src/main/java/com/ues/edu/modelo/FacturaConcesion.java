@@ -1,11 +1,10 @@
 package com.ues.edu.modelo;
-
 import com.ues.edu.modelo.estructuras.ListaSimple;
-
+import com.ues.edu.utilidades.GeneradorID;
 
 public class FacturaConcesion implements Comparable<FacturaConcesion> {
 
-    private int idFacturaConcesion;
+    private String idFacturaConcesion;
     private Double montoTotal;
     private MetodoPago metodoPago;
     private Empleado empleado;
@@ -13,13 +12,14 @@ public class FacturaConcesion implements Comparable<FacturaConcesion> {
 
     public FacturaConcesion() {
         detalleConcesion = new ListaSimple<>();
+        this.idFacturaConcesion = GeneradorID.generarCodigoFactura();
     }
 
-    public int getIdFacturaConcesion() {
+    public String getIdFacturaConcesion() {
         return idFacturaConcesion;
     }
 
-    public void setIdFacturaConcesion(int idFacturaConcesion) {
+    public void setIdFacturaConcesion(String idFacturaConcesion) {
         this.idFacturaConcesion = idFacturaConcesion;
     }
 
@@ -47,9 +47,6 @@ public class FacturaConcesion implements Comparable<FacturaConcesion> {
         this.empleado = empleado;
     }
 
-    // ELIMINADO: getFecha() y setFecha(LocalDateTime fecha)
-    // El atributo 'fecha' ya no existe
-
     public ListaSimple<DetalleConcesion> getDetalleConcesion() {
         return detalleConcesion;
     }
@@ -60,7 +57,9 @@ public class FacturaConcesion implements Comparable<FacturaConcesion> {
 
     @Override
     public int compareTo(FacturaConcesion o) {
-        // CORREGIDO: Como 'fecha' fue eliminada, usamos 'idFacturaConcesion' para Comparable.
-        return Integer.compare(this.idFacturaConcesion, o.getIdFacturaConcesion());
+        if (this.idFacturaConcesion == null || o.getIdFacturaConcesion() == null) {
+             return 0; 
+        }
+        return this.idFacturaConcesion.compareTo(o.getIdFacturaConcesion());
     }
 }

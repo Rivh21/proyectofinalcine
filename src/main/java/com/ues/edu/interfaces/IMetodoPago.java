@@ -9,7 +9,7 @@ import com.ues.edu.modelo.estructuras.ListaSimple;
 
 /**
  *
- * @author jorge
+ * @author radon
  */
 public interface IMetodoPago {
     public ListaSimple<MetodoPago> selectAll();

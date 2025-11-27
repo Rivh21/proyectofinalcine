@@ -11,8 +11,11 @@ import com.ues.edu.modelo.DetalleConcesion;
 import com.ues.edu.modelo.dao.FacturaConcesionDao;
 import com.ues.edu.modelo.dao.ProductoDao;
 import com.ues.edu.modelo.dao.LotesInventarioDao;
+import com.ues.edu.modelo.dao.MetodoPagoDao;
 import com.ues.edu.vista.ModalFactCon;
 import com.ues.edu.vista.VistaListado;
+import com.ues.edu.modelo.estructuras.ListaSimple;
+import com.ues.edu.utilidades.GeneradorID;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
@@ -20,8 +23,7 @@ import java.awt.Frame;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 /**
- * 
- * @author radon
+ * * @author radon
  */
 
 public class ControladorModalFactCon {
@@ -30,6 +32,7 @@ public class ControladorModalFactCon {
     private final ProductoDao productoDao;
     private final FacturaConcesionDao facturaDao;
     private final LotesInventarioDao lotesDao;
+    private final MetodoPagoDao metodoPagoDao;
     private Producto productoSeleccionado;
     private final ControladorVistaFactura controladorPrincipal;
     private final int idEmpleadoActual;
@@ -39,6 +42,7 @@ public class ControladorModalFactCon {
         this.productoDao = new ProductoDao();
         this.facturaDao = new FacturaConcesionDao();
         this.lotesDao = new LotesInventarioDao();
+        this.metodoPagoDao = new MetodoPagoDao();
         this.controladorPrincipal = controladorPrincipal;
         this.idEmpleadoActual = idEmpleadoActual;
         this.productoSeleccionado = null;
@@ -48,6 +52,7 @@ public class ControladorModalFactCon {
         cargarMetodosPago();
         onClickProducto();
         onClickAgregar();
+        onClickEliminar();
         onClickCancelar();
         onClickPagoCliente();
         onClickGuardar();
@@ -70,29 +75,33 @@ public class ControladorModalFactCon {
         vista.spiCantidad.setValue(1);
         vista.lbTotalProducto.setText("Total: $0.00");
         vista.tfCambio.setText("0.00");
+        
+        vista.lbSiesEfectivo.setVisible(false);
+        vista.tfPagoCliente.setVisible(false);
+        vista.lbCambio.setVisible(false);
+        vista.tfCambio.setVisible(false);
     }
 
     private void cargarMetodosPago() {
         vista.cmbMetodoPago.removeAllItems();
-        MetodoPago efectivo = new MetodoPago("Efectivo");
-        efectivo.setidMetodoPago(1);
-        vista.cmbMetodoPago.addItem(efectivo);
 
-        MetodoPago tarjeta = new MetodoPago("Tarjeta");
-        tarjeta.setidMetodoPago(2);
-        vista.cmbMetodoPago.addItem(tarjeta);
+        MetodoPago placeholder = new MetodoPago("--- SELECCIONAR ---");
+        placeholder.setidMetodoPago(0);
+        vista.cmbMetodoPago.addItem(placeholder);        
+        ListaSimple<MetodoPago> listaSimpleMetodos = metodoPagoDao.selectAll();
+                for (MetodoPago mp : listaSimpleMetodos.toArray()) {
+            vista.cmbMetodoPago.addItem(mp);
+        }
+        vista.cmbMetodoPago.setSelectedIndex(0);
     }
-
 
 
     private void onClickProducto() {
         vista.btnProducto.addActionListener(e -> {
             Frame owner = JOptionPane.getFrameForComponent(vista);
             if (owner == null) return;
-
             VistaListado listado = new VistaListado(owner, true, "SELECCIONAR PRODUCTO");
             listado.setLocationRelativeTo(vista);
-
             DefaultTableModel modelo = new DefaultTableModel() {
                 @Override public boolean isCellEditable(int row, int column) { return false; }
             };
@@ -102,11 +111,9 @@ public class ControladorModalFactCon {
                 int disponible = lotesDao.obtenerCantidadDisponible(p.getIdProducto());
                 modelo.addRow(new Object[]{p.getIdProducto(), p.getNombre(), String.format("%.2f", p.getPrecioVenta()), disponible});
             }
-
             listado.tbDatos.setModel(modelo);
             TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelo);
             listado.tbDatos.setRowSorter(sorter);
-
             listado.tfBuscar.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyReleased(KeyEvent e) {
@@ -116,25 +123,21 @@ public class ControladorModalFactCon {
                 }
             });
 
-            listado.btnSeleccionar.addActionListener(ev -> {
+             listado.btnSeleccionar.addActionListener(ev -> {
                 int fila = listado.tbDatos.getSelectedRow();
                 if (fila == -1) {
                     JOptionPane.showMessageDialog(listado, "Seleccione un producto", "Advertencia", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
-
                 fila = listado.tbDatos.convertRowIndexToModel(fila);
-
                 int idProducto = (int) listado.tbDatos.getModel().getValueAt(fila, 0);
                 String nombre = (String) listado.tbDatos.getModel().getValueAt(fila, 1);
-                double precio = Double.parseDouble(listado.tbDatos.getModel().getValueAt(fila, 2).toString());
+                double precio = Double.parseDouble(listado.tbDatos.getModel().getValueAt(fila, 2).toString().replace(",", "."));
                 int disponible = (int) listado.tbDatos.getModel().getValueAt(fila, 3);
-
                 if (disponible <= 0) {
-                    JOptionPane.showMessageDialog(listado, "El producto **" + nombre + "** no tiene existencias disponibles.", "Producto Agotado", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(listado, "El producto **" + nombre + "** no tiene existencias suficientes.", "Producto Agotado", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
                 productoSeleccionado = new Producto();
                 productoSeleccionado.setIdProducto(idProducto);
                 productoSeleccionado.setNombre(nombre);
@@ -200,11 +203,13 @@ public class ControladorModalFactCon {
             modeloTabla.addRow(new Object[]{nombreProducto, cantidad, String.format("%.2f", precio), String.format("%.2f", subtotal)});
             vista.lbTotalProducto.setText(String.format("Total: $%.2f", calcularTotal()));
 
-            if ("Efectivo".equals(((MetodoPago) vista.cmbMetodoPago.getSelectedItem()).getnombreMetodo())) {
+            MetodoPago metodoSeleccionado = (MetodoPago) vista.cmbMetodoPago.getSelectedItem();
+            if (metodoSeleccionado != null && "Efectivo".equalsIgnoreCase(metodoSeleccionado.getnombreMetodo())) {
                 try {
                     double total = Double.parseDouble(vista.lbTotalProducto.getText().replace("Total: $", "").replace(",", "."));
                     double pago = Double.parseDouble(vista.tfPagoCliente.getText().trim().replace(",", "."));
-                    vista.tfCambio.setText(String.format("%.2f", pago - total));
+                    double cambio = (pago >= total) ? (pago - total) : 0.00;
+                    vista.tfCambio.setText(String.format("%.2f", cambio));
                 } catch (Exception ex) { vista.tfCambio.setText("0.00"); }
             }
 
@@ -215,27 +220,57 @@ public class ControladorModalFactCon {
             vista.spiCantidad.setValue(1);
         });
     }
+      private void onClickEliminar() {
+    vista.btnEliminar.addActionListener(e -> {
+        DefaultTableModel modeloTabla = (DefaultTableModel) vista.tbDatos.getModel();
+        int filaSeleccionada = vista.tbDatos.getSelectedRow();
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(vista, "Seleccione la fila a eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        modeloTabla.removeRow(filaSeleccionada); 
+        double nuevoTotal = calcularTotal();
+        vista.lbTotalProducto.setText(String.format("Total: $%.2f", nuevoTotal));
+        MetodoPago metodoSeleccionado = (MetodoPago) vista.cmbMetodoPago.getSelectedItem();
+        if (metodoSeleccionado != null && "Efectivo".equalsIgnoreCase(metodoSeleccionado.getnombreMetodo())) {
+            try {
+                double pago = Double.parseDouble(vista.tfPagoCliente.getText().trim().replace(",", "."));
+                double cambio = (pago >= nuevoTotal) ? (pago - nuevoTotal) : 0.00;
+                vista.tfCambio.setText(String.format("%.2f", cambio));
+            } catch (Exception ex) {
+                vista.tfCambio.setText("0.00");
+            }
+        }
+    });
+}
 
     private void onClickCancelar() {
         vista.btnCancelar.addActionListener(e -> vista.dispose());
     }
-
     private void MetodoPago() {
         vista.cmbMetodoPago.addActionListener(e -> {
             MetodoPago metodoPago = (MetodoPago) vista.cmbMetodoPago.getSelectedItem();
             if (metodoPago == null) return;
-            boolean esEfectivo = "Efectivo".equals(metodoPago.getnombreMetodo());
-            vista.lbSiesEfectivo.setVisible(esEfectivo);
-            vista.tfPagoCliente.setVisible(esEfectivo);
-            vista.lbCambio.setVisible(esEfectivo);
-            vista.tfCambio.setVisible(esEfectivo);
-            if (esEfectivo) {
+                        boolean esEfectivoValido = metodoPago.getidMetodoPago() > 0 && "Efectivo".equalsIgnoreCase(metodoPago.getnombreMetodo());
+            
+            vista.lbSiesEfectivo.setVisible(esEfectivoValido);
+            vista.tfPagoCliente.setVisible(esEfectivoValido);
+            vista.lbCambio.setVisible(esEfectivoValido);
+            vista.tfCambio.setVisible(esEfectivoValido);
+            
+            if (esEfectivoValido) {
                 try {
                     double total = Double.parseDouble(vista.lbTotalProducto.getText().replace("Total: $", "").replace(",", "."));
-                    double pago = Double.parseDouble(vista.tfPagoCliente.getText().trim().replace(",", "."));
-                    vista.tfCambio.setText(String.format("%.2f", pago - total));
+                    double pago = 0.00;
+                    try { pago = Double.parseDouble(vista.tfPagoCliente.getText().trim().replace(",", ".")); }
+                    catch (NumberFormatException ignored) {} 
+                    double cambio = (pago >= total) ? (pago - total) : 0.00;
+                    vista.tfCambio.setText(String.format("%.2f", cambio));
                 } catch (Exception ex) { vista.tfCambio.setText("0.00"); }
-            } else { vista.tfPagoCliente.setText(""); vista.tfCambio.setText("0.00"); }
+            } else { 
+                vista.tfPagoCliente.setText(""); 
+                vista.tfCambio.setText("0.00"); 
+            }
         });
     }
 
@@ -248,63 +283,84 @@ public class ControladorModalFactCon {
                     String pagoText = vista.tfPagoCliente.getText().trim();
                     if (pagoText.isEmpty()) { vista.tfCambio.setText("0.00"); return; }
                     double pago = Double.parseDouble(pagoText.replace(",", "."));
-                    vista.tfCambio.setText(String.format("%.2f", pago - total));
+                    double cambio = (pago >= total) ? (pago - total) : 0.00;
+                    vista.tfCambio.setText(String.format("%.2f", cambio));
                 } catch (NumberFormatException ex) { vista.tfCambio.setText("0.00"); }
             }
         });
     }
 
     private void onClickGuardar() {
-        vista.btnGuardar.addActionListener(e -> {
-            if (vista.tbDatos.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(vista, "Debe agregar al menos un producto.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    vista.btnGuardar.addActionListener(e -> {
+        if (vista.tbDatos.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(vista, "Debe agregar al menos un producto.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (idEmpleadoActual <= 0) {
+            JOptionPane.showMessageDialog(vista, "Error: ID de empleado inválido.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        MetodoPago metodoPago = (MetodoPago) vista.cmbMetodoPago.getSelectedItem();
+        if (metodoPago == null || metodoPago.getidMetodoPago() <= 0) {
+            JOptionPane.showMessageDialog(vista, "Debe seleccionar un método de pago válido.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        double total = calcularTotal();
+
+        if ("Efectivo".equalsIgnoreCase(metodoPago.getnombreMetodo())) {
+            try {
+                double pago = Double.parseDouble(vista.tfPagoCliente.getText().trim().replace(",", "."));
+                if (pago < total) {
+                    JOptionPane.showMessageDialog(vista, "El pago del cliente ($" + String.format("%.2f", pago) + ") es menor al total ($" + String.format("%.2f", total) + ").", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(vista, "Ingrese un monto de pago válido para Efectivo.", "Advertencia", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-            if (idEmpleadoActual <= 0) {
-                JOptionPane.showMessageDialog(vista, "Error: ID de empleado inválido.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        }
 
-            double total = calcularTotal();
-            MetodoPago metodoPago = (MetodoPago) vista.cmbMetodoPago.getSelectedItem();
+        ListaSimple<DetalleConcesion> listaDetalles = new ListaSimple<>();
+        DefaultTableModel modeloTabla = (DefaultTableModel) vista.tbDatos.getModel();
 
-            com.ues.edu.modelo.estructuras.ListaSimple<DetalleConcesion> listaDetalles = new com.ues.edu.modelo.estructuras.ListaSimple<>();
-            DefaultTableModel modeloTabla = (DefaultTableModel) vista.tbDatos.getModel();
+        for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+            String nombreProducto = modeloTabla.getValueAt(i, 0).toString();
+            int cantidad = Integer.parseInt(modeloTabla.getValueAt(i, 1).toString());
+            double precioUnit = Double.parseDouble(modeloTabla.getValueAt(i, 2).toString().replace(",", "."));
+            double subtotal = Double.parseDouble(modeloTabla.getValueAt(i, 3).toString().replace(",", "."));
 
-            for (int i = 0; i < modeloTabla.getRowCount(); i++) {
-                String nombreProducto = modeloTabla.getValueAt(i, 0).toString();
-                int cantidad = Integer.parseInt(modeloTabla.getValueAt(i, 1).toString());
-                double precioUnit = Double.parseDouble(modeloTabla.getValueAt(i, 2).toString());
-                double subtotal = Double.parseDouble(modeloTabla.getValueAt(i, 3).toString());
+            Producto productoReal = productoDao.buscarNombre(nombreProducto);
 
-                Producto productoReal = productoDao.buscarNombre(nombreProducto);
+            DetalleConcesion det = new DetalleConcesion();
+            det.setProducto(productoReal);
+            det.setCantidad(cantidad);
+            det.setPrecioUnitario(precioUnit);
+            det.setSubtotal(subtotal);
 
-                DetalleConcesion det = new DetalleConcesion();
-                det.setProducto(productoReal);
-                det.setCantidad(cantidad);
-                det.setPrecioUnitario(precioUnit);
-                det.setSubtotal(subtotal);
+            listaDetalles.insertar(det);
+        }
 
-                listaDetalles.insertar(det);
-            }
+        FacturaConcesion nueva = new FacturaConcesion();
+        nueva.setIdFacturaConcesion(GeneradorID.generarCodigoFactura()); // <- ID generado aquí
+        nueva.setMontoTotal(total);
+        nueva.setMetodoPago(metodoPago);
+        nueva.setEmpleado(new Empleado(idEmpleadoActual));
+        nueva.setDetalleConcesion(listaDetalles);
 
-            FacturaConcesion nueva = new FacturaConcesion();
-            nueva.setMontoTotal(total);
-            nueva.setMetodoPago(metodoPago);
-            nueva.setEmpleado(new Empleado(idEmpleadoActual));
-            nueva.setDetalleConcesion(listaDetalles);
+        boolean exito = facturaDao.insert(nueva);
 
-            boolean exito = facturaDao.insert(nueva);
+        if (exito) {
+            if (controladorPrincipal != null) controladorPrincipal.cargarTablaFacturas();
+            vista.dispose();
+            JOptionPane.showMessageDialog(null, "Factura guardada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(vista, "Error al guardar la factura.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    });
+}
 
-            if (exito) {
-                if (controladorPrincipal != null) controladorPrincipal.cargarTablaFacturas();
-                vista.dispose();
-                JOptionPane.showMessageDialog(null, "Factura guardada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(vista, "Error al guardar la factura.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-    }
 
     private double calcularTotal() {
         double total = 0;
@@ -315,4 +371,6 @@ public class ControladorModalFactCon {
         }
         return total;
     }
+
+    
 }

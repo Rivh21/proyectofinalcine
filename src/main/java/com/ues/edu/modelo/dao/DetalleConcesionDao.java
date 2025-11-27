@@ -15,6 +15,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *
+ * @author radon
+ */
 public class DetalleConcesionDao implements IDetalleConcesion {
 
     private Conexion conectar;
@@ -52,8 +56,7 @@ public class DetalleConcesionDao implements IDetalleConcesion {
             ps.setInt(1, obj.getCantidad());
             ps.setDouble(2, obj.getPrecioUnitario());
             ps.setDouble(3, obj.getSubtotal()); 
-            ps.setInt(4, obj.getFactura() != null ? obj.getFactura().getIdFacturaConcesion() : 0);
-            ps.setInt(5, obj.getProducto() != null ? obj.getProducto().getIdProducto() : 0);
+ps.setString(4, obj.getFactura() != null ? obj.getFactura().getIdFacturaConcesion() : null);            ps.setInt(5, obj.getProducto() != null ? obj.getProducto().getIdProducto() : 0);
 
             ps.execute();
             return true;
@@ -96,7 +99,7 @@ public class DetalleConcesionDao implements IDetalleConcesion {
                 d.setSubtotal(rs.getDouble("subtotal")); // ⭐ Asegurado: la columna 'subtotal' se usa
 
                 FacturaConcesion f = new FacturaConcesion();
-                f.setIdFacturaConcesion(rs.getInt("id_factura_concesion"));
+                f.setIdFacturaConcesion(rs.getString("id_factura_concesion"));
                 d.setFactura(f);
 
                 d.setProducto(new Producto(rs.getInt("id_producto")));

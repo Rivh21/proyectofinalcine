@@ -98,13 +98,17 @@ public class ControladorModalPeliculas {
             mp.tfTitulo1.requestFocus();
             return false;
         }
-        if (!titulo.matches("[a-zA-Z0-9 ]+")) {
+        if (!titulo.matches("[\\p{L}0-9 .,'´’\\-_:;!¡?¿()\\[\\]\"&/°]+")) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-            DesktopNotify.showDesktopMessage("Error", "El Título solo puede contener letras y números", DesktopNotify.ERROR, 3000);
+            DesktopNotify.showDesktopMessage(
+                    "Error",
+                    "El Título contiene caracteres no permitidos",
+                    DesktopNotify.ERROR,
+                    3000
+            );
             mp.tfTitulo1.requestFocus();
             return false;
         }
-
         String duracionStr = mp.tfDuracion.getText().trim();
         if (duracionStr.isEmpty()) {
             DesktopNotify.setDefaultTheme(NotifyTheme.Red);

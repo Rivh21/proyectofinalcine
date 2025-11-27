@@ -22,7 +22,7 @@ import javax.swing.table.TableRowSorter;
 
 /**
  *
- * @author jorge
+ * @author radon
  */
 public class ControladorMetodoPago {
 

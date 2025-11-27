@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.ues.edu.controlador;
-
 import com.ues.edu.modelo.Empleado;
 import com.ues.edu.modelo.Rol;
 import com.ues.edu.modelo.Usuario;

@@ -14,9 +14,9 @@ public interface IFacturaConcesion {
 
     ListaSimple<FacturaConcesion> selectAll();
     ListaSimple<FacturaConcesion> buscar(String texto);
-    FacturaConcesion buscarPorId(int id);
+    FacturaConcesion buscarPorId(String id);
     boolean insert(FacturaConcesion factura);
     boolean update(FacturaConcesion factura);
     boolean delete(FacturaConcesion factura);
-    boolean anularFacturaConcesion(int idFactura);
+    boolean anularFacturaConcesion(String idFactura);
 }

@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author jorge
+ * @author radon
  */
 public interface IPermisoRol {
     //cambios inter

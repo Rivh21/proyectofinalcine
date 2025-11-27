@@ -5,12 +5,10 @@
 package com.ues.edu.interfaces;
 import com.ues.edu.modelo.DetalleConcesion;
 import com.ues.edu.modelo.estructuras.Pila;
-
 /**
  *
  * @author radon
  */
-
 public interface IDetalleConcesion {
 
     Pila<DetalleConcesion> selectAll();
