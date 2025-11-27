@@ -41,7 +41,7 @@ public class BuscadorTexto extends JTextField {
         // Cargar icono
         icono = new ImageIcon(getClass().getResource("/iconos/buscador.png")).getImage();
 
-        // --- Animación de línea ---
+        // Animacion de la linea
         animTimer = new Timer(15, e -> {
 
             int target = getWidth();
@@ -74,7 +74,7 @@ public class BuscadorTexto extends JTextField {
 
         });
 
-        // Escuchamos los eventos de foco
+        // Escucha los eventos de foco
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -102,7 +102,7 @@ public class BuscadorTexto extends JTextField {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // --- Dibuja el icono ---
+        // Dibuja el icono
         if (icono != null) {
             int iconSize = 25;
             int y = (getHeight() - iconSize) / 2;
@@ -110,7 +110,7 @@ public class BuscadorTexto extends JTextField {
 
         }
 
-        // --- Dibuja el hint ---
+        // Dibuja el hint
         if (getText().isEmpty()) {
             g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             Insets ins = getInsets();
@@ -125,7 +125,7 @@ public class BuscadorTexto extends JTextField {
 
         }
 
-        // --- Línea inferior ---
+        // Línea inferior
         int yLine = getHeight() - 2;
 
         // Línea base (gris)

@@ -57,31 +57,31 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         setBackground(new Color(0, 0, 0, 0));
         setExtendedState(MAXIMIZED_BOTH);
 
-        //--- 1. CONFIGURACIÓN DEL PANEL SECUNDARIO ---
+        //--- CONFIGURACIÓN DEL PANEL SECUNDARIO ---
         panelSecundario = new javax.swing.JPanel();
         panelSecundario.setLayout(new java.awt.BorderLayout());
         panelSecundario.setOpaque(false);
 
-        //2. Montar la estructura interna de panelSecundario (Header + Vistas + Footer)
+        // Monta la estructura interna de panelSecundario (Header + Vistas + Footer)
         int realHeaderAlto = header1.getPreferredSize().height;
         header1.setPreferredSize(new Dimension(0, realHeaderAlto));
 
         panelSecundario.add(header1, java.awt.BorderLayout.NORTH);
         panelSecundario.add(footer1, java.awt.BorderLayout.SOUTH);
 
-        //3. Montar la estructura principal en 'bg'
+        // Monta la estructura principal en el background
         this.getContentPane().setLayout(new java.awt.BorderLayout());
         this.getContentPane().add(bg, java.awt.BorderLayout.CENTER);
-
         bg.setLayout(new java.awt.BorderLayout());
         menu1.setPreferredSize(new Dimension(MENU_ANCHO_MAX, 0));
+        bg.add(menu1, java.awt.BorderLayout.WEST);        
+        bg.add(panelSecundario, java.awt.BorderLayout.CENTER);
 
-        bg.add(menu1, java.awt.BorderLayout.WEST);          // Menú a la izquierda
-        bg.add(panelSecundario, java.awt.BorderLayout.CENTER); // Contenedor Secundario al centro
-
-        //5. Inicialización de Listeners
         header1.setMenuToggleListener(this);
         menu1.getListaMenu().setSelectionListener(this);
+        
+        // Al arrancar el programa empieza en el case INICIO
+        this.onModuleSelected("INICIO");
 
         bg.revalidate();
         this.getContentPane().revalidate();
@@ -143,32 +143,22 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
     }// </editor-fold>//GEN-END:initComponents
 
     private void showJPanel(javax.swing.JPanel p) {
-
-        //Obtiene el LayoutManager del panel que contiene las vistas
         java.awt.BorderLayout layout = (java.awt.BorderLayout) panelSecundario.getLayout();
-
-        //1. Encuentra el componente actual en el CENTRO
         java.awt.Component centerComponent = layout.getLayoutComponent(panelSecundario, java.awt.BorderLayout.CENTER);
-
-        //2. Esto limpia la vista anterior
         if (centerComponent != null) {
             panelSecundario.remove(centerComponent);
         }
-
-        //3. Añade la nueva vista SOLO si no es NULL
         if (p != null) {
             panelSecundario.add(p, java.awt.BorderLayout.CENTER);
         }
-
-        //4. Forzar el redibujado en ambos niveles (por si acaso)
         panelSecundario.revalidate();
         panelSecundario.repaint();
-        bg.revalidate(); //Revalida el padre también
+        bg.revalidate(); 
     }
 
     private void animateMenuWidth() {
         int currentWidth = menu1.getPreferredSize().width;
-        int newWidth = currentWidth; // Variable local
+        int newWidth = currentWidth;
 
         if (currentWidth < targetWidth) {
             newWidth = Math.min(currentWidth + VELOCIDAD, targetWidth);
@@ -187,7 +177,7 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
     }
 
     //--- IMPLEMENTACIÓN DE INTERFACES ---
-    //1. HeaderMenuListener: Activa/Desactiva la animación
+    // Activa/Desactiva la animación
     @Override
     public void toggleMenuVisibility() {
         if (menuVisible) {
@@ -199,6 +189,7 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
         animador.start();
     }
 
+    // Switch para el cambio de menus
     @Override
     public void onModuleSelected(String itemName) {
         switch (itemName) {
@@ -290,7 +281,7 @@ public class Dashboard extends javax.swing.JFrame implements HeaderMenuListener,
                 showJPanel(vb);
             }
 
-            case "INICIO" -> {
+            case "INICIO"  -> {
                 MenuPrincipal vistaCartelera = new MenuPrincipal(); 
                 ControladorMenuPrincipal controladorCartelera = new ControladorMenuPrincipal(vistaCartelera);
                 showJPanel(vistaCartelera);

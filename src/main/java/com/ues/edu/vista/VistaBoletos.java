@@ -171,9 +171,8 @@ public class VistaBoletos extends javax.swing.JPanel {
 private void crearEfectoPantalla(int ancho, int alto) {
     lbPantalla.setPreferredSize(new java.awt.Dimension(ancho, alto));
     lbPantalla.setSize(ancho, alto);
-    lbPantalla.setText(""); // Borramos el texto
+    lbPantalla.setText(""); 
 
-    // Aqui crea la imagen.
     BufferedImage img = new BufferedImage(ancho, alto, BufferedImage.TYPE_INT_ARGB);
     Graphics2D g2 = img.createGraphics();
     
@@ -182,10 +181,10 @@ private void crearEfectoPantalla(int ancho, int alto) {
     // Dibuja el trapecio.
     int margen = 40; // Más margen para acentuar la perspectiva 3D
     GeneralPath trapecio = new GeneralPath();
-    trapecio.moveTo(margen, 0);           // Arriba Izq
-    trapecio.lineTo(ancho - margen, 0);   // Arriba Der
-    trapecio.lineTo(ancho, alto);         // Abajo Der
-    trapecio.lineTo(0, alto);             // Abajo Izq
+    trapecio.moveTo(margen, 0);          
+    trapecio.lineTo(ancho - margen, 0);   
+    trapecio.lineTo(ancho, alto);         
+    trapecio.lineTo(0, alto);             
     trapecio.closePath();
 
     // Degradado (Efecto luz de cine).

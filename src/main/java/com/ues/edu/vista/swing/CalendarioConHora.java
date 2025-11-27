@@ -15,7 +15,6 @@ import com.github.lgooddatepicker.components.TimePickerSettings;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import com.github.lgooddatepicker.components.DatePickerSettings;
 
 public class CalendarioConHora extends DateTimePicker {
     
@@ -35,14 +34,11 @@ public class CalendarioConHora extends DateTimePicker {
 
     private void inicializarPersonalizacion() {
 
-//  Personalizar el DatePicker (Calendario)
+//  Personaliza el DatePicker (Calendario)
                 TimePickerSettings timeSettings = this.getTimePicker().getSettings();
 
-        // Mostrar la hora en formato 24 horas (ej. 14:30)
+        // Muestra la hora en formato 24 horas (ej. 14:30)
         timeSettings.setFormatForDisplayTime("HH:mm");
-        // Establecer un rango de horas, por ej. horario de oficina
-        // timeSettings.setTimeRange(LocalTime.of(8, 0), LocalTime.of(18, 0));
-        // Añadir un listener
         this.addDateTimeChangeListener(event -> {
             LocalDateTime nuevaFechaHora = event.getNewDateTimeStrict();
             if (nuevaFechaHora != null) {
@@ -63,14 +59,7 @@ public class CalendarioConHora extends DateTimePicker {
     public void limpiarSeleccion() {
         this.clear();
     }
-
-    /**
-     *
-     * Método para obtener la fecha y hora como un Timestamp de SQL para
-     * facilitar el guardado en la base de datos.
-     * @return java.sql.Timestamp o null si está vacío.
-     *
-     */
+    
     public java.sql.Timestamp getTimestamp() {
         LocalDateTime ldt = this.getDateTimeStrict();
         if (ldt != null) {

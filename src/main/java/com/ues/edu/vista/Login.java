@@ -275,54 +275,49 @@ public class Login extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void pintarIcono() {
-        // 1. Tamaño del lienzo (canvas)
+        // Tamaño del lienzo 
         int width = 250;
         int height = 250;
 
-        // 2. Crear imagen
+        // Crear imagen
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = img.createGraphics();
 
-        // 3. Calidad HD (Antialiasing)
+        // Calidad HD (Antialiasing)
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // 4. Degradado (Cyan a Morado)
+        // Degradado (Cyan a Morado)
         Color colorInicio = new Color(0, 204, 255);
         Color colorFin = new Color(102, 51, 255);
         GradientPaint gradiente = new GradientPaint(0, 0, colorInicio, width, height, colorFin);
         g2.setPaint(gradiente);
 
-        // 5. Grosor de línea
+        // Grosor de línea
         g2.setStroke(new BasicStroke(6f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-
-        // --- GEOMETRÍA CORREGIDA ---
-        // A. Círculo Exterior
+        
+        // Círculo Exterior
         int padding = 10;
         g2.drawOval(padding, padding, width - (padding * 2), height - (padding * 2));
 
-        // B. Cabeza (Más pequeña y más arriba)
-        int headSize = 70; // Reduje el tamaño (antes era muy grande)
+        // Cabeza 
+        int headSize = 70; 
         int headX = (width - headSize) / 2;
-        int headY = 60;    // Posición fija más arriba
+        int headY = 60; 
         g2.drawOval(headX, headY, headSize, headSize);
 
-        // C. Hombros (Arco)
-        // El truco es imaginar un círculo invisible para los hombros
+        // Hombros 
         int shoulderWidth = 140;
         int shoulderHeight = 120;
         int shoulderX = (width - shoulderWidth) / 2;
 
-        // Calculamos Y para que quede DEBAJO de la cabeza con un espacio
-        // Cabeza termina en: 60 (y) + 70 (alto) = 130.
-        // Ponemos los hombros en 145 para dejar 15px de espacio.
         int shoulderY = 145;
 
-        // Dibujamos solo la mitad superior del círculo (de 0 a 180 grados)
+        // Dibuja solo la mitad superior del círculo 
         g2.drawArc(shoulderX, shoulderY, shoulderWidth, shoulderHeight, 0, 180);
 
         g2.dispose();
 
-        // 6. Setear icono
+        // Setear icono
         lbIcono.setIcon(new ImageIcon(img));
         lbIcono.setHorizontalAlignment(javax.swing.JLabel.CENTER);
     }

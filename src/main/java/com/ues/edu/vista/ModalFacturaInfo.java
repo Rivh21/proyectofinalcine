@@ -18,7 +18,6 @@ public class ModalFacturaInfo extends javax.swing.JDialog {
         initComponents();
         lbTitulo.setText(titulo);
         setLocationRelativeTo(null);
-//        tfEfectivo.setPlaceholder("Efectivo");
         fondo.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
@@ -62,11 +61,6 @@ public class ModalFacturaInfo extends javax.swing.JDialog {
 
         btnCancelar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnCancelar.setText("CANCELAR");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
 
         lbTitulo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
         lbTitulo.setText("jLabel1");
@@ -89,9 +83,6 @@ public class ModalFacturaInfo extends javax.swing.JDialog {
         fondoLayout.setHorizontalGroup(
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(lbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(fondoLayout.createSequentialGroup()
                 .addGap(39, 39, 39)
                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -107,6 +98,9 @@ public class ModalFacturaInfo extends javax.swing.JDialog {
                                 .addComponent(lbMontoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 99, Short.MAX_VALUE)))
                         .addGap(39, 39, 39))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fondoLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(lbTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         fondoLayout.setVerticalGroup(
             fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -139,10 +133,6 @@ public class ModalFacturaInfo extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments

@@ -74,7 +74,9 @@ public class ControladorAsiento {
         this.vista.btnCrearAsiento.addActionListener((e) -> {
             if (salaParaGeneracion == null) {
                 DesktopNotify.setDefaultTheme(NotifyTheme.Red);
-                DesktopNotify.showDesktopMessage("Advertencia", "Debe seleccionar una sala para generar asientos.", DesktopNotify.WARNING, 3000);
+                DesktopNotify.showDesktopMessage("Advertencia", 
+                        "Debe seleccionar una sala para generar asientos.",
+                        DesktopNotify.WARNING, 3000);
                 return;
             }
 

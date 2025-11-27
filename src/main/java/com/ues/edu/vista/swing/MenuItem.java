@@ -33,62 +33,12 @@ public class MenuItem extends javax.swing.JPanel {
         lbIcono.setOpaque(false);
         lbNombre.setOpaque(false);
         lbNombre.setForeground(Color.WHITE);
-//        lbNombre.setForeground(Color.LIGHT_GRAY);
 
         lbIcono.setPreferredSize(new Dimension(0, 0));
         lbIcono.setMaximumSize(new Dimension(0, 0));
-
-        // Llamada a la nueva lógica de estilos
         applyStyle();
     }
-
-//    private void applyStyle() {
-//        int paddingLeft = 15;
-//        if (data.getTipo() == ModeloMenu.TipoMenu.TITULO) {
-//
-//            lbIcono.setVisible(false);
-//            lbNombre.setText(data.getNombre());
-//            lbNombre.setFont(new Font("roboto", Font.BOLD, 12));
-//            lbNombre.setVisible(true);
-//            setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-//
-//        } else if (data.getTipo() == ModeloMenu.TipoMenu.VACIO || data.getNombre().trim().isEmpty()) {
-//            // VACIO: Sin contenido
-//            lbIcono.setVisible(false);
-//            lbNombre.setText(" ");
-//            lbNombre.setVisible(true);
-//            setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-//
-//        } else {
-//            if (data.isSubMenuChild()) {
-//                paddingLeft = 30;
-//            }
-//
-//            setBorder(BorderFactory.createEmptyBorder(2, paddingLeft, 2, 5));
-//
-//            lbIcono.setVisible(true);
-//            lbNombre.setFont(new Font("roboto", Font.PLAIN, 12));
-//
-//            String nombre = data.getNombre();
-//
-//            if (data.getTipo() == ModeloMenu.TipoMenu.SUB_MENU) {
-//                // 3. ÍTEM PADRE (SUB_MENU): Añadir flecha
-//                if (data.isExpandible()) {
-//                    nombre = nombre + "  \u25BC"; // Flecha abajo (Expandido)
-//                } else {
-//                    nombre = nombre + "  \u25B6"; // Flecha derecha (Contraído)
-//                }
-//                lbIcono.setIcon(data.toIcon());
-//
-//            } else {
-//                // ÍTEM NORMAL (MENÚ o SUBMENÚ HIJO)
-//                lbIcono.setIcon(data.toIcon());
-//            }
-//
-//            lbNombre.setText(nombre);
-//            lbNombre.setVisible(true);
-//        }
-//    }
+    
     private void applyStyle() {
         int paddingLeft = 15;
         String textoHtml;
@@ -115,7 +65,6 @@ public class MenuItem extends javax.swing.JPanel {
             lbIcono.setIcon(data.toIcon());
 
             if (data.getTipo() == ModeloMenu.TipoMenu.SUB_MENU) {
-                // la flecha tiene su propio tamaño de fuente "</font>  <font size='2'>&#9660;</font></html>".
                 if (data.isExpandible()) {
                     textoHtml = "<html><font face='Roboto' size='3'>" + data.getNombre() + "</font>  <font size='2'>&#9660;</font></html>";
                 } else {
@@ -173,14 +122,14 @@ public class MenuItem extends javax.swing.JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // 1. DIBUJAR FONDO MÁS OSCURO para SUBMENÚS HIJOS
+        // DIBUJAR FONDO MÁS OSCURO para SUBMENÚS HIJOS
         if (data != null && data.isSubMenuChild()) {
             g2.setColor(SUBMENU_BACKGROUND);
             //dibuja el rectangulo oscuro
             g2.fillRect(0, 0, getWidth(), getHeight());
         }
 
-        // 2. DIBUJAR EFECTOS HOVER/SELECCIÓN
+        // DIBUJAR EFECTOS HOVER/SELECCIÓN
         if (seleccionado || isHover) {
             Color colorDeEfecto = new Color(255, 255, 255, 80);
 

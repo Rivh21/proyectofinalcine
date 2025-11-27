@@ -10,10 +10,7 @@ import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.JToggleButton;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 /**
@@ -26,14 +23,12 @@ public class ToggleSwitch extends JToggleButton {
     private Timer timer;
 
     public ToggleSwitch() {
-        // 1. Configuración visual básica
         setBorder(null);
         setContentAreaFilled(false);
         setFocusPainted(false);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setSize(50, 25);
-
-        // 2. Configurar el Timer de animación
+        
         // Se ejecuta cada 10ms para mover la bolita suavemente
         timer = new Timer(10, e -> {
             boolean shouldRepaint = false;
@@ -61,14 +56,12 @@ public class ToggleSwitch extends JToggleButton {
             if (shouldRepaint) {
                 repaint();
             } else {
-                // Si ya llegó al destino, paramos el timer para ahorrar recursos
+                // Si ya llegó al destino, para el timer para ahorrar recursos
                 timer.stop();
             }
         });
 
-        // 3. IMPORTANTE: Escuchar el cambio de estado
-        // Cuando el usuario hace clic, Swing cambia el estado (isSelected).
-        // Nosotros detectamos ese cambio y arrancamos la animación.
+        // Escuchar el cambio de estado
         addActionListener(e -> {
             timer.start();
         });
@@ -77,7 +70,6 @@ public class ToggleSwitch extends JToggleButton {
         putClientProperty(FlatClientProperties.STYLE, "arc: 999");
     }
 
-    // Usamos paintComponent en lugar de paint (Más seguro en Swing)
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -87,7 +79,7 @@ public class ToggleSwitch extends JToggleButton {
         int height = getHeight();
         int size = height - 4; // Tamaño de la bolita
 
-        // A. Dibujar fondo (Píldora)
+        // Dibujar fondo (Píldora)
         if (isSelected()) {
             g2.setColor(new Color(230, 230, 230)); // Fondo Claro
         } else {
@@ -95,12 +87,12 @@ public class ToggleSwitch extends JToggleButton {
         }
         g2.fillRoundRect(0, 0, width, height, height, height);
 
-        // B. Calcular posición animada
+        // Calcular posición animada
         double endLocation = width - size - 2;
         double startLocation = 2;
         double x = startLocation + (location * (endLocation - startLocation));
 
-        // C. Dibujar la bolita (Círculo)
+        // Dibujar la bolita (Círculo)
         if (location > 0.5f) { // Si está más a la derecha
             g2.setColor(new Color(255, 200, 0)); // Naranja (Sol)
         } else {

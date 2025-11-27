@@ -5,14 +5,6 @@
 package com.ues.edu.vista;
 
 import com.ues.edu.modelo.MetodoPago;
-import java.awt.Dialog;
-import java.awt.Frame;
-
-/**
- *
- * @author radon
-import com.ues.edu.modelo.MetodoPago;
-import java.awt.Frame; // Necesitas este import si usas Frame
 
 /**
  *
@@ -20,18 +12,10 @@ import java.awt.Frame; // Necesitas este import si usas Frame
  */
 public class ModalFactCon extends javax.swing.JDialog {
 
-    // Se elimina la variable 'private final ModalFactCon modalFact;' ya que no es necesaria aquí.
-    
-    // *** CORRECCIÓN CRÍTICA EN LA FIRMA Y LA LLAMADA A SUPER ***
-    // El constructor recibe el padre, el estado modal, y el título
     public ModalFactCon(java.awt.Frame parent, boolean modal, String titulo) {
-        // La llamada a super() DEBE pasar los argumentos en el orden (Owner, Title, Modal).
-        // Si tu parent es un Frame (como sugiere tu controlador), esta es la forma más común:
         super(parent, titulo, modal); 
-        
-        // --- El resto del constructor ---
-        initComponents(); // Solo una llamada
-        
+
+        initComponents(); 
         lbTitulo.setText(titulo);
         setLocationRelativeTo(parent);
         
@@ -51,7 +35,6 @@ public class ModalFactCon extends javax.swing.JDialog {
         lbCambio.setVisible(false);
         tfCambio.setVisible(false);
         
-        // Lógica para quitar foco (Esto se mantiene)
         fondo.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
@@ -172,19 +155,9 @@ public class ModalFactCon extends javax.swing.JDialog {
 
         btnAgregar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnAgregar.setText("AGREGAR");
-        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAgregarActionPerformed(evt);
-            }
-        });
 
         btnEliminar.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         btnEliminar.setText("ELIMINAR");
-        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEliminarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout fondoLayout = new javax.swing.GroupLayout(fondo);
         fondo.setLayout(fondoLayout);
@@ -294,24 +267,18 @@ public class ModalFactCon extends javax.swing.JDialog {
                                 .addGroup(fondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(btnAgregar)
                                     .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(fondo, javax.swing.GroupLayout.PREFERRED_SIZE, 932, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+            .addComponent(fondo, javax.swing.GroupLayout.PREFERRED_SIZE, 944, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(fondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(fondo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -324,14 +291,6 @@ public class ModalFactCon extends javax.swing.JDialog {
     private void tfPrecio1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfPrecio1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfPrecio1ActionPerformed
-
-    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnAgregarActionPerformed
-
-    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
      * @param args the command line arguments

@@ -13,9 +13,8 @@ import java.sql.*;
  * @author radon
  */
 public class SalaDAO implements ISala {
-
     private final Conexion conectar;
-
+    
     public SalaDAO() {
         conectar = new Conexion();
     }

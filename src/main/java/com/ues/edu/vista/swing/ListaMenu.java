@@ -22,8 +22,6 @@ public class ListaMenu<E extends Object> extends JList<E> {
     private final DefaultListModel modelo;
     private int selectedIndex = -1;
     private int hoverIndex = -1;
-
-    // VARIABLE PARA EL LISTENER DE SELECCIÓN DE MÓDULOS
     private MenuSelectionListener selectionListener;
 
     public ListaMenu() {
@@ -34,7 +32,7 @@ public class ListaMenu<E extends Object> extends JList<E> {
     }
 
     private void initMouseListeners() {
-        // Listener para la SELECCIÓN (al hacer clic) y Expansión de Submenús
+        // Listener para la selección al hacer clic y expansión de Submenús
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent me) {
@@ -52,22 +50,21 @@ public class ListaMenu<E extends Object> extends JList<E> {
                             selectedIndex = -1;
                         } else switch (menu.getTipo()) {
                             case MENU -> {
-                                // 1. ÍTEM DE MENÚ NORMAL: Selecciona y notifica al Dashboard
+                                //  ÍTEM DE MENÚ NORMAL: Selecciona y notifica al Dashboard
                                 selectedIndex = index;
                                 if (selectionListener != null) {
                                     selectionListener.onModuleSelected(menu.getNombre());
                                 }
                             }
                             case SUB_MENU -> {
-                                // 2. ÍTEM DE SUBMENÚ PADRE: Alterna la expansión
+                                // ÍTEM DE SUBMENÚ PADRE: Alterna la expansión
                                 if (menu.isExpandible()) {
-                                    // Colapsar
                                     hideSubMenu(menu, index);
                                 } else {
                                     // Expandir
                                     showSubMenu(menu, index);
                                 }   menu.setExpandible(!menu.isExpandible());
-                                selectedIndex = index; // Opcional: selecciona el padre al expandir
+                                selectedIndex = index;
                             }
                             default -> // Si es TÍTULO o VACÍO
                                 selectedIndex = -1;
@@ -111,7 +108,6 @@ public class ListaMenu<E extends Object> extends JList<E> {
         });
     }
 
-    // --- LÓGICA DE MANEJO DE SUBMENÚS ---
     // Método para mostrar los submenús
     private void showSubMenu(ModeloMenu parentMenu, int index) {
         List<ModeloMenu> subMenus = parentMenu.getSubMenus();
@@ -140,7 +136,6 @@ public class ListaMenu<E extends Object> extends JList<E> {
         }
     }
 
-    // --- GETTERS Y SETTERS ---
     public void setSelectionListener(MenuSelectionListener listener) {
         this.selectionListener = listener;
     }
@@ -157,16 +152,9 @@ public class ListaMenu<E extends Object> extends JList<E> {
                 } else {
                     dato = new ModeloMenu("", o + "", ModeloMenu.TipoMenu.VACIO);
                 }
-
-                // MenuItem.java debe manejar el sangrado y el ícono de expansión
                 MenuItem item = new MenuItem(dato);
-
-                // 1. Configuración de la Selección
                 item.setSeleccionado(selectedIndex == index);
-
-                // 2. Configuración del Hover
                 item.setHover(hoverIndex == index);
-
                 return item;
             }
         };

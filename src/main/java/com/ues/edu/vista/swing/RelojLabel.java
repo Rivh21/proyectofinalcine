@@ -26,7 +26,7 @@ public class RelojLabel extends JLabel {
         Timer timer = new Timer(1000, e -> actualizarHora());
         timer.start();
 
-        // Muestro la hora una primera vez para que no aparezca vacío
+        // Muestra la hora una primera vez para que no aparezca vacío
         actualizarHora();
     }
 
@@ -35,8 +35,6 @@ public class RelojLabel extends JLabel {
         LocalDateTime ahora = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd 'de' MMMM 'de' yyyy, hh:mm:ss a", locale);
         String tiempoFormateado = ahora.format(formatter);
-
-        // Actualizo el texto de ESTA MISMA etiqueta
         setText(tiempoFormateado.toUpperCase());
     }
 }

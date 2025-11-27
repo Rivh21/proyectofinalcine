@@ -27,11 +27,6 @@ public class ModalPeliculas extends javax.swing.JDialog {
             cmbClasificacion.setModel(new javax.swing.DefaultComboBoxModel<>(ClasificacionPelicula.values()));
             cmbGenero.setModel(new javax.swing.DefaultComboBoxModel<>(GeneroPelicula.values()));
 
-
-        
-        
-        
-        
          fondo.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mousePressed(java.awt.event.MouseEvent e) {
@@ -85,20 +80,10 @@ public class ModalPeliculas extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         tfDuracion.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        tfDuracion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfDuracionActionPerformed(evt);
-            }
-        });
 
         lbTitulo.setFont(new java.awt.Font("Roboto", 1, 14)); // NOI18N
 
         tfTitulo1.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
-        tfTitulo1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfTitulo1ActionPerformed(evt);
-            }
-        });
 
         cmbClasificacion.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
 
@@ -181,14 +166,6 @@ public class ModalPeliculas extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void tfDuracionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfDuracionActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfDuracionActionPerformed
-
-    private void tfTitulo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfTitulo1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfTitulo1ActionPerformed
 
     /**
      * @param args the command line arguments

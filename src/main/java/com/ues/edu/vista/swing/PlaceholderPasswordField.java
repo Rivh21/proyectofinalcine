@@ -33,8 +33,6 @@ public class PlaceholderPasswordField extends JPasswordField{
     private int animWidth = 0;
     private Timer animTimer;
     private boolean animatingIn = false;
-
-    // --- Nuevas variables para la visibilidad de la contraseña ---
     private boolean passwordVisible = false;
     private final char defaultEchoChar;
 
@@ -44,7 +42,7 @@ public class PlaceholderPasswordField extends JPasswordField{
         setSelectionColor(new Color(70, 130, 180, 102));
         setTransferHandler(null);
 
-        // Guarda el carácter de eco por defecto (usualmente '•')
+        // Guarda el carácter de eco por defecto
         this.defaultEchoChar = getEchoChar();
 
         initFocusAnimation();
@@ -104,9 +102,7 @@ public class PlaceholderPasswordField extends JPasswordField{
         });
     }
 
-    /**
-     * Añade un listener para detectar clics en el ícono del ojo.
-     */
+
     private void initShowHidePassword() {
         addMouseListener(new MouseAdapter() {
             @Override
@@ -130,13 +126,10 @@ public class PlaceholderPasswordField extends JPasswordField{
         });
     }
 
-    /**
-     * Cambia la visibilidad de la contraseña.
-     */
     private void togglePasswordVisibility() {
         passwordVisible = !passwordVisible;
         if (passwordVisible) {
-            // Muestra la contraseña (echo char nulo)
+            // Muestra la contraseña
             setEchoChar((char) 0);
         } else {
             // Oculta la contraseña con el carácter por defecto
@@ -162,8 +155,6 @@ public class PlaceholderPasswordField extends JPasswordField{
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // Placeholder: Usa getPassword().length en lugar de getText().isEmpty()
         if (getPassword().length == 0) {
             g2.setColor(focused ? focusColor : Color.GRAY);
             FontMetrics fm = g2.getFontMetrics();
@@ -180,16 +171,13 @@ public class PlaceholderPasswordField extends JPasswordField{
         g2.setColor(focusColor);
         g2.fillRect((getWidth() - animWidth) / 2, yLine - lineThickness + 1, animWidth, lineThickness);
         
-        // --- Dibuja el ícono de mostrar/ocultar contraseña ---
+        // Dibuja el ícono de mostrar/ocultar contraseña
         drawPasswordIcon(g2);
         
         g2.dispose();
     }
     
-    /**
-     * Dibuja el ícono del ojo (abierto o tachado).
-     * @param g2 
-     */
+
     private void drawPasswordIcon(Graphics2D g2) {
         Rectangle icon = getIconBounds();
         g2.setColor(Color.GRAY);
@@ -201,9 +189,9 @@ public class PlaceholderPasswordField extends JPasswordField{
         g2.fillOval(icon.x + icon.width / 2 - 2, icon.y + icon.height / 2 - 2, 4, 4);
 
         if (passwordVisible) {
-            // Ojo abierto (no se dibuja nada más)
+            // Ojo abierto
         } else {
-            // Dibuja una línea diagonal para "tachar" el ojo
+            // Dibuja una línea diagonal para tachar el ojo
             g2.drawLine(icon.x, icon.y + icon.height, icon.x + icon.width, icon.y);
         }
     }

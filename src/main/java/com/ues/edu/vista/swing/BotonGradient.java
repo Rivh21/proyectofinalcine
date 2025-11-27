@@ -32,7 +32,7 @@ public class BotonGradient extends JButton {
         setForeground(Color.WHITE); // Texto blanco
         setCursor(new Cursor(Cursor.HAND_CURSOR)); // Manita al pasar mouse
         setBorder(new EmptyBorder(10, 20, 10, 20)); // Padding interno
-        setFocusPainted(false); // Quitar linea punteada de foco
+        setFocusPainted(false); // Quita linea punteada de foco
         setFont(new Font("Roboto", Font.BOLD, 14)); // Fuente negrita
 
         // Eventos para animacion simple
@@ -68,16 +68,16 @@ public class BotonGradient extends JButton {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
-        // Crear el degradado
+        // Crea el degradado
         int width = getWidth();
         int height = getHeight();
         GradientPaint gra = new GradientPaint(0, 0, color1, width, 0, color2);
         
-        // Aplicar transparencia para efectos de mouse
+        // Aplica transparencia para efectos de mouse
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         
         g2.setPaint(gra);
-        // Dibujar rectangulo redondeado (radio 20)
+        // Dibujar rectangulo redondeado
         g2.fillRoundRect(0, 0, width, height, 20, 20);
         
         g2.dispose();

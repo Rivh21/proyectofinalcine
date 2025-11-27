@@ -27,12 +27,12 @@ public class DateChooser extends JDateChooser {
     private JTextField textField;
 
     public DateChooser() {
-        super();//llama al constructor
+        super();
         inicializarPersonalizacion();
     }
 
     public DateChooser(Date date) {
-        super(date);//aqui lo llama ya con una fecha
+        super(date);
         inicializarPersonalizacion();
     }
 
@@ -68,22 +68,16 @@ public class DateChooser extends JDateChooser {
 
     private void forzarColorDelTema() {
         if (this.textField != null) {
-            
-            // Usar el color del tema
-            // Esto funcionará para AMBOS temas, claro y oscuro.
             Color colorDelTema = UIManager.getColor("TextField.foreground");
             if (colorDelTema != null) {
                 this.textField.setForeground(colorDelTema);
             }
-
-            // Descomentar para forzar el color blanco
-            // this.textField.setForeground(Color.WHITE);
         }
     }
     
-    public void seleccionarDiaDeManana() {
+    public void seleccionarDiaDeMañana() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, 1); // Suma 1 día a la fecha actual
+        cal.add(Calendar.DAY_OF_MONTH, 1); 
         this.setDate(cal.getTime());
     }
 
