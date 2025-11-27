@@ -61,7 +61,7 @@ public class Menu extends javax.swing.JPanel {
     private void construirMenu() {
         listaMenu1.addItem(new ModeloMenu("home_24", "INICIO", ModeloMenu.TipoMenu.MENU));
 
-        // --- 1. CARTELERA (Antes preguntabas por Peliculas, Salas, etc. Ahora solo por el GRUPO) ---
+        // CARTELERA
         if (tienePermiso("GESTIONAR_CARTELERA")) {
             List<ModeloMenu> subMenusNucleo = new ArrayList<>();
             subMenusNucleo.add(new ModeloMenu("movie", "Peliculas", ModeloMenu.TipoMenu.MENU));
@@ -72,7 +72,7 @@ public class Menu extends javax.swing.JPanel {
             listaMenu1.addItem(new ModeloMenu("theaters", "Nucleo Del Cine", subMenusNucleo));
         }
 
-        // --- 2. RRHH (Usuarios, Roles, Empleados) ---
+        // RRHH (Usuarios, Roles, Empleados)
         if (tienePermiso("GESTIONAR_RRHH")) {
             List<ModeloMenu> subMenusGestion = new ArrayList<>();
             subMenusGestion.add(new ModeloMenu("grupo", "Empleados", ModeloMenu.TipoMenu.MENU));
@@ -83,7 +83,7 @@ public class Menu extends javax.swing.JPanel {
             listaMenu1.addItem(new ModeloMenu("settings", "Gestion Interna", subMenusGestion));
         }
 
-        // --- 3. PRODUCTOS (Nuevo permiso sugerido) ---
+        // PRODUCTOS
         if (tienePermiso("GESTIONAR_INVENTARIO")) {
             List<ModeloMenu> subMenusConcesion = new ArrayList<>();
             subMenusConcesion.add(new ModeloMenu("hand_package", "Producto", ModeloMenu.TipoMenu.MENU));
@@ -92,13 +92,12 @@ public class Menu extends javax.swing.JPanel {
             listaMenu1.addItem(new ModeloMenu("storefront", "Productos", subMenusConcesion));
         }
 
-        // --- 4. VENTAS ---
+        // 4. VENTAS
         if (tienePermiso("VER_VENTAS")) {
             List<ModeloMenu> subMenuVentas = new ArrayList<>();
 
             subMenuVentas.add(new ModeloMenu("factura", "Factura Taquilla", ModeloMenu.TipoMenu.MENU));
 
-            // Si quieres separar confitería, usa GESTIONAR_INVENTARIO o crea VER_CONFITERIA
             if (tienePermiso("GESTIONAR_INVENTARIO") || tienePermiso("VER_VENTAS")) {
                 subMenuVentas.add(new ModeloMenu("factura", "Factura Concesion", ModeloMenu.TipoMenu.MENU));
             }

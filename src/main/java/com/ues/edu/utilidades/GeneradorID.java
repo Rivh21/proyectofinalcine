@@ -24,6 +24,6 @@ public class GeneradorID {
             sb.append(letras.charAt(index));
         }
 
-        return sb.toString(); // Retorna la factura "FAC-9X2J1M"
+        return sb.toString(); // Retorna la factura 
     }
 }
