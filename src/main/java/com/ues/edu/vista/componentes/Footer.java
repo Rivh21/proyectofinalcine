@@ -147,12 +147,12 @@ public class Footer extends javax.swing.JPanel {
                 );
 
                 if (confirmacion == javax.swing.JOptionPane.YES_OPTION) {
-                    javax.swing.JOptionPane.showMessageDialog(
-                            null,
-                            "¡Hasta pronto! Gracias por usar el sistema.",
-                            "Saliendo",
-                            javax.swing.JOptionPane.INFORMATION_MESSAGE
-                    );
+//                    javax.swing.JOptionPane.showMessageDialog(
+//                            null,
+//                            "¡Hasta pronto! Gracias por usar el sistema.",
+//                            "Saliendo",
+//                            javax.swing.JOptionPane.INFORMATION_MESSAGE
+//                    );
 
                     java.awt.Window parentWindow = javax.swing.SwingUtilities.getWindowAncestor(Footer.this);
                     if (parentWindow != null) {
