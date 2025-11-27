@@ -41,7 +41,7 @@ public class ControladorVistaFactura {
         inicializarTabla();
         cargarTablaFacturas();
         configurarSeguridadBotones();
-
+        onBuscar();
         onClickNuevaFactura();
         onClickVerFactura();
         onClickAnularFactura();
@@ -221,5 +221,39 @@ public class ControladorVistaFactura {
             }
         });
     }
+
+    
+    private void onBuscar() {
+        vista.tfBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                ejecutarBusqueda();
+            }
+        });
+    }
+    private void ejecutarBusqueda() {
+        String txt = vista.tfBuscar.getText().trim();
+        DefaultTableModel modelo = (DefaultTableModel) vista.tbDatos.getModel();
+        modelo.setRowCount(0);
+
+        ListaSimple<FacturaConcesion> facturas;
+
+        if (txt.isEmpty()) {
+            facturas = facturaDao.selectAll();
+        } else {
+            facturas = facturaDao.buscar(txt);
+        }
+
+        for (FacturaConcesion f : facturas.toArray()) {
+            modelo.addRow(new Object[]{
+                f.getIdFacturaConcesion(),
+                String.format("%.2f", f.getMontoTotal()),
+                f.getMetodoPago() != null ? f.getMetodoPago().getnombreMetodo() : "N/A",
+                f.getEmpleado() != null ? f.getEmpleado().getNombre() : "N/A"
+            });
+        }
+    }
+
+
 }
 
